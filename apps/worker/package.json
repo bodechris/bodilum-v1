@@ -1,0 +1,24 @@
+{
+  "name": "worker",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node -r esbuild-register src/worker.ts",
+    "start": "node dist/worker.js",
+    "lint": "eslint .",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@bod/utils": "workspace:*",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@bod/eslint-config": "workspace:*",
+    "@bod/typescript-config": "workspace:*",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.10",
+    "esbuild-register": "^3.6.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

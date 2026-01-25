@@ -1,0 +1,124 @@
+"filename", "language", "JSON", "Markdown", "YAML", "TypeScript", "JavaScript", "JSON with Comments", "XML", "TypeScript JSX", "PostCSS", "JavaScript JSX", "comment", "blank", "total"
+"d:\APPS\WEB\bodilum\bodilum-v1\README.md", "Markdown", 0, 93, 0, 0, 0, 0, 0, 0, 0, 0, 0, 43, 136
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\README.md", "Markdown", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\app\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 5, 27
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 5, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 2, 11
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 2, 3, 19
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\next.config.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\package-lock.json", "JSON", 6577, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6578
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\package.json", "JSON", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 2, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\public\file.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\public\globe.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\public\next.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\public\vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\public\window.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\admin\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 1, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\README.md", "Markdown", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\app\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 5, 27
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 5, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 2, 11
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 2, 3, 19
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\next.config.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\package-lock.json", "JSON", 6577, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6578
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\package.json", "JSON", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 2, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\public\file.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\public\globe.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\public\next.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\public\vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\public\window.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\creators\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 1, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\README.md", "Markdown", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\(root)\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 3, 15
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\about\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0, 2, 9
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\brands\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 11, 53
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\inspirations\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 7, 43
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\pricing\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\projects\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\signin\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\app\start\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 11, 0, 0, 0, 2, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\modules\app-frontend\AppFrontend.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 49, 0, 0, 0, 5, 54
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\HeaderImagesV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 39, 0, 0, 0, 4, 43
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\HomePageComp.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 162, 0, 0, 1, 12, 175
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\ImageCardV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 56, 0, 0, 0, 5, 61
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\MainFixedFooterV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 27, 0, 0, 0, 4, 31
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\MainFooterV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 4, 20
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\MainHeaderV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 73, 0, 0, 0, 4, 77
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\color-mode.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 96, 0, 0, 0, 13, 109
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\page-v0\PageV0.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 4, 28
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\provider.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 13, 0, 0, 0, 3, 16
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\toaster.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 40, 0, 0, 0, 4, 44
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\components\ui\tooltip.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 42, 0, 0, 0, 5, 47
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 2, 3, 19
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\next.config.ts", "TypeScript", 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 3, 11
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\package-lock.json", "JSON", 6577, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6578
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\package.json", "JSON", 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 34
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 2, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\providers\Providers.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 12, 0, 0, 0, 5, 17
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\providers\StyledComponentsRegistry.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 24, 0, 0, 4, 5, 33
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\file.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\globe.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\loading1a.svg", "XML", 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1, 6
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\loading2a.svg", "XML", 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 1, 7
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\logo-icon.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\next.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\public\window.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\frontend\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 2, 36
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\README.md", "Markdown", 0, 23, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 37
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\app\globals.css", "PostCSS", 0, 0, 0, 0, 0, 0, 0, 0, 22, 0, 0, 5, 27
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 30, 0, 0, 0, 5, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 2, 11
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 14, 0, 0, 0, 0, 0, 2, 3, 19
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\next.config.ts", "TypeScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 3, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\package-lock.json", "JSON", 6577, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6578
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\package.json", "JSON", 27, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 28
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\postcss.config.mjs", "JavaScript", 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 2, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\public\file.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\public\globe.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\public\next.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\public\vercel.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\public\window.svg", "XML", 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\render\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 34, 0, 0, 0, 0, 0, 1, 35
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\server\package.json", "JSON", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\server\src\server.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\server\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 9
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\server\tsup.config.ts", "TypeScript", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\worker\package.json", "JSON", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 24
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\worker\src\worker.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\worker\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 9
+"d:\APPS\WEB\bodilum\bodilum-v1\apps\worker\tsup.config.ts", "TypeScript", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\APPS\WEB\bodilum\bodilum-v1\package.json", "JSON", 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 27
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\eslint-config\README.md", "Markdown", 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 4
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\eslint-config\base.js", "JavaScript", 0, 0, 0, 0, 26, 0, 0, 0, 0, 0, 5, 2, 33
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\eslint-config\next.js", "JavaScript", 0, 0, 0, 0, 49, 0, 0, 0, 0, 0, 7, 2, 58
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\eslint-config\package.json", "JSON", 24, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 25
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\eslint-config\react-internal.js", "JavaScript", 0, 0, 0, 0, 33, 0, 0, 0, 0, 0, 5, 2, 40
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\typescript-config\base.json", "JSON", 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\typescript-config\nextjs.json", "JSON", 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\typescript-config\package.json", "JSON", 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\typescript-config\react-library.json", "JSON", 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 8
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\eslint.config.mjs", "JavaScript", 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 1, 2, 5
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\package.json", "JSON", 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\src\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 4, 21
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\src\card.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 0, 2, 28
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\src\code.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 2, 12
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\src\index.ts", "TypeScript", 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 3
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 1, 10
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\ui\tsup.config.ts", "TypeScript", 0, 0, 0, 14, 0, 0, 0, 0, 0, 0, 1, 1, 16
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\utils\package.json", "JSON", 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 20
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\utils\src\index.ts", "TypeScript", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\utils\tsconfig.json", "JSON with Comments", 0, 0, 0, 0, 0, 8, 0, 0, 0, 0, 0, 1, 9
+"d:\APPS\WEB\bodilum\bodilum-v1\packages\utils\tsup.config.ts", "TypeScript", 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 10
+"d:\APPS\WEB\bodilum\bodilum-v1\pnpm-lock.yaml", "YAML", 0, 0, 5815, 0, 0, 0, 0, 0, 0, 0, 0, 1489, 7304
+"d:\APPS\WEB\bodilum\bodilum-v1\pnpm-workspace.yaml", "YAML", 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 4
+"d:\APPS\WEB\bodilum\bodilum-v1\src\components\ui\color-mode.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 81, 0, 10, 91
+"d:\APPS\WEB\bodilum\bodilum-v1\src\components\ui\provider.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 3, 13
+"d:\APPS\WEB\bodilum\bodilum-v1\src\components\ui\toaster.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 40, 0, 4, 44
+"d:\APPS\WEB\bodilum\bodilum-v1\src\components\ui\tooltip.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 0, 0, 0, 32, 0, 4, 36
+"d:\APPS\WEB\bodilum\bodilum-v1\turbo.json", "JSON", 21, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 22
+"Total", "-", 26643, 187, 5818, 67, 190, 171, 32, 964, 108, 163, 32, 1840, 36215
