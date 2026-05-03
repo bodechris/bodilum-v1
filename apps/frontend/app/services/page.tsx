@@ -8,7 +8,7 @@ function ServicesPage() {
       <h2 className="!text-4xl">Our services and offerings</h2>
       <div className="mt-8 space-y-4">
         <div className="p-4 border rounded">
-          <h3 className="text-2xl font-bold">48-hour Small Business Brand Kit</h3>
+          <h3 className="text-2xl font-bold">48-hour Small Business Brand Kit</h3>  
           <p className="mt-2 text-gray-600">Description of Service 1.</p>
         </div>
         <div className="p-4 border rounded">
