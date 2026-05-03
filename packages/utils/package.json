@@ -3,9 +3,14 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./contexts/GlobalAppVarProvider": "./src/contexts/GlobalAppVarProvider.tsx"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.9",
+    "typescript": "^5.9.3"
   },
   "peerDependencies": {
     "react": "^19.2.3"

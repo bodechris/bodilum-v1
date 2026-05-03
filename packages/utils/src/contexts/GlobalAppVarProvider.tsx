@@ -34,5 +34,11 @@ export function GlobalAppVarProvider({ children }: PropsWithChildren) {
 }
 
 export function useGlobalAppStates() {
-  return useContext(GlobalAppStateContext);
+  const context = useContext(GlobalAppStateContext);
+
+  if (!context) {
+    throw new Error('useGlobalAppStates must be used within GlobalAppVarProvider');
+  }
+
+  return context;
 }
