@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@bod/utils/*": ["../../packages/utils/src/*"]
     }
   },
   "include": [

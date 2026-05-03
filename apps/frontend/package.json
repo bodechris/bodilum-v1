@@ -3,14 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev --port 3010",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@bod/ui": "workspace:*",
     "@bod/utils": "workspace:*",
     "@chakra-ui/react": "^3.31.0",
     "@emotion/react": "^11.14.0",

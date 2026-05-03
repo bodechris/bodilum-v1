@@ -4,16 +4,19 @@ import React from 'react'
 import MainHeaderV0 from '@/components/ui/MainHeaderV0';
 import MainFixedFooterV0 from '@/components/ui/MainFixedFooterV0';
 import styled from 'styled-components';
+import { GlobalAppVarProvider } from '@bod/utils/contexts/GlobalAppVarProvider';
 
 function AppFrontend({ children }: { children: React.ReactNode }) {
   return (
-    <AppFrontendWrapper>
-        <MainHeaderV0 />
-        <main className="mainApp w-[95%]">
-            {children}
-        </main>
-        <MainFixedFooterV0 />
-    </AppFrontendWrapper>
+    <GlobalAppVarProvider>
+      <AppFrontendWrapper>
+          <MainHeaderV0 />
+          <main className="mainApp w-[95%]">
+              {children}
+          </main>
+          <MainFixedFooterV0 />
+      </AppFrontendWrapper>
+    </GlobalAppVarProvider>
   )
 }
 

@@ -3,19 +3,15 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 
-import {
-  Button,
-  CloseButton,
-  Dialog,
-  For,
-  HStack,
-  Portal,
-} from "@chakra-ui/react"
+import { Button, CloseButton, Dialog, For, HStack, Portal } from "@chakra-ui/react";
+import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 
 function HomePageComp() {
 
   const [modalIsOpen, setModalIsOpen] = React.useState<boolean | undefined>(undefined);
   const [formType, setFormType] = React.useState<'waiting-list' | 'design-request'>('waiting-list');
+
+  const { isSignedIn } = useGlobalAppStates() || {};
 
   useEffect(() => {
     if( !modalIsOpen ) return;

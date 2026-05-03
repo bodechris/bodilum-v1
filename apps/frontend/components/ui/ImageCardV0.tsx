@@ -13,7 +13,7 @@ type ImageCardV0Props = {
 
 function ImageCardV0({ offsetX = 0, offsetY = 0, rotation = 0, imageUrl = "img-1.jpg", bgColor="#fff" }: ImageCardV0Props) {
   return (
-    <ImageCardV0Wrapper offsetx={offsetX} offsety={offsetY} rotation={rotation} bgcolor={bgColor}>
+    <ImageCardV0Wrapper $offsetX={offsetX} $offsetY={offsetY} $rotation={rotation} $bgColor={bgColor}>
         <Image src={`/${imageUrl}`} alt="Sample Image" width={800} height={800} />
     </ImageCardV0Wrapper>
   )
@@ -22,15 +22,15 @@ function ImageCardV0({ offsetX = 0, offsetY = 0, rotation = 0, imageUrl = "img-1
 export default ImageCardV0;
 
 type ImageCardV0WrapperProps = {
-  offsetx: number;
-  offsety: number;
-  rotation: number;
-  bgcolor: string;
+  $offsetX: number;
+  $offsetY: number;
+  $rotation: number;
+  $bgColor: string;
 }
 const ImageCardV0Wrapper = styled.div<ImageCardV0WrapperProps>`
 width: min(300px, 80vw);
 height: 400px;
-background: ${props => props.bgcolor};
+background: ${props => props.$bgColor};
 border-radius: 10px;
 margin: 10px;
 display: flex;
@@ -45,7 +45,7 @@ outline: 0.6rem solid #ffff;
 overflow: hidden;
 
 transform-origin: center center;
-transform: rotate(${props => props.rotation}deg) translateX(${props => props.offsetx}vw) translateY(${props => props.offsety}vw);
+transform: rotate(${props => props.$rotation}deg) translateX(${props => props.$offsetX}vw) translateY(${props => props.$offsetY}vw);
 
 img {
     width: 100%;

@@ -9,12 +9,9 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@bod/utils": "workspace:*",
     "express": "^5.2.1"
   },
   "devDependencies": {
-    "@bod/eslint-config": "workspace:*",
-    "@bod/typescript-config": "workspace:*",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.10",
     "esbuild-register": "^3.6.0",

@@ -1,9 +1,17 @@
-import React from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
 
 import Link from 'next/link';
+import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 
 function MainHeaderV0() {
+  const { isSignedIn } = useGlobalAppStates();
+
+  useEffect(() => {
+    console.log("MainHeaderV0 - isSignedIn:", isSignedIn);
+  }, [isSignedIn]);
+
+
   return (
     <MainHeaderV0Wrapper>
         <div className="w-[95%] flex justify-between header-holder">
@@ -12,16 +20,22 @@ function MainHeaderV0() {
                 <nav>
                     <ul className="flex gap-4">
                         <li><Link href="/">Home</Link></li>
-                        <li><Link href="/inspirations">Inspirations</Link></li>
-                        <li><Link href="/projects">Projects</Link></li>
-                        <li><Link href="/start">Start</Link></li>
-                        <li><Link href="/brands">Brands</Link></li>
-                        <li><Link href="/pricing">Pricing</Link></li>
+                        <li><Link href="/services">Services</Link></li>
+                        <li><Link href="/contact">Contact</Link></li>
+                        {/* <li><Link href="/inspirations">Inspirations</Link></li> */}
+                        {/* <li><Link href="/projects">Projects</Link></li> */}
+                        {/* <li><Link href="/start">Start</Link></li> */}
+                        {/* <li><Link href="/brands">Brands</Link></li> */}
+                        {/* <li><Link href="/pricing">Pricing</Link></li> */}  
                     </ul>
                 </nav>
             </div>
             <div className="_right">
-                <Link href="/signin">Sign in</Link>
+                {isSignedIn ? (
+                    <Link href="/profile">Profile</Link>
+                ) : (
+                    <Link href="/signin">Sign in</Link>
+                )}
             </div>
         </div>
     </MainHeaderV0Wrapper>

@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@chakra-ui/react"],
   },
+  transpilePackages: ["@bod/utils"],
 };
 
 export default nextConfig;
