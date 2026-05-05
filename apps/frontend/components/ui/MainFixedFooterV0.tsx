@@ -4,11 +4,11 @@ import styled from 'styled-components';
 function MainFixedFooterV0() {
   return (
     <MainFixedFooterV0Wrapper>
-        <div className="w-[95%] flex justify-between main-fixed-footer-holder">
+        {/* <div className="w-[95%] flex justify-between main-fixed-footer-holder">
             <div className="_left">left</div>
             <div className="_center">center</div>
             <div className="_right">right</div>
-        </div>
+        </div> */}
     </MainFixedFooterV0Wrapper>
   )
 }

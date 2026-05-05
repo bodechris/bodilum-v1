@@ -5,7 +5,7 @@ import styled from 'styled-components';
 function MainFooterV0() {
   return (
     <MainFooterV0Wrapper>
-        <span>MainFooterV0</span>
+        <span>MainFooterV0</span> 
     </MainFooterV0Wrapper>
   )
 }

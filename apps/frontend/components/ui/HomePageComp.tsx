@@ -5,6 +5,7 @@ import styled from "styled-components";
 
 import { Button, CloseButton, Dialog, For, HStack, Portal } from "@chakra-ui/react";
 import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
+import Link from "next/link";
 
 function HomePageComp() {
 
@@ -41,11 +42,14 @@ function HomePageComp() {
           <Dialog.Content>
             <Dialog.Header>
               <Dialog.Title>
-                { formType === 'waiting-list' ? 'Join our Waiting List' : 'Request a Design' }
+                {/* { formType === 'waiting-list' ? 'Join our Waiting List' : 'Request a Design' } */}
+                <p className="text-2xl font-bold">This feature is launching soon 🚀</p>
               </Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <>Dialog Body Content here...</>
+              {/* <>Dialog Body Content here...</> */}
+              <p className="text-lg">We are working hard to launch this feature in the next few weeks. Stay tuned!</p>
+              <Link href="/services" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our services</Link>
             </Dialog.Body>
             <Dialog.Footer>
             </Dialog.Footer>
