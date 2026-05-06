@@ -7,13 +7,16 @@ import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import Link from 'next/link';
 
 function SingleServiceV0({ title, description, link, price }: SingleServiceProp) {
-  const { currency } = useGlobalAppStates();
+  const { currencyCode, formatUsdPrice, isExchangeRateLoading } = useGlobalAppStates();
+  const showPriceLoader = Boolean(price) && currencyCode !== 'USD' && isExchangeRateLoading;
 
   return (
     <SingleServiceV0Wrapper>
         <h3>{title}</h3>
         <p>{description}</p>
-        <div className="service-price">{price ? `${currency} ${price}` : ''}</div>
+        <div className="service-price">
+          {showPriceLoader ? <span className="service-price-loader" /> : formatUsdPrice(price)}
+        </div>
         <Link href={link}>View</Link><button>Request this service</button>
     </SingleServiceV0Wrapper>
   )
@@ -41,4 +44,29 @@ const SingleServiceV0Wrapper = styled.div`
     -webkit-box-shadow: 0px 20px 30px 2px rgba(0,0,0,0.05);
     -moz-box-shadow:    0px 20px 30px 2px rgba(0,0,0,0.05);
     box-shadow:         0px 20px 30px 2px rgba(0,0,0,0.05); 
+
+  .service-price {
+    min-height: 1.75rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .service-price-loader {
+    width: 7.5rem;
+    height: 1.1rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #ececec 0%, #f7f7f7 50%, #ececec 100%);
+    background-size: 200% 100%;
+    animation: price-loader 1.1s ease-in-out infinite;
+  }
+
+  @keyframes price-loader {
+    0% {
+      background-position: 200% 0;
+    }
+
+    100% {
+      background-position: -200% 0;
+    }
+  }
 `;

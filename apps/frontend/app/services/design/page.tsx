@@ -14,7 +14,7 @@ function DesignServicePage() {
             title: "48-Hour Small Business Professional Makeover",
             description: "A fast, focused makeover to give your small business a more polished and professional brand presence across your customer touchpoints, and marketing materials. We’ll audit your current brand presence, identify the most impactful improvements, and implement them in a way that’s seamless for your team and customers.",
             link: "/services/brand-refresh", 
-            price: '7500',
+            price: '460',
             bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
             deliverables: [
               "2 simple logo variations",
@@ -34,7 +34,7 @@ function DesignServicePage() {
             title: "Brand Discovery & Refresh",
             description: "Helping businesses discover their unique brand identity and refreshing existing brand identity to stay relevant in the market.",
             link: "/services/brand-refresh", 
-            price: '15000',
+            price: '920',
             bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
             deliverables: [
               "Brand discovery workshop",
@@ -54,7 +54,7 @@ function DesignServicePage() {
           title: "Content & Marketing Package",
           description: "A content and marketing package that includes copywriting (with AI assistance), re-usable design templates, and strategy to help businesses create a cohesive and effective marketing presence.",
           link: "/services/content-marketing-package",
-          price: '>=10000',
+          price: '>=640',
           bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
           deliverables: [
             "Copywriting (with AI assistance)",
