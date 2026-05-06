@@ -6,6 +6,7 @@ function ServicesPage() {
     <PageV0>
       <h1 className="!text-9xl">Services</h1>
       <h2 className="!text-4xl">Our services and offerings</h2>
+      <b>Bodilum helps premium small businesses upgrade their brand, website, and AI workflows in 7–21 days — so they look professional, get better leads, respond faster, and operate smarter.</b>
       <div className="mt-8 space-y-4">
         <div className="p-4 border rounded">
           <h3 className="text-2xl font-bold">48-hour Small Business Brand Kit</h3>  
