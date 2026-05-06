@@ -1,11 +1,11 @@
-import ServiceDetailPage from "../ServiceDetailPage";
+import ServiceSectionPage from "../ServiceSectionPage";
 
 function AIIntegrationsServicePage() {
   return (
-    <ServiceDetailPage
-      eyebrow="AI Integrations"
-      title="AI workflows that reduce response time and repetitive work."
-      summary="Bodilum connects AI tools to your customer journey and internal workflow so you can handle leads, content, and routine operations with more speed and less manual effort."
+    <ServiceSectionPage
+      title="AI Integrations"
+      subtitle="AI workflows that reduce response time and repetitive work."
+      description="Bodilum connects AI tools to your customer journey and internal workflow so you can handle leads, content, and routine operations with more speed and less manual effort."
       deliverables={[
         "AI-assisted lead qualification, intake, or response flows connected to your forms and channels.",
         "Prompt and workflow setup for recurring content, messaging, or client support tasks.",

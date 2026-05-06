@@ -1,22 +1,23 @@
-import ServiceDetailPage from "../ServiceDetailPage";
+import ServiceSectionPage from "../ServiceSectionPage";
 
 function DesignServicePage() {
   return (
-    <ServiceDetailPage
-      eyebrow="Design Services"
-      title="Design that makes your brand look established fast."
-      summary="Bodilum creates practical, high-conviction design systems for small businesses that need to look premium, trustworthy, and ready to sell without wasting months on revisions."
+    <ServiceSectionPage
+      title="All Design Services"
+      subtitle="Bodilum's design services for small businesses, including brand kits, landing pages, company profiles, and more."
+      description="Bodilum's design services help small businesses create a polished and professional brand presence across their website, customer touchpoints, and marketing materials — so they can get better leads, respond faster, and operate smarter."
       deliverables={[
-        "Brand identity direction, typography, and color decisions tailored to your offer.",
-        "Marketing-ready design assets for social posts, flyers, brochures, decks, or menus.",
-        "Conversion-focused landing page or website section design concepts.",
-        "A clean visual system your team can keep using after launch.",
+        "Brand kits with logo, color palette, typography, and usage guidelines.",
+        "Landing pages designed for clarity, speed, and lead capture.",
+        "Company profiles that communicate your offer and story clearly.",
+        "Pricelists, menus, or service lists that make it easy for customers to understand and choose your offerings.",
+        "Google Business Profile makeovers that improve your local presence and lead generation.",
       ]}
       outcomes={[
-        "A sharper first impression across your website, social channels, and sales materials.",
-        "Design assets that feel consistent instead of patched together.",
-        "Less back-and-forth because the design is tied directly to your business goal.",
-        "A brand presence that looks credible enough to support higher-value offers.",
+        "A more polished and professional brand presence across your website and customer touchpoints.",
+        "Improved lead quality and conversion through clearer communication of your offer.",
+        "Faster response time and better customer experience with well-designed touchpoints.",
+        "A stronger foundation for future marketing and growth efforts with a cohesive brand identity.",
       ]}
     />
   );

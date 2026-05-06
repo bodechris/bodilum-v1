@@ -1,8 +1,11 @@
+"use client";
+
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import styles from './styles/main-header.module.scss';
 
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import useWindowResize from '@bod/utils/hooks/useWindowResize';
 
@@ -14,11 +17,17 @@ function MainHeaderV0() {
   const { isSignedIn } = useGlobalAppStates();
 
   const [open, setOpen] = useState(false)
+  const pathname = usePathname();
   const screenDim = useWindowResize();
+  const useCompactLogo = screenDim[0] > 0 && screenDim[0] < 768;
 
   useEffect(() => {
     console.log("MainHeaderV0 - isSignedIn:", isSignedIn);
   }, [isSignedIn]);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
 
   // useEffect(() => {
   //   console.log("MainHeaderV0 - screenDim:", screenDim);
@@ -47,7 +56,7 @@ function MainHeaderV0() {
     <MainHeaderV0Wrapper>
       <div className={`${styles.mainHeader} w-[95%] flex justify-between header-holder`}>
             <div className="_left">
-              <Link href="/">{ screenDim[0] < 768 ? logoSvg.icon : logoSvg.icon_and_text }</Link>
+              <Link href="/">{ useCompactLogo ? logoSvg.icon : logoSvg.icon_and_text }</Link>
               {/* <Link href="/">{ logoSvg.icon }</Link> */}
             </div>
             <div className="_center">
@@ -61,25 +70,10 @@ function MainHeaderV0() {
                             </Popover.Trigger>
                             <Portal>
                               <Popover.Positioner>
-                                <Popover.Content
-                                  background="#fff"
-                                  backdropFilter="blur(25px)"
-                                  // border="1px solid rgba(240, 240, 240, 0.2)"
-                                  borderRadius="1.25rem"
-                                  boxShadow="0 24px 60px rgba(0, 0, 0, 0.2)"
-                                  marginTop="0.3rem"
-                                  overflow="hidden"
-                                >
+                                <Popover.Content className={ styles.popoverContent }>
                                   <Popover.Arrow />
-                                  <Popover.Body
-                                    color="#1c1c1c"
-                                    fontSize="0.95rem"
-                                    lineHeight="1.5"
-                                    minW="18rem"
-                                    p="1rem 1.1rem"
-                                    background="transparent"
-                                  >
-                                    <ul className="flex flex-col gap-3">
+                                  <Popover.Body className={ styles.popoverBody }>
+                                    <ul className={ styles.popoverList }>
                                       <li><Link href="/services/design">Design</Link></li>
                                       <li><Link href="/services/development">Development</Link></li>
                                       <li><Link href="/services/ai-integrations">AI Integrations</Link></li>
