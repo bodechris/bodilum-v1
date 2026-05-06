@@ -1,20 +1,26 @@
+"use client";
+
 import React from 'react';
 import styled from 'styled-components';
 import { SingleServiceProp } from './ServiceSectionPage';
+import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import Link from 'next/link';
 
-function SingleServiceV0({ title, description, link }: SingleServiceProp) {
+function SingleServiceV0({ title, description, link, price }: SingleServiceProp) {
+  const { currency } = useGlobalAppStates();
+
   return (
     <SingleServiceV0Wrapper>
         <h3>{title}</h3>
         <p>{description}</p>
-        <Link href={link}>Learn More</Link>
+        <div className="service-price">{price ? `${currency} ${price}` : ''}</div>
+        <Link href={link}>View</Link><button>Request this service</button>
     </SingleServiceV0Wrapper>
   )
 }
 
-export default SingleServiceV0;
-
+export default SingleServiceV0;  
+ 
 const SingleServiceV0Wrapper = styled.div`
   width: 100%;
   height: 100%;

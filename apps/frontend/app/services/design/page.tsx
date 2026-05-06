@@ -11,30 +11,59 @@ function DesignServicePage() {
 
       services={[
         {
-            title: "Web Design",
-            description: "Creating visually appealing and user-friendly websites.",
-            link: "/services/web-design"
+            title: "48-Hour Small Business Professional Makeover",
+            description: "A fast, focused makeover to give your small business a more polished and professional brand presence across your customer touchpoints, and marketing materials. We’ll audit your current brand presence, identify the most impactful improvements, and implement them in a way that’s seamless for your team and customers.",
+            link: "/services/brand-refresh", 
+            price: '7500',
+            bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
+            deliverables: [
+              "2 simple logo variations",
+              "Business card",
+              "Price list/menu",
+              "Invoice",
+              "Quote",
+              "Receipt",
+              "Email signature",
+              "Google My Business profile",
+              "Google Analytics setup",
+              "Social media profile",
+              "Free on-board of brand identity on BiznesXpo"
+            ]
         },
         {
-            title: "Graphic Design",
-            description: "Designing logos, brochures, and other marketing materials.",
-            link: "/services/graphic-design"
+            title: "Brand Discovery & Refresh",
+            description: "Helping businesses discover their unique brand identity and refreshing existing brand identity to stay relevant in the market.",
+            link: "/services/brand-refresh", 
+            price: '15000',
+            bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
+            deliverables: [
+              "Brand discovery workshop",
+              "Brand identity development",
+              "Logo design",
+              "Color palette creation",
+              "Typography selection",
+              "Brand guidelines document",
+              "Social media profile design",
+              "Email signature design",
+              "Business card design",
+              "Brand collateral templates",
+              "Free on-board of brand identity on BiznesXpo"
+            ]
         },
         {
-            title: "UI/UX Design",
-            description: "Enhancing user experience through intuitive design.",
-            link: "/services/ui-ux-design"
+          title: "Content & Marketing Package",
+          description: "A content and marketing package that includes copywriting (with AI assistance), re-usable design templates, and strategy to help businesses create a cohesive and effective marketing presence.",
+          link: "/services/content-marketing-package",
+          price: '>=10000',
+          bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
+          deliverables: [
+            "Copywriting (with AI assistance)",
+            "Re-usable design templates",
+            "Marketing strategy"
+          ]
         },
-        {
-            title: "Branding",
-            description: "Creating a strong brand identity for your business.",
-            link: "/services/branding"
-        },
-        {
-            title: "Social Media Design",
-            description: "Designing engaging content for social media platforms.",
-            link: "/services/social-media-design"
-        }
+        
+        
       ]}
 
     />

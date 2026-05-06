@@ -6,6 +6,7 @@ import MainFixedFooterV0 from '@/components/ui/MainFixedFooterV0';
 import styled from 'styled-components';
 import { GlobalAppVarProvider } from '@bod/utils/contexts/GlobalAppVarProvider';
 import BxPanelV0 from '@/components/bx-panel/BxPanelV0';
+import MainFooterV0 from '@/components/ui/MainFooterV0';
 
 function AppFrontend({ children }: { children: React.ReactNode }) {
   return (
@@ -17,7 +18,7 @@ function AppFrontend({ children }: { children: React.ReactNode }) {
               <BxPanelV0 />
           </main>
           <MainFixedFooterV0 />
-          {/* <MainFooterV0 /> */}
+          <MainFooterV0 />
       </AppFrontendWrapper>
     </GlobalAppVarProvider>
   )

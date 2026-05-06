@@ -7,6 +7,9 @@ export type SingleServiceProp = {
   title: string;
   description: string;
   link: string;
+  price?: string;
+  bestFor?: string;
+  deliverables?: string[];
 };
 
 type ServiceSectionPageProps = {
@@ -59,7 +62,6 @@ const ServiceSectionWrapper = styled.section`
   border-radius: 25%;
 
   margin-top: 2rem;
-
   position: relative;
 
   .service-section__header {
