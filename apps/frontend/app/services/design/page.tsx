@@ -3,22 +3,40 @@ import ServiceSectionPage from "../ServiceSectionPage";
 function DesignServicePage() {
   return (
     <ServiceSectionPage
-      title="All Design Services"
-      subtitle="Bodilum's design services for small businesses, including brand kits, landing pages, company profiles, and more."
+      title="Design Services"
+      subtitle="Design that creates a polished brand presence for businesses that want to stand out and get better results."
       description="Bodilum's design services help small businesses create a polished and professional brand presence across their website, customer touchpoints, and marketing materials — so they can get better leads, respond faster, and operate smarter."
-      deliverables={[
-        "Brand kits with logo, color palette, typography, and usage guidelines.",
-        "Landing pages designed for clarity, speed, and lead capture.",
-        "Company profiles that communicate your offer and story clearly.",
-        "Pricelists, menus, or service lists that make it easy for customers to understand and choose your offerings.",
-        "Google Business Profile makeovers that improve your local presence and lead generation.",
+
+      media="/images/design-1.webp"
+
+      services={[
+        {
+            title: "Web Design",
+            description: "Creating visually appealing and user-friendly websites.",
+            link: "/services/web-design"
+        },
+        {
+            title: "Graphic Design",
+            description: "Designing logos, brochures, and other marketing materials.",
+            link: "/services/graphic-design"
+        },
+        {
+            title: "UI/UX Design",
+            description: "Enhancing user experience through intuitive design.",
+            link: "/services/ui-ux-design"
+        },
+        {
+            title: "Branding",
+            description: "Creating a strong brand identity for your business.",
+            link: "/services/branding"
+        },
+        {
+            title: "Social Media Design",
+            description: "Designing engaging content for social media platforms.",
+            link: "/services/social-media-design"
+        }
       ]}
-      outcomes={[
-        "A more polished and professional brand presence across your website and customer touchpoints.",
-        "Improved lead quality and conversion through clearer communication of your offer.",
-        "Faster response time and better customer experience with well-designed touchpoints.",
-        "A stronger foundation for future marketing and growth efforts with a cohesive brand identity.",
-      ]}
+
     />
   );
 }

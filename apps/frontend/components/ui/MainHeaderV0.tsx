@@ -113,7 +113,6 @@ const MainHeaderV0Wrapper = styled.header`
   margin: 0 auto;
   width: 100%;
   height: 60px;
-//   background: skyblue;
   position: fixed;
   top: 0; left: 0;
   display: flex;

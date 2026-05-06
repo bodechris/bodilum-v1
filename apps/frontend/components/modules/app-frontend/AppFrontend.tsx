@@ -32,7 +32,6 @@ const AppFrontendWrapper = styled.div`
   height: 200vh;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   
   background: #fff;
   background-image: url('/pg-bg-0.jpg');
@@ -46,7 +45,6 @@ const AppFrontendWrapper = styled.div`
   .mainApp {
     width: 100%;
     height: auto;
-    min-height: 100vh;
     margin-top: 80px;
     margin-bottom: 10rem;
     flex-grow: 1;
