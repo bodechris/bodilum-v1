@@ -1,12 +1,19 @@
-import { use, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import styles from './styles/main-header.module.scss';
 
 import Link from 'next/link';
 import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import useWindowResize from '@bod/utils/hooks/useWindowResize';
 
+import { Popover, Portal } from "@chakra-ui/react";
+
+
+
 function MainHeaderV0() {
   const { isSignedIn } = useGlobalAppStates();
+
+  const [open, setOpen] = useState(false)
   const screenDim = useWindowResize();
 
   useEffect(() => {
@@ -36,8 +43,9 @@ function MainHeaderV0() {
 
 
   return (
+    <>
     <MainHeaderV0Wrapper>
-        <div className="w-[95%] flex justify-between header-holder">
+      <div className={`${styles.mainHeader} w-[95%] flex justify-between header-holder`}>
             <div className="_left">
               <Link href="/">{ screenDim[0] < 768 ? logoSvg.icon : logoSvg.icon_and_text }</Link>
               {/* <Link href="/">{ logoSvg.icon }</Link> */}
@@ -46,7 +54,42 @@ function MainHeaderV0() {
                 <nav>
                     <ul className="flex gap-4">
                         <li><Link href="/">Home</Link></li>
-                        <li><Link href="/services">Services</Link></li>
+                        <li>
+                          <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
+                            <Popover.Trigger asChild>
+                              <button className="btn-1">Services</button>
+                            </Popover.Trigger>
+                            <Portal>
+                              <Popover.Positioner>
+                                <Popover.Content
+                                  background="#fff"
+                                  backdropFilter="blur(25px)"
+                                  // border="1px solid rgba(240, 240, 240, 0.2)"
+                                  borderRadius="1.25rem"
+                                  boxShadow="0 24px 60px rgba(0, 0, 0, 0.2)"
+                                  marginTop="0.3rem"
+                                  overflow="hidden"
+                                >
+                                  <Popover.Arrow />
+                                  <Popover.Body
+                                    color="#1c1c1c"
+                                    fontSize="0.95rem"
+                                    lineHeight="1.5"
+                                    minW="18rem"
+                                    p="1rem 1.1rem"
+                                    background="transparent"
+                                  >
+                                    <ul className="flex flex-col gap-3">
+                                      <li><Link href="/services/design">Design</Link></li>
+                                      <li><Link href="/services/development">Development</Link></li>
+                                      <li><Link href="/services/ai-integrations">AI Integrations</Link></li>
+                                    </ul>
+                                  </Popover.Body>
+                                </Popover.Content>
+                              </Popover.Positioner>
+                            </Portal>
+                          </Popover.Root>
+                        </li>
                         <li><Link href="/contact">Contact</Link></li>
                         {/* <li><Link href="/inspirations">Inspirations</Link></li> */}
                         {/* <li><Link href="/projects">Projects</Link></li> */}
@@ -66,6 +109,7 @@ function MainHeaderV0() {
             </div>
         </div>
     </MainHeaderV0Wrapper>
+    </>
   )
 }
 
@@ -141,6 +185,28 @@ const MainHeaderV0Wrapper = styled.header`
           margin: 0;
           padding: 0;
           li {
+            .btn-1 {
+              appearance: none;
+              background: transparent;
+              border: 0;
+              color: #000;
+              cursor: pointer;
+              font: inherit;
+              font-weight: bold;
+              line-height: 1;
+              padding: 0;
+
+              &:hover {
+                color: #555;
+              }
+
+              &:focus-visible {
+                outline: 2px solid #222;
+                outline-offset: 0.35rem;
+                border-radius: 0.25rem;
+              }
+            }
+
             a {
               text-decoration: none;
               color: #000;
