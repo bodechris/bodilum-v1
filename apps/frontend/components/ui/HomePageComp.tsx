@@ -52,7 +52,7 @@ function HomePageComp() {
               <div className="ctas" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', alignItems: 'center', justifyContent: 'center', textAlign: 'center', lineHeight: 1.0 }}>
 
                 <Link href="/services/design" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our design services</Link>
-                <Link href="/services/development" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our software engineering services</Link>
+                <Link href="/services/web-development" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our Web development services</Link>
                 <Link href="/services/ai-integrations" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our AI Integration services</Link>
 
               </div>

@@ -75,7 +75,7 @@ function MainHeaderV0() {
                                   <Popover.Body className={ styles.popoverBody }>
                                     <ul className={ styles.popoverList }>
                                       <li><Link href="/services/design">Design</Link></li>
-                                      <li><Link href="/services/development">Development</Link></li>
+                                      <li><Link href="/services/web-development">Web Development</Link></li>
                                       <li><Link href="/services/ai-integrations">AI Integrations</Link></li>
                                     </ul>
                                   </Popover.Body>
