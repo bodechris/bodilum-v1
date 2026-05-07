@@ -1,10 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import { ReactNode, useMemo, useState } from "react";
 import PageV0 from "@/components/ui/page-v0/PageV0";
 import styled from "styled-components";
 import SingleServiceV0 from "./SingleServiceV0";
-import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
 import {
   ServiceDrawerPayload,
   ServiceSectionDrawerContext,
@@ -77,69 +77,92 @@ function ServiceSectionPage(props: ServiceSectionPageProps) {
           </ServiceSectionWrapper>
         </PageV0>
 
-        <Drawer.Root
-          open={isDrawerOpen}
-          onOpenChange={(details) => setIsDrawerOpen(details.open)}
-          key='xl' size='xl'
-        >
-          <Portal>
-            <Drawer.Backdrop />
-            <Drawer.Positioner padding="4">
-              <Drawer.Content rounded="md" maxW="8xl">
-                <Drawer.Header>
-                  <Drawer.Title>
-                    {activeService?.title ?? "Service request"}
-                  </Drawer.Title>
-                </Drawer.Header>
-                <Drawer.Body>
-                  <div className="service-drawer__body">
-                    {activeService?.thumbnail && (
-                      <img
-                        className="service-drawer__image"
-                        src={activeService.thumbnail}
-                        alt={activeService.title}
-                      />
-                    )}
-                    <p>
-                      {activeService?.description ??
-                        "Choose a service to see its details here."}
-                    </p>
-                    {activeService?.bestFor && (
-                      <p>
-                        <strong>Best for:</strong> {activeService.bestFor}
-                      </p>
-                    )}
-                    {activeService?.deliverables?.length ? (
-                      <div>
-                        <strong>Deliverables</strong>
-                        <ul>
-                          {activeService.deliverables.map((deliverable) => (
-                            <li key={deliverable}>{deliverable}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    ) : null}
+        {isDrawerOpen ? (
+          <div
+            className="service-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="service-drawer-title"
+          >
+            <button
+              type="button"
+              className="service-drawer__backdrop"
+              aria-label="Close service details"
+              onClick={() => setIsDrawerOpen(false)}
+            />
+
+            <div className="service-drawer__panel">
+              <div className="service-drawer__header">
+                <h3 id="service-drawer-title">
+                  {activeService?.title ?? "Service request"}
+                </h3>
+                <button
+                  type="button"
+                  className="service-drawer__close"
+                  aria-label="Close service details"
+                  onClick={() => setIsDrawerOpen(false)}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="service-drawer__body">
+                {activeService?.thumbnail && (
+                  <img
+                    className="service-drawer__image"
+                    src={activeService.thumbnail}
+                    alt={activeService.title}
+                  />
+                )}
+                <p>
+                  {activeService?.description ??
+                    "Choose a service to see its details here."}
+                </p>
+                {activeService?.bestFor && (
+                  <p>
+                    <strong>Best for:</strong> {activeService.bestFor}
+                  </p>
+                )}
+                {activeService?.deliverables?.length ? (
+                  <div>
+                    <strong>Deliverables</strong>
+                    <ul>
+                      {activeService.deliverables.map((deliverable) => (
+                        <li key={deliverable}>{deliverable}</li>
+                      ))}
+                    </ul>
                   </div>
-                </Drawer.Body>
-                <Drawer.Footer>
-                  <Button variant="outline" onClick={() => setIsDrawerOpen(false)}>
-                    Cancel
-                  </Button>
-                  {activeService?.link ? (
-                    <Button asChild>
-                      <a href={activeService.link}>See offer</a>
-                    </Button>
-                  ) : (
-                    <Button onClick={() => setIsDrawerOpen(false)}>Close</Button>
-                  )}
-                </Drawer.Footer>
-                <Drawer.CloseTrigger asChild>
-                  <CloseButton size="sm" />
-                </Drawer.CloseTrigger>
-              </Drawer.Content>
-            </Drawer.Positioner>
-          </Portal>
-        </Drawer.Root>
+                ) : null}
+              </div>
+
+              <div className="service-drawer__footer">
+                <button
+                  type="button"
+                  className="service-drawer__button service-drawer__button--secondary"
+                  onClick={() => setIsDrawerOpen(false)}
+                >
+                  Cancel
+                </button>
+                {activeService?.link ? (
+                  <Link
+                    className="service-drawer__button service-drawer__button--primary"
+                    href={activeService.link}
+                  >
+                    See offer
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="service-drawer__button service-drawer__button--primary"
+                    onClick={() => setIsDrawerOpen(false)}
+                  >
+                    Close
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ) : null}
       </>
     </ServiceSectionDrawerContext.Provider>
   );
@@ -269,5 +292,100 @@ const ServiceSectionWrapper = styled.section`
     max-height: 220px;
     object-fit: cover;
     border-radius: 1rem;
+  }
+
+  .service-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .service-drawer__backdrop {
+    position: absolute;
+    inset: 0;
+    border: 0;
+    background: rgba(17, 17, 17, 0.55);
+    cursor: pointer;
+  }
+
+  .service-drawer__panel {
+    position: relative;
+    width: min(760px, 100%);
+    height: 100%;
+    background: #fff;
+    padding: 1.5rem;
+    overflow-y: auto;
+    box-shadow: -24px 0 64px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .service-drawer__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+
+    h3 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      line-height: 1;
+      font-weight: 800;
+    }
+  }
+
+  .service-drawer__close {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .service-drawer__footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+
+  .service-drawer__button {
+    min-height: 44px;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    border: 1px solid #d8d8d8;
+    text-align: center;
+  }
+
+  .service-drawer__button--secondary {
+    background: #fff;
+    cursor: pointer;
+  }
+
+  .service-drawer__button--primary {
+    background: #111;
+    color: #fff;
+    border-color: #111;
+  }
+
+  @media all and (max-width: 720px) {
+    .service-drawer {
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .service-drawer__panel {
+      width: 100%;
+      max-height: 88vh;
+      border-top-left-radius: 1.5rem;
+      border-top-right-radius: 1.5rem;
+    }
   }
 `;
