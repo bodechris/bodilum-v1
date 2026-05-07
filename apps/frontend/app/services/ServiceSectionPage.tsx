@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 import { ReactNode, useMemo, useState } from "react";
 import PageV0 from "@/components/ui/page-v0/PageV0";
@@ -77,92 +78,125 @@ function ServiceSectionPage(props: ServiceSectionPageProps) {
           </ServiceSectionWrapper>
         </PageV0>
 
-        {isDrawerOpen ? (
-          <div
-            className="service-drawer"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="service-drawer-title"
-          >
-            <button
-              type="button"
-              className="service-drawer__backdrop"
-              aria-label="Close service details"
-              onClick={() => setIsDrawerOpen(false)}
-            />
+        <Drawer.Root
+          lazyMount
+          unmountOnExit
+          placement="end"
+          open={isDrawerOpen}
+          onOpenChange={(details) => setIsDrawerOpen(details.open)}
+        >
+          <Portal>
+            <Drawer.Backdrop bg="rgba(17, 17, 17, 0.55)" />
+            <Drawer.Positioner p={{ base: "0", md: "4" }}>
+              <Drawer.Content
+                maxW={{ base: "100%", md: "760px" }}
+                maxH={{ base: "88vh", md: "calc(100vh - 2rem)" }}
+                borderRadius={{ base: "1.5rem 1.5rem 0 0", md: "1.75rem" }}
+                boxShadow="-24px 0 64px rgba(0, 0, 0, 0.18)"
+              >
+                <Drawer.Header display="flex" alignItems="flex-start" gap="1rem" pb="1rem">
+                  <Drawer.Title fontSize="clamp(1.5rem, 3vw, 2rem)" lineHeight="1" fontWeight="800">
+                    {activeService?.title ?? "Service request"}
+                  </Drawer.Title>
+                </Drawer.Header>
 
-            <div className="service-drawer__panel">
-              <div className="service-drawer__header">
-                <h3 id="service-drawer-title">
-                  {activeService?.title ?? "Service request"}
-                </h3>
-                <button
-                  type="button"
-                  className="service-drawer__close"
-                  aria-label="Close service details"
-                  onClick={() => setIsDrawerOpen(false)}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="service-drawer__body">
-                {activeService?.thumbnail && (
-                  <img
-                    className="service-drawer__image"
-                    src={activeService.thumbnail}
-                    alt={activeService.title}
+                <Drawer.CloseTrigger asChild>
+                  <CloseButton
+                    size="sm"
+                    position="absolute"
+                    top="1.25rem"
+                    insetEnd="1.25rem"
+                    rounded="full"
+                    borderWidth="1px"
+                    borderColor="#ddd"
+                    bg="#fff"
                   />
-                )}
-                <p>
-                  {activeService?.description ??
-                    "Choose a service to see its details here."}
-                </p>
-                {activeService?.bestFor && (
-                  <p>
-                    <strong>Best for:</strong> {activeService.bestFor}
-                  </p>
-                )}
-                {activeService?.deliverables?.length ? (
-                  <div>
-                    <strong>Deliverables</strong>
-                    <ul>
-                      {activeService.deliverables.map((deliverable) => (
-                        <li key={deliverable}>{deliverable}</li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : null}
-              </div>
+                </Drawer.CloseTrigger>
 
-              <div className="service-drawer__footer">
-                <button
-                  type="button"
-                  className="service-drawer__button service-drawer__button--secondary"
-                  onClick={() => setIsDrawerOpen(false)}
-                >
-                  Cancel
-                </button>
-                {activeService?.link ? (
-                  <Link
-                    className="service-drawer__button service-drawer__button--primary"
-                    href={activeService.link}
-                  >
-                    See offer
-                  </Link>
-                ) : (
-                  <button
+                <Drawer.Body display="flex" flexDirection="column" gap="1rem">
+                  {activeService?.thumbnail && (
+                    <img
+                      src={activeService.thumbnail}
+                      alt={activeService.title}
+                      style={{
+                        width: "100%",
+                        maxHeight: "220px",
+                        objectFit: "cover",
+                        borderRadius: "1rem",
+                      }}
+                    />
+                  )}
+                  <p style={{ color: "#555", lineHeight: 1.5 }}>
+                    {activeService?.description ??
+                      "Choose a service to see its details here."}
+                  </p>
+                  {activeService?.bestFor && (
+                    <p style={{ color: "#555", lineHeight: 1.5 }}>
+                      <strong>Best for:</strong> {activeService.bestFor}
+                    </p>
+                  )}
+                  {activeService?.deliverables?.length ? (
+                    <div>
+                      <strong>Deliverables</strong>
+                      <ul style={{ marginTop: "0.75rem", paddingLeft: "1rem", color: "#555" }}>
+                        {activeService.deliverables.map((deliverable) => (
+                          <li key={deliverable}>{deliverable}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                </Drawer.Body>
+
+                <Drawer.Footer display="flex" flexWrap="wrap" gap="0.75rem" pt="0.5rem">
+                  <Button
                     type="button"
-                    className="service-drawer__button service-drawer__button--primary"
+                    minH="44px"
+                    px="1.1rem"
+                    rounded="full"
+                    fontWeight="700"
+                    borderWidth="1px"
+                    borderColor="#d8d8d8"
+                    bg="#fff"
+                    color="#111"
                     onClick={() => setIsDrawerOpen(false)}
                   >
-                    Close
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : null}
+                    Cancel
+                  </Button>
+                  {activeService?.link ? (
+                    <Button
+                      asChild
+                      minH="44px"
+                      px="1.1rem"
+                      rounded="full"
+                      fontWeight="700"
+                      bg="#111"
+                      color="#fff"
+                      borderWidth="1px"
+                      borderColor="#111"
+                    >
+                      <Link href={activeService.link}>See offer</Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      minH="44px"
+                      px="1.1rem"
+                      rounded="full"
+                      fontWeight="700"
+                      bg="#111"
+                      color="#fff"
+                      borderWidth="1px"
+                      borderColor="#111"
+                      onClick={() => setIsDrawerOpen(false)}
+                    >
+                      Close
+                    </Button>
+                  )}
+                </Drawer.Footer>
+              </Drawer.Content>
+            </Drawer.Positioner>
+          </Portal>
+        </Drawer.Root>
       </>
     </ServiceSectionDrawerContext.Provider>
   );
@@ -268,124 +302,5 @@ const ServiceSectionWrapper = styled.section`
     gap: 2rem;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     grid-auto-rows: 400px;
-  }
-
-  .service-drawer__body {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-    p {
-      color: #555;
-      line-height: 1.5;
-    }
-
-    ul {
-      margin-top: 0.75rem;
-      padding-left: 1rem;
-      color: #555;
-    }
-  }
-
-  .service-drawer__image {
-    width: 100%;
-    max-height: 220px;
-    object-fit: cover;
-    border-radius: 1rem;
-  }
-
-  .service-drawer {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .service-drawer__backdrop {
-    position: absolute;
-    inset: 0;
-    border: 0;
-    background: rgba(17, 17, 17, 0.55);
-    cursor: pointer;
-  }
-
-  .service-drawer__panel {
-    position: relative;
-    width: min(760px, 100%);
-    height: 100%;
-    background: #fff;
-    padding: 1.5rem;
-    overflow-y: auto;
-    box-shadow: -24px 0 64px rgba(0, 0, 0, 0.18);
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .service-drawer__header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 1rem;
-
-    h3 {
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      line-height: 1;
-      font-weight: 800;
-    }
-  }
-
-  .service-drawer__close {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 999px;
-    border: 1px solid #ddd;
-    background: #fff;
-    font-size: 1.5rem;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  .service-drawer__footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: auto;
-    padding-top: 0.5rem;
-  }
-
-  .service-drawer__button {
-    min-height: 44px;
-    padding: 0.8rem 1.1rem;
-    border-radius: 999px;
-    font-weight: 700;
-    border: 1px solid #d8d8d8;
-    text-align: center;
-  }
-
-  .service-drawer__button--secondary {
-    background: #fff;
-    cursor: pointer;
-  }
-
-  .service-drawer__button--primary {
-    background: #111;
-    color: #fff;
-    border-color: #111;
-  }
-
-  @media all and (max-width: 720px) {
-    .service-drawer {
-      justify-content: center;
-      align-items: flex-end;
-    }
-
-    .service-drawer__panel {
-      width: 100%;
-      max-height: 88vh;
-      border-top-left-radius: 1.5rem;
-      border-top-right-radius: 1.5rem;
-    }
   }
 `;
