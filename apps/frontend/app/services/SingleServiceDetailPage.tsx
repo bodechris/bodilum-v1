@@ -1,117 +1,209 @@
+"use client";
+
+import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
 import Link from 'next/link';
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import PageV0 from '@/components/ui/page-v0/PageV0';
 import styled from 'styled-components';
 import { ServiceEntry } from './servicesData';
 import LocalizedServicePrice from './LocalizedServicePrice';
+import ServiceRequestDrawerContent from './ServiceRequestDrawerContent';
+import { ServiceDrawerPayload } from './ServiceSectionDrawerContext';
 
 type SingleServiceDetailPageProps = {
   service: ServiceEntry;
 };
 
 function SingleServiceDetailPage({ service }: SingleServiceDetailPageProps) {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const serviceCategoryLink = service.link.split('/').slice(0, 3).join('/');
   const ctaHref = service.ctaHref ?? "/contact";
   const ctaLabel = service.ctaLabel ?? "Request this service";
+  const shouldOpenRequestDrawer = !service.ctaHref || ctaHref === "/contact";
   const accent = service.accent ?? "#111111";
   const accentSoft = service.accentSoft ?? "#f4f4f5";
   const accentContrast = service.accentContrast ?? "#ffffff";
   const heroPattern = service.heroPattern ?? "mesh";
   const heroMood = service.heroMood ?? "calm";
+  const drawerService = useMemo<ServiceDrawerPayload>(() => ({
+    title: service.title,
+    description: service.description,
+    link: service.link,
+    price: service.price,
+    summary: service.summary,
+    timeline: service.timeline,
+    bestFor: service.bestFor,
+    deliverables: service.deliverables,
+    thumbnail: service.thumbnail,
+  }), [service]);
 
   return (
-    <PageV0>
-      <SingleServiceDetailPageWrapper
-        className={`hero-pattern-${heroPattern} hero-mood-${heroMood}`}
-        style={{
-          ["--service-accent" as string]: accent,
-          ["--service-accent-soft" as string]: accentSoft,
-          ["--service-accent-contrast" as string]: accentContrast,
-        }}
-      >
-        <Link className="back-link" href={serviceCategoryLink}>
-          Back to services
-        </Link>
+    <>
+      <PageV0>
+        <SingleServiceDetailPageWrapper
+          className={`hero-pattern-${heroPattern} hero-mood-${heroMood}`}
+          style={{
+            ["--service-accent" as string]: accent,
+            ["--service-accent-soft" as string]: accentSoft,
+            ["--service-accent-contrast" as string]: accentContrast,
+          }}
+        >
+          <Link className="back-link" href={serviceCategoryLink}>
+            Back to services
+          </Link>
 
-        <div className="service-hero">
-          <div className="service-copy">
-            <div className="service-meta">
-              <LocalizedServicePrice price={service.price} />
-              {service.timeline && <span className="timeline-badge">{service.timeline}</span>}
+          <div className="service-hero">
+            <div className="service-copy">
+              <div className="service-meta">
+                <LocalizedServicePrice price={service.price} />
+                {service.timeline && <span className="timeline-badge">{service.timeline}</span>}
+              </div>
+              <h1>{service.title}</h1>
+              {service.summary && <p className="summary">{service.summary}</p>}
+              <p className="description">{service.description}</p>
+              {service.bestFor && (
+                <p className="best-for">
+                  <strong>Best for:</strong> {service.bestFor}
+                </p>
+              )}
+
+              <div className="hero-actions">
+                {shouldOpenRequestDrawer ? (
+                  <button
+                    className="primary-cta"
+                    type="button"
+                    onClick={() => setIsDrawerOpen(true)}
+                  >
+                    {ctaLabel}
+                  </button>
+                ) : (
+                  <Link className="primary-cta" href={ctaHref}>{ctaLabel}</Link>
+                )}
+                <Link className="secondary-cta" href={serviceCategoryLink}>Browse all offers</Link>
+              </div>
             </div>
-            <h1>{service.title}</h1>
-            {service.summary && <p className="summary">{service.summary}</p>}
-            <p className="description">{service.description}</p>
-            {service.bestFor && (
-              <p className="best-for">
-                <strong>Best for:</strong> {service.bestFor}
-              </p>
+
+            {service.thumbnail && (
+              <div className="service-media">
+                <img src={service.thumbnail} alt={service.title} />
+              </div>
             )}
-
-            <div className="hero-actions">
-              <Link className="primary-cta" href={ctaHref}>{ctaLabel}</Link>
-              <Link className="secondary-cta" href={serviceCategoryLink}>Browse all offers</Link>
-            </div>
           </div>
 
-          {service.thumbnail && (
-            <div className="service-media">
-              <img src={service.thumbnail} alt={service.title} />
-            </div>
-          )}
-        </div>
+          {service.outcomes?.length ? (
+            <section className="outcomes-section section-card">
+              <h2>What changes after this</h2>
+              <div className="chip-grid">
+                {service.outcomes.map((outcome) => (
+                  <div key={outcome} className="chip-card">{outcome}</div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-        {service.outcomes?.length ? (
-          <section className="outcomes-section section-card">
-            <h2>What changes after this</h2>
-            <div className="chip-grid">
-              {service.outcomes.map((outcome) => (
-                <div key={outcome} className="chip-card">{outcome}</div>
-              ))}
-            </div>
-          </section>
-        ) : null}
+          {service.process?.length ? (
+            <section className="process-section section-card">
+              <h2>How it works</h2>
+              <div className="step-list">
+                {service.process.map((step, index) => (
+                  <div key={step} className="step-card">
+                    <span className="step-number">0{index + 1}</span>
+                    <p>{step}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-        {service.process?.length ? (
-          <section className="process-section section-card">
-            <h2>How it works</h2>
-            <div className="step-list">
-              {service.process.map((step, index) => (
-                <div key={step} className="step-card">
-                  <span className="step-number">0{index + 1}</span>
-                  <p>{step}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-        ) : null}
+          {service.deliverables?.length ? (
+            <section className="deliverables-section section-card">
+              <h2>What you get</h2>
+              <ul>
+                {service.deliverables.map((deliverable) => (
+                  <li key={deliverable}>{deliverable}</li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
 
-        {service.deliverables?.length ? (
-          <section className="deliverables-section section-card">
-            <h2>What you get</h2>
-            <ul>
-              {service.deliverables.map((deliverable) => (
-                <li key={deliverable}>{deliverable}</li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+          {service.faqs?.length ? (
+            <section className="faq-section section-card">
+              <h2>FAQs</h2>
+              <div className="faq-list">
+                {service.faqs.map((faq) => (
+                  <article key={faq.question} className="faq-item">
+                    <h3>{faq.question}</h3>
+                    <p>{faq.answer}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          ) : null}
+        </SingleServiceDetailPageWrapper>
+      </PageV0>
 
-        {service.faqs?.length ? (
-          <section className="faq-section section-card">
-            <h2>FAQs</h2>
-            <div className="faq-list">
-              {service.faqs.map((faq) => (
-                <article key={faq.question} className="faq-item">
-                  <h3>{faq.question}</h3>
-                  <p>{faq.answer}</p>
-                </article>
-              ))}
-            </div>
-          </section>
-        ) : null}
-      </SingleServiceDetailPageWrapper>
-    </PageV0>
+      <Drawer.Root
+        lazyMount
+        unmountOnExit
+        placement="end"
+        open={isDrawerOpen}
+        onOpenChange={(details) => setIsDrawerOpen(details.open)}
+      >
+        <Portal>
+          <Drawer.Backdrop bg="rgba(17, 17, 17, 0.55)" />
+          <Drawer.Positioner p={{ base: "0", md: "4" }}>
+            <Drawer.Content
+              maxW={{ base: "100%", md: "760px" }}
+              maxH={{ base: "88vh", md: "calc(100vh - 2rem)" }}
+              borderRadius={{ base: "1.5rem 1.5rem 0 0", md: "1.75rem" }}
+              boxShadow="-24px 0 64px rgba(0, 0, 0, 0.18)"
+            >
+              <Drawer.Header display="flex" alignItems="flex-start" gap="1rem" pb="1rem">
+                <Drawer.Title fontSize="clamp(1.5rem, 3vw, 2rem)" lineHeight="1" fontWeight="800">
+                  {service.title}
+                </Drawer.Title>
+              </Drawer.Header>
+
+              <Drawer.CloseTrigger asChild>
+                <CloseButton
+                  size="sm"
+                  position="absolute"
+                  top="1.25rem"
+                  insetEnd="1.25rem"
+                  rounded="full"
+                  borderWidth="1px"
+                  borderColor="#ddd"
+                  bg="#fff"
+                />
+              </Drawer.CloseTrigger>
+
+              <Drawer.Body display="flex" flexDirection="column" gap="1rem">
+                <ServiceRequestDrawerContent
+                  service={drawerService}
+                  onClose={() => setIsDrawerOpen(false)}
+                />
+              </Drawer.Body>
+
+              <Drawer.Footer display="flex" justifyContent="flex-start" pt="0.25rem">
+                <Button
+                  asChild
+                  minH="44px"
+                  px="1.1rem"
+                  rounded="full"
+                  fontWeight="700"
+                  borderWidth="1px"
+                  borderColor="#d8d8d8"
+                  bg="#fff"
+                  color="#111"
+                >
+                  <Link href={service.link}>See full offer</Link>
+                </Button>
+              </Drawer.Footer>
+            </Drawer.Content>
+          </Drawer.Positioner>
+        </Portal>
+      </Drawer.Root>
+    </>
   )
 }
 
@@ -316,6 +408,7 @@ const SingleServiceDetailPageWrapper = styled.div`
     border: 1px solid #ddd;
     font-weight: 700;
     transition: all 0.2s ease;
+    cursor: pointer;
   }
 
   .primary-cta {
