@@ -10,6 +10,7 @@ export type SingleServiceProp = {
   price?: string;
   bestFor?: string;
   deliverables?: string[];
+  thumbnail?: string;
 };
 
 type ServiceSectionPageProps = {
