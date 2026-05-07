@@ -7,6 +7,8 @@ export type ServiceDrawerPayload = {
   description: string;
   link: string;
   price?: string;
+  summary?: string;
+  timeline?: string;
   bestFor?: string;
   deliverables?: string[];
   thumbnail?: string;

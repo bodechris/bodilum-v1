@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ReactNode, useMemo, useState } from "react";
 import PageV0 from "@/components/ui/page-v0/PageV0";
 import styled from "styled-components";
+import ServiceRequestDrawerContent from "./ServiceRequestDrawerContent";
 import SingleServiceV0 from "./SingleServiceV0";
 import {
   ServiceDrawerPayload,
@@ -16,6 +17,8 @@ export type SingleServiceProp = {
   description: string;
   link: string;
   price?: string;
+  summary?: string;
+  timeline?: string;
   bestFor?: string;
   deliverables?: string[];
   thumbnail?: string;
@@ -114,85 +117,29 @@ function ServiceSectionPage(props: ServiceSectionPageProps) {
                 </Drawer.CloseTrigger>
 
                 <Drawer.Body display="flex" flexDirection="column" gap="1rem">
-                  {activeService?.thumbnail && (
-                    <img
-                      src={activeService.thumbnail}
-                      alt={activeService.title}
-                      style={{
-                        width: "100%",
-                        maxHeight: "220px",
-                        objectFit: "cover",
-                        borderRadius: "1rem",
-                      }}
-                    />
-                  )}
-                  <p style={{ color: "#555", lineHeight: 1.5 }}>
-                    {activeService?.description ??
-                      "Choose a service to see its details here."}
-                  </p>
-                  {activeService?.bestFor && (
-                    <p style={{ color: "#555", lineHeight: 1.5 }}>
-                      <strong>Best for:</strong> {activeService.bestFor}
-                    </p>
-                  )}
-                  {activeService?.deliverables?.length ? (
-                    <div>
-                      <strong>Deliverables</strong>
-                      <ul style={{ marginTop: "0.75rem", paddingLeft: "1rem", color: "#555" }}>
-                        {activeService.deliverables.map((deliverable) => (
-                          <li key={deliverable}>{deliverable}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : null}
+                  <ServiceRequestDrawerContent
+                    service={activeService}
+                    onClose={() => setIsDrawerOpen(false)}
+                  />
                 </Drawer.Body>
 
-                <Drawer.Footer display="flex" flexWrap="wrap" gap="0.75rem" pt="0.5rem">
-                  <Button
-                    type="button"
-                    minH="44px"
-                    px="1.1rem"
-                    rounded="full"
-                    fontWeight="700"
-                    borderWidth="1px"
-                    borderColor="#d8d8d8"
-                    bg="#fff"
-                    color="#111"
-                    onClick={() => setIsDrawerOpen(false)}
-                  >
-                    Cancel
-                  </Button>
-                  {activeService?.link ? (
+                {activeService?.link ? (
+                  <Drawer.Footer display="flex" justifyContent="flex-start" pt="0.25rem">
                     <Button
                       asChild
                       minH="44px"
                       px="1.1rem"
                       rounded="full"
                       fontWeight="700"
-                      bg="#111"
-                      color="#fff"
                       borderWidth="1px"
-                      borderColor="#111"
+                      borderColor="#d8d8d8"
+                      bg="#fff"
+                      color="#111"
                     >
-                      <Link href={activeService.link}>See offer</Link>
+                      <Link href={activeService.link}>See full offer</Link>
                     </Button>
-                  ) : (
-                    <Button
-                      type="button"
-                      minH="44px"
-                      px="1.1rem"
-                      rounded="full"
-                      fontWeight="700"
-                      bg="#111"
-                      color="#fff"
-                      borderWidth="1px"
-                      borderColor="#111"
-                      onClick={() => setIsDrawerOpen(false)}
-                    >
-                      Close
-                    </Button>
-                  )}
-                </Drawer.Footer>
+                  </Drawer.Footer>
+                ) : null}
               </Drawer.Content>
             </Drawer.Positioner>
           </Portal>
