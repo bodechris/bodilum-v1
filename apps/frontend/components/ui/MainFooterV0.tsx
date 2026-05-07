@@ -194,6 +194,7 @@ function MainFooterV0() {
 
         <div className="footer-bottom">
           <p>&copy; Bodilum. 2026 All rights reserved.</p>
+          <a href="https://www.biznesxpo.com" target="_blank" rel="noopener noreferrer">Creator of BiznesXpo Platform: AI-Powered Platform for solopreneurs and small businesses to grow and succeed.</a>
         </div>
       </div>
     </MainFooterV0Wrapper>
@@ -408,6 +409,24 @@ const MainFooterV0Wrapper = styled.footer`
   .footer-bottom {
     color: #6f6f6f;
     font-size: 0.92rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    p { 
+      flex: 1;
+    }
+    a {
+      flex: 1;
+      max-width: 500px;
+      text-align: right;
+      &:hover {
+        color: #ccc;
+        text-decoration: underline;
+      }
+    }
   }
 
   @media all and (max-width: 1080px) {
