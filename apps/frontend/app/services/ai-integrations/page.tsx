@@ -11,6 +11,7 @@ function AIIntegrationsServicePage() {
         {
           title: "AI Opportunity Audit",
           description: "We’ll audit your customer journey and internal workflow to identify the best opportunities to integrate AI tools that can save you time, reduce manual work, and help you respond faster to customers.",
+          thumbnail: "/images/ai-integrations-1.webp",
           link: "/services/brand-refresh",
           price: '310',
           deliverables: [
@@ -25,6 +26,7 @@ function AIIntegrationsServicePage() {
           title: "AI Starter Sprint",
           description: "A fast, focused sprint to implement 1–3 AI tools that can save you time, reduce manual work, and help you respond faster to customers. We’ll implement the AI tools in a way that’s seamless for your team and customers.",
           link: "/services/brand-refresh",
+          thumbnail: "/images/ai-integrations-3.webp",
           price: '920',
           bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
           deliverables: [
@@ -43,6 +45,7 @@ function AIIntegrationsServicePage() {
         {
             title: "AI Business Upgrade Sprint",
             description: "A fast, focused sprint to identify and implement AI tools that can save you time, reduce manual work, and help you respond faster to customers. We’ll audit your current workflow, identify the best AI tools for your business, and implement them in a way that’s seamless for your team and customers.",
+            thumbnail: "/images/ai-integrations-6.webp",
             link: "/services/brand-refresh", 
             price: '>=1530',
             bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",

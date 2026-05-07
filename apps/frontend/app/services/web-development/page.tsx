@@ -12,6 +12,7 @@ function DevelopmentServicePage() {
             title: "AI-Assisted Starter Landing Page",
             description: "A fast, modern, AI-assisted landing page built with senior creative direction, clean design, secure modern tech, CMS editing, and a polished launch setup.",
             link: "/services/brand-refresh", 
+            thumbnail: "/images/landing-page-3.webp",
             price: '920',
             bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
             deliverables: [
@@ -45,6 +46,7 @@ function DevelopmentServicePage() {
             title: "14-Day Premium Launch Page",
             description: "Awwwards-level landing pages for startups, apps, SaaS products, consultants, and premium service brands.This is for founders, consultants, startups, and service businesses that need a beautiful, credible, fast-loading website that helps them sell.",
             link: "/services/brand-refresh", 
+            thumbnail: "/images/landing-page-5.webp",
             price: '>=1530',
             bestFor: "Startups, apps, SaaS products, consultants, and premium service brands",
             deliverables: [
@@ -67,6 +69,7 @@ function DevelopmentServicePage() {
             title: "Prototype-to-Production Engineering Sprint",
             description: "For founders with AI-built or vibe-coded apps who need senior engineers to make the product stable, secure, scalable, and launch-ready. This is a 14-day sprint where we audit your codebase, identify and fix critical issues, and get your product ready for real users.",
             link: "/services/brand-refresh", 
+            thumbnail: "/images/ai-integrations-2.webp",
             price: '>=460',
             bestFor: "Startups, apps, SaaS products, consultants, and premium service brands that need to get a product out the door quickly without sacrificing code quality or security.",
             deliverables: [

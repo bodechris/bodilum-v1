@@ -1,7 +1,14 @@
-import Link from "next/link";
+"use client";
+
+import { ReactNode, useMemo, useState } from "react";
 import PageV0 from "@/components/ui/page-v0/PageV0";
 import styled from "styled-components";
 import SingleServiceV0 from "./SingleServiceV0";
+import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
+import {
+  ServiceDrawerPayload,
+  ServiceSectionDrawerContext,
+} from "./ServiceSectionDrawerContext";
 
 export type SingleServiceProp = {
   title: string;
@@ -19,37 +26,127 @@ type ServiceSectionPageProps = {
   description?: string;
   media?: string;
   services?: SingleServiceProp[];
+  children?: ReactNode;
 };
 
 function ServiceSectionPage(props: ServiceSectionPageProps) {
-  const { title, subtitle, description, media, services } = props;
+  const { title, subtitle, description, media, services, children } = props;
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [activeService, setActiveService] = useState<ServiceDrawerPayload | null>(null);
+
+  const drawerContextValue = useMemo(
+    () => ({
+      activeService,
+      isOpen: isDrawerOpen,
+      openDrawer: (service?: ServiceDrawerPayload | null) => {
+        if (service) {
+          setActiveService(service);
+        }
+
+        setIsDrawerOpen(true);
+      },
+      closeDrawer: () => setIsDrawerOpen(false),
+      setActiveService,
+    }),
+    [activeService, isDrawerOpen],
+  );
 
   return (
-    <PageV0>
-      <ServiceSectionWrapper>
-        <div className="service-section__header">
-          <div className="service-section__header-info">
-            <h1>{title}</h1>
-            {subtitle && <h2>{subtitle}</h2>}
-            {description && <p>{description}</p>}
-          </div>
-          <div className="service-section__header-media">
-            {media && <img src={media} alt={title} />}
-          </div>
-        </div>
-        {services && (
-          <div className="service-section__services">
-            {services.map((service, index) => (
-              <SingleServiceV0 key={index} {...service} />
-            ))}
-          </div>
-        )}
-      </ServiceSectionWrapper>
-    </PageV0>
+    <ServiceSectionDrawerContext.Provider value={drawerContextValue}>
+      <>
+        <PageV0>
+          <ServiceSectionWrapper>
+            <div className="service-section__header">
+              <div className="service-section__header-info">
+                <h1>{title}</h1>
+                {subtitle && <h2>{subtitle}</h2>}
+                {description && <p>{description}</p>}
+              </div>
+              <div className="service-section__header-media">
+                {media && <img src={media} alt={title} />}
+              </div>
+            </div>
+            {children}
+            {services && (
+              <div className="service-section__services">
+                {services.map((service, index) => (
+                  <SingleServiceV0 key={index} {...service} />
+                ))}
+              </div>
+            )}
+          </ServiceSectionWrapper>
+        </PageV0>
+
+        <Drawer.Root
+          open={isDrawerOpen}
+          onOpenChange={(details) => setIsDrawerOpen(details.open)}
+          key='xl' size='xl'
+        >
+          <Portal>
+            <Drawer.Backdrop />
+            <Drawer.Positioner padding="4">
+              <Drawer.Content rounded="md" maxW="8xl">
+                <Drawer.Header>
+                  <Drawer.Title>
+                    {activeService?.title ?? "Service request"}
+                  </Drawer.Title>
+                </Drawer.Header>
+                <Drawer.Body>
+                  <div className="service-drawer__body">
+                    {activeService?.thumbnail && (
+                      <img
+                        className="service-drawer__image"
+                        src={activeService.thumbnail}
+                        alt={activeService.title}
+                      />
+                    )}
+                    <p>
+                      {activeService?.description ??
+                        "Choose a service to see its details here."}
+                    </p>
+                    {activeService?.bestFor && (
+                      <p>
+                        <strong>Best for:</strong> {activeService.bestFor}
+                      </p>
+                    )}
+                    {activeService?.deliverables?.length ? (
+                      <div>
+                        <strong>Deliverables</strong>
+                        <ul>
+                          {activeService.deliverables.map((deliverable) => (
+                            <li key={deliverable}>{deliverable}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ) : null}
+                  </div>
+                </Drawer.Body>
+                <Drawer.Footer>
+                  <Button variant="outline" onClick={() => setIsDrawerOpen(false)}>
+                    Cancel
+                  </Button>
+                  {activeService?.link ? (
+                    <Button asChild>
+                      <a href={activeService.link}>See offer</a>
+                    </Button>
+                  ) : (
+                    <Button onClick={() => setIsDrawerOpen(false)}>Close</Button>
+                  )}
+                </Drawer.Footer>
+                <Drawer.CloseTrigger asChild>
+                  <CloseButton size="sm" />
+                </Drawer.CloseTrigger>
+              </Drawer.Content>
+            </Drawer.Positioner>
+          </Portal>
+        </Drawer.Root>
+      </>
+    </ServiceSectionDrawerContext.Provider>
   );
 }
 
 export default ServiceSectionPage;
+export { useServiceSectionDrawer } from "./ServiceSectionDrawerContext";
 
 
 const ServiceSectionWrapper = styled.section`
@@ -148,5 +245,29 @@ const ServiceSectionWrapper = styled.section`
     gap: 2rem;
     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
     grid-auto-rows: 400px;
+  }
+
+  .service-drawer__body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    p {
+      color: #555;
+      line-height: 1.5;
+    }
+
+    ul {
+      margin-top: 0.75rem;
+      padding-left: 1rem;
+      color: #555;
+    }
+  }
+
+  .service-drawer__image {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 1rem;
   }
 `;

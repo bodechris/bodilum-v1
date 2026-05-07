@@ -5,9 +5,19 @@ import styled from 'styled-components';
 import { SingleServiceProp } from './ServiceSectionPage';
 import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import Link from 'next/link';
+import { useServiceSectionDrawer } from './ServiceSectionDrawerContext';
 
-function SingleServiceV0({ title, description, link, price, thumbnail }: SingleServiceProp) {
+function SingleServiceV0({
+  title,
+  description,
+  link,
+  price,
+  thumbnail,
+  bestFor,
+  deliverables,
+}: SingleServiceProp) {
   const { currencyCode, formatUsdPrice, isExchangeRateLoading } = useGlobalAppStates();
+  const { openDrawer } = useServiceSectionDrawer();
   const showPriceLoader = Boolean(price) && currencyCode !== 'USD' && isExchangeRateLoading;
 
   return (
@@ -17,12 +27,34 @@ function SingleServiceV0({ title, description, link, price, thumbnail }: SingleS
           <img src={thumbnail || "/images/design-1.webp"} alt={title} />
 
           <div className="service-price">
-            {showPriceLoader ? <span className="service-price-loader" /> : formatUsdPrice(price)}
+            {showPriceLoader ? <span className="service-price-loader" /> : (() => {
+              let formattedPrice = formatUsdPrice(price);
+              formattedPrice = formattedPrice.replace('>=', "Starting at ");
+              return formattedPrice;
+            })()}
           </div>
+
+          <div className="service-bg-overlay" />
+
         </Link>
 
-        <div className="service-actions">          
-          <button type="button">Request this service</button>
+        <div className="service-actions">
+          <button
+            type="button"
+            onClick={() =>
+              openDrawer({
+                title,
+                description,
+                link,
+                price,
+                thumbnail,
+                bestFor,
+                deliverables,
+              })
+            }
+          >
+            Request this service
+          </button>
         </div>
 
       </div>
@@ -80,6 +112,15 @@ const SingleServiceV0Wrapper = styled.div`
       position: relative;
       display: flex;
     }
+    .service-thumbnail-link .service-bg-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      z-index: 1;
+      background-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.2) 80%, rgba(0,0,0,0.4) 100%);
+    }
 
     img {
       width: 100%;
@@ -88,6 +129,7 @@ const SingleServiceV0Wrapper = styled.div`
       object-position: top center;
       position: absolute;
       top: 0; left: 0;
+      z-index: 0;
     }
 
     .service-price {
@@ -97,15 +139,19 @@ const SingleServiceV0Wrapper = styled.div`
       position: absolute;
       bottom: 0.5rem; left: 20px;
 
+      z-index: 10;
+
+      font-family: var(--font-lato), sans-serif;
+      font-weight: 900;
+
       border-radius: 20px;
-      background: #fffc;
-      backdrop-filter: blur(10px);
+      background: #fff;
+      // backdrop-filter: blur(10px);
 
       box-shadow: 0px 20px 30px 2px rgba(0,0,0,0.05);
       padding: 0.25rem 0.75rem;
 
       font-size: clamp(12px, 2vw, 16px);
-      font-weight: bolder;
     }
 
     .service-actions {
@@ -114,6 +160,7 @@ const SingleServiceV0Wrapper = styled.div`
       gap: 0.5rem;
       position: absolute;
       bottom: 0.5rem; right: 20px;
+      z-index: 10;
 
       button {
         padding: 0.25rem 0.75rem;
