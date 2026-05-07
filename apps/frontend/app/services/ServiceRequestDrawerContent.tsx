@@ -152,10 +152,10 @@ export default function ServiceRequestDrawerContent({
     const priceInZar = basePrice * zarExchangeRate;
 
     if (priceInZar < DEPOSIT_THRESHOLD_ZAR) {
-      return "This project falls below R11,000, so full payment is required before work begins.";
+      return "Full payment is required before the project starts.";
     }
 
-    return "This project is at or above R11,000, so we begin with a 50% upfront payment.";
+    return "For this project to start, a 50% upfront payment is required.";
   }, [basePrice, zarExchangeRate]);
 
   const defaultValues = useMemo(
