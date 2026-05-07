@@ -14,7 +14,7 @@ function DesignServicePage() {
             title: "48-Hour Small Business Professional Makeover",
             description: "A fast, focused makeover to give your small business a more polished and professional brand presence across your customer touchpoints, and marketing materials. We’ll audit your current brand presence, identify the most impactful improvements, and implement them in a way that’s seamless for your team and customers.",
             link: "/services/brand-refresh", 
-            thumbnail: "/images/48-hour-design-refresh.webp",            
+            thumbnail: "/images/branding-1.webp",            
             price: '460',
             bestFor: "Startups, consultants, coaches, small businesses, personal brands, service providers, and founders who need a modern landing page quickly without spending premium-launch money.",
             deliverables: [
