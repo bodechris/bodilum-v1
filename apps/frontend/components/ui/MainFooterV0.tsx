@@ -194,7 +194,7 @@ function MainFooterV0() {
 
         <div className="footer-bottom">
           <p>&copy; Bodilum. 2026 All rights reserved.</p>
-          <a href="https://www.biznesxpo.com" target="_blank" rel="noopener noreferrer">Creator of BiznesXpo Platform: AI-Powered Platform for solopreneurs and small businesses to grow and succeed.</a>
+          <a href="https://www.biznesxpo.com" target="_blank" rel="noopener noreferrer">Bodilum is the design studio from the team behind BiznesXpo</a>
         </div>
       </div>
     </MainFooterV0Wrapper>

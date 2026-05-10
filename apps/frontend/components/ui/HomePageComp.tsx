@@ -24,15 +24,27 @@ function HomePageComp() {
   return (
     <>
     <HomePageWrapper>
-     <h1>
-        Turn your <b>boldest</b> <span className="emp1">design ideas</span> into reality <b>in hours</b> —not weeks.
-     </h1>
 
-     <div className="lara-chat-bot">
+      <h1>
+        <span className="emp1">Premium design,</span> <b>without starting from scratch.</b>
+     </h1>
+     <p>Choose from beautiful pre-made design directions for websites, brands, campaigns, and business assets. Then work with our creative team to customize everything around your business, your message, and your goals.</p>
+     <div className="home-page-ctas">
+
+        <Link href="/design-direction" className="primary-cta">Choose Design Direction</Link>
+        <Link href="/monthly-support">View Monthly Support Packages</Link>
+
+      </div>
+
+     {/* <h1>
+        Turn your <b>boldest</b> <span className="emp1">design ideas</span> into reality <b>in hours</b> —not weeks.
+     </h1> */}
+
+     {/* <div className="lara-chat-bot">
         <div id="lara-user-input" contentEditable="true" role="textbox" aria-multiline="true" aria-label="Editable description area" aria-placeholder="Describe your design idea..." className="relative min-h-[120px] w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 empty:before:content-[attr(aria-placeholder)] empty:before:text-gray-400 empty:before:absolute empty:before:left-3 empty:before:top-3 empty:before:cursor-text" onClick={ () => (setFormType('design-request'), setModalIsOpen(true)) }>
         </div>
         <span>Lara, our design AI-powered project manager, uses AI to help you refine your design brief using AI powered pre-made designs, uploaded references, and your initial design brief. It then manages the communication with our world-class design talents to execute your ideas in hours, not weeks!</span>
-     </div>
+     </div> */}
 
     </HomePageWrapper>
     <Dialog.Root key="modal-form" size="lg" open={modalIsOpen} onOpenChange={(open) => setModalIsOpen(open.open)}>
@@ -115,11 +127,48 @@ const HomePageWrapper = styled.div`
     }
 
     p {
-        width: min(620px, 90%);
+        width: min(720px, 90%);
         font-size: clamp(12px, 2.5vw, 20px);
         line-height: 1.2;
         text-align: center;
         color: #555;
+    }
+
+    .home-page-ctas {
+      width: min(650px, 90%);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      line-height: 1.0;
+
+      a, button {
+        display: inline-block;
+        padding: 1rem 2rem;
+        border-radius: 40px;
+        border: 2px solid #222;
+        background: #fff;
+        color: #222;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          background: #f7f7f7;
+          color: #000;
+        }
+      }
+      
+      .primary-cta {
+        padding: 1rem 2rem;
+        background: #222;
+        color: #fff;
+
+        &:hover {
+          background: #000;
+          color: #f7f7f7;
+        }
+      }
     }
 
     .small-info {

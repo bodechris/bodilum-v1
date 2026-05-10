@@ -7,11 +7,11 @@ function HeaderImagesV0() {
   return (
     <HeaderImagesV0Wrapper>
         <div className="featured-works">
-            <ImageCardV0 offsetX={-30} offsetY={4} rotation={15} imageUrl='img-9.jpg' />
-            <ImageCardV0 offsetX={-20} offsetY={5} rotation={15} imageUrl='img-11.jpg' />
-            <ImageCardV0 offsetX={-10} rotation={-5} />
-            <ImageCardV0 offsetX={5} rotation={-10} imageUrl='img-8.jpg' />
-            <ImageCardV0 offsetX={15} rotation={-15} imageUrl='img-7.jpg' />
+            <ImageCardV0 offsetX={-30} offsetY={4} rotation={15} imageUrl='web-landing-4.webp' />
+            <ImageCardV0 offsetX={-20} offsetY={5} rotation={15} imageUrl='mobile-ui-2.webp' />
+            <ImageCardV0 offsetX={-10} rotation={-5} imageUrl='comp-design-8.webp' />
+            <ImageCardV0 offsetX={5} rotation={-10} imageUrl='comp-design-5.webp' />
+            <ImageCardV0 offsetX={15} rotation={-15} imageUrl='comp-design-7.webp' />
         </div>
     </HeaderImagesV0Wrapper>
   )
