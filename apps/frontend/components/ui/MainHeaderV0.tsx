@@ -63,6 +63,8 @@ function MainHeaderV0() {
                 <nav>
                     <ul className="flex gap-4">
                         <li><Link href="/">Home</Link></li>
+                        <li><Link href="/design-direction">Design Direction</Link></li>
+                        <li><Link href="/monthly-support">Monthly Support</Link></li>
                         <li>
                           <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
                             <Popover.Trigger asChild>
