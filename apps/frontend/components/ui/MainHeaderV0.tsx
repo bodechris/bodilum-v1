@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import styles from './styles/main-header.module.scss';
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import useWindowResize from '@bod/utils/hooks/useWindowResize';
-
-import { Popover, Portal } from "@chakra-ui/react";
 
 
 
@@ -17,21 +14,25 @@ function MainHeaderV0() {
   const { isSignedIn } = useGlobalAppStates();
 
   const [open, setOpen] = useState(false)
+
+  const [openMenu, setOpenMenu] = useState(false)
+  const [openMobileServicesMenu, setOpenMobileServicesMenu] = useState(false)
+
   const pathname = usePathname();
   const screenDim = useWindowResize();
   const useCompactLogo = screenDim[0] > 0 && screenDim[0] < 768;
 
   useEffect(() => {
-    console.log("MainHeaderV0 - isSignedIn:", isSignedIn);
-  }, [isSignedIn]);
+    setOpen(false);
+    setOpenMenu(false);
+    setOpenMobileServicesMenu(false);
+  }, [pathname]);
 
   useEffect(() => {
     setOpen(false);
-  }, [pathname]);
-
-  // useEffect(() => {
-  //   console.log("MainHeaderV0 - screenDim:", screenDim);
-  // }, [screenDim]);
+    setOpenMenu(false);
+    setOpenMobileServicesMenu(false);
+  }, [useCompactLogo]);
 
   const logoSvg = {
     icon: <svg fill="none" ><path fillRule="evenodd" clipRule="evenodd" d="M27.5 0C42.688 0 55 12.312 55 27.5S42.688 55 27.5 55 0 42.688 0 27.5 12.312 0 27.5 0Zm.985 9.153c10.126.48 17.946 9.077 17.467 19.203-.48 10.126-9.077 17.946-19.203 17.466-8.503-.402-15.38-6.53-17.081-14.48-.674-2.76-.989-6.131-.818-9.75.433-9.137 3.799-16.4 7.517-16.225 1.853.088 3.444 2.006 4.52 5.04a18.292 18.292 0 0 1 7.598-1.254Zm-.561 11.863a6.48 6.48 0 1 1-.613 12.944 6.48 6.48 0 0 1 .613-12.944Z" fill="#222"/></svg>,
@@ -54,44 +55,87 @@ function MainHeaderV0() {
   return (
     <>
     <MainHeaderV0Wrapper>
-      <div className={`${styles.mainHeader} w-[95%] flex justify-between header-holder`}>
-            <div className="_left">
-              <Link href="/">{ useCompactLogo ? logoSvg.icon : logoSvg.icon_and_text }</Link>
-              {/* <Link href="/">{ logoSvg.icon }</Link> */}
-            </div>
+      <div className="w-[95%] flex justify-between header-holder">
+        <div className="_left">
+          <Link href="/">{ useCompactLogo ? logoSvg.icon : logoSvg.icon_and_text }</Link>
+          {/* <Link href="/">{ logoSvg.icon }</Link> */}
+        </div>
+
+      {
+        screenDim[0] > 0 && screenDim[0] < 768 && (
+          <div className="_mobile-menu">
+            <button
+              className="btn-1"
+              type="button"
+              aria-label="Open menu"
+              aria-expanded={openMenu}
+              onClick={() => setOpenMenu((currentOpen) => !currentOpen)}
+            >
+              <svg viewBox="0 0 279.97 173.75">
+                <rect width="279.97" height="71.26"/>
+                <rect y="102.49" width="279.97" height="71.26"/>
+              </svg>
+            </button>
+            {openMenu && (
+              <div className="menu-surface mobile-menu-panel">
+                <div className="menu-body">
+                  <ul className="menu-list">
+                    <li><Link href="/"><span>Home</span></Link></li>
+                    <li><Link href="/design-direction"><span>Design Direction</span></Link></li>
+                    <li><Link href="/monthly-support"><span>Monthly Support</span></Link></li>
+                    <li>
+                      <button className='btn-1' type="button" onClick={ () => setOpenMobileServicesMenu(!openMobileServicesMenu) }><span>Services</span><span className="arrow"><svg viewBox="0 0 24 24" >
+<path fillRule="evenodd" clipRule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" />
+</svg></span></button>
+                      {
+                        openMobileServicesMenu && (
+                          <ul className="mobile-submenu">
+                            <li><Link href="/services/design"><span>Design</span></Link></li>
+                            <li><Link href="/services/web-development"><span>Web Development</span></Link></li>
+                            <li><Link href="/services/ai-integrations"><span>AI Integrations</span></Link></li>
+                          </ul>
+                        )
+                      }
+                    </li>
+                    <li><Link href="/contact"><span>Contact</span></Link></li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      }
+      {
+        screenDim[0] > 0 && screenDim[0] >= 768 && (
+          <>
             <div className="_center">
                 <nav>
                     <ul className="flex gap-4">
-                        <li><Link href="/">Home</Link></li>
-                        <li><Link href="/design-direction">Design Direction</Link></li>
-                        <li><Link href="/monthly-support">Monthly Support</Link></li>
+                        <li><Link href="/"><span>Home</span></Link></li>
+                        <li><Link href="/design-direction"><span>Design Direction</span></Link></li>
+                        <li><Link href="/monthly-support"><span>Monthly Support</span></Link></li>
                         <li>
-                          <Popover.Root open={open} onOpenChange={(e) => setOpen(e.open)}>
-                            <Popover.Trigger asChild>
-                              <button className="btn-1">Services</button>
-                            </Popover.Trigger>
-                            <Portal>
-                              <Popover.Positioner>
-                                <Popover.Content className={ styles.popoverContent }>
-                                  <Popover.Arrow />
-                                  <Popover.Body className={ styles.popoverBody }>
-                                    <ul className={ styles.popoverList }>
-                                      <li><Link href="/services/design">Design</Link></li>
-                                      <li><Link href="/services/web-development">Web Development</Link></li>
-                                      <li><Link href="/services/ai-integrations">AI Integrations</Link></li>
-                                    </ul>
-                                  </Popover.Body>
-                                </Popover.Content>
-                              </Popover.Positioner>
-                            </Portal>
-                          </Popover.Root>
+                          <button className="btn-1" type="button" aria-expanded={open} onClick={() => setOpen((currentOpen) => !currentOpen)}><span>Services</span><span className="arrow"><svg viewBox="0 0 24 24">
+<path fillRule="evenodd" clipRule="evenodd" d="M12.7071 14.7071C12.3166 15.0976 11.6834 15.0976 11.2929 14.7071L6.29289 9.70711C5.90237 9.31658 5.90237 8.68342 6.29289 8.29289C6.68342 7.90237 7.31658 7.90237 7.70711 8.29289L12 12.5858L16.2929 8.29289C16.6834 7.90237 17.3166 7.90237 17.7071 8.29289C18.0976 8.68342 18.0976 9.31658 17.7071 9.70711L12.7071 14.7071Z" />
+</svg></span></button>
+                          {open && (
+                            <div className="menu-surface desktop-services-menu">
+                              <div className="menu-body">
+                                <ul className="menu-list">
+                                  <li><Link href="/services/design"><span>Design</span></Link></li>
+                                  <li><Link href="/services/web-development"><span>Web Development</span></Link></li>
+                                  <li><Link href="/services/ai-integrations"><span>AI Integrations</span></Link></li>
+                                </ul>
+                              </div>
+                            </div>
+                          )}
                         </li>
-                        <li><Link href="/contact">Contact</Link></li>
-                        {/* <li><Link href="/inspirations">Inspirations</Link></li> */}
-                        {/* <li><Link href="/projects">Projects</Link></li> */}
-                        {/* <li><Link href="/start">Start</Link></li> */}
-                        {/* <li><Link href="/brands">Brands</Link></li> */}
-                        {/* <li><Link href="/pricing">Pricing</Link></li> */}  
+                        <li><Link href="/contact"><span>Contact</span></Link></li>
+                        {/* <li><Link href="/inspirations"><span>Inspirations</span></Link></li> */}
+                        {/* <li><Link href="/projects"><span>Projects</span></Link></li> */}
+                        {/* <li><Link href="/start"><span>Start</span></Link></li> */}
+                        {/* <li><Link href="/brands"><span>Brands</span></Link></li> */}
+                        {/* <li><Link href="/pricing"><span>Pricing</span></Link></li> */}  
                     </ul>
                 </nav>
             </div>
@@ -103,6 +147,11 @@ function MainHeaderV0() {
                     <></>
                 )}
             </div>
+          </>
+        )
+      }
+
+            
         </div>
     </MainHeaderV0Wrapper>
     </>
@@ -121,6 +170,95 @@ const MainHeaderV0Wrapper = styled.header`
   z-index: 1000;
   justify-content: center;
 
+  .menu-surface {
+    background: #fff;
+    border-radius: 1.25rem;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(25px);
+  }
+
+  .menu-body {
+    min-width: 18rem;
+    padding: 1rem 1.1rem 2rem;
+    color: #1c1c1c;
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    li {
+      border-bottom: 0.5px solid #f7f7f7;
+      padding-bottom: 0.5rem;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      button {
+        text-decoration: none;
+        color: #000;
+        font-weight: bold;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        padding: 0;
+
+        svg {
+          width: 25px !important;
+          height: auto !important;
+          fill: #222 !important;
+          padding: 0 !important;
+          margin-top: 0 !important;
+          display: block;
+        }
+
+        &:hover {
+          color: #555;
+        }
+      }
+    }
+
+    li > ul {
+      position: relative;
+      margin: 0.5rem 0 0 1rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      border-top: 0.5px solid #f7f7f7;
+      gap: 0.75rem;
+
+      a {
+        margin-left: 3rem;
+        color: #bbb !important;
+        font-weight: bold;
+
+        &:hover {
+          color: #333 !important;
+        }
+      }
+    }
+
+    a {
+      display: block;
+      text-decoration: none;
+      color: #111;
+      font-weight: 600;
+      transition: color 160ms ease, transform 160ms ease;
+
+      &:hover {
+        color: #555;
+        transform: translateX(2px);
+      }
+    }
+  }
+
   .header-holder  {
     padding-top: 15px;
     position: relative;
@@ -129,12 +267,59 @@ const MainHeaderV0Wrapper = styled.header`
     align-items: center;
     top: 0;
 
+    ._mobile-menu {
+      width: 50px;
+      height: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 30px; right: 0;
+      z-index: 10;
+      transform-style: preserve-3d;
+
+      .btn-1 {
+        width: 100%;
+        height: auto;
+        cursor: pointer;       
+
+        svg {
+          width: 100%;
+          height: auto;
+          fill: #111;
+          padding: 8px;
+
+        }
+
+      }
+
+      .mobile-menu-panel {
+        position: absolute;
+        top: calc(100% + 1rem);
+        right: 0;
+        width: min(20rem, calc(100vw - 2rem));
+        z-index: 20;
+      }
+    }
+    ._mobile-menu:before {
+      content: "";
+      width: 50px;
+      height: 50px;
+      position: absolute;
+      top: -100px; right: 0;
+      background: transparent;
+      box-shadow: 0px 80px 30px 2px rgba(255,255,255,1); 
+      transform: translateZ(-1px);
+    }
+
     ._left {
       width: 60px;
       height: 60px;
-      top: 0; left: 0;
+      top: 20px; left: 0;
       position: absolute;
       z-index: 15;
+
+      transform-style: preserve-3d;
 
       // border: 2px solid pink;
 
@@ -148,6 +333,17 @@ const MainHeaderV0Wrapper = styled.header`
       svg.icon_and_text {
         width: min(200px, 30vw);
       }
+    }
+    ._left:before {
+      content: "";
+      width: 60px;
+      height: 100px;
+      position: absolute;
+      top: -150px; left: 0;
+      background: transparent;
+      box-shadow: 0px 120px 60px 2px rgba(255,255,255,1); 
+      transform: translateZ(-1px);
+      // border: 2px solid skyblue;
     }
 
     ._center {
@@ -166,7 +362,7 @@ const MainHeaderV0Wrapper = styled.header`
       height: auto;
       padding: 1rem 2rem;
       border-radius: 1rem;
-      background: #fff3;
+      background: #fff9;
       backdrop-filter: blur(10px);
       
 
@@ -184,19 +380,41 @@ const MainHeaderV0Wrapper = styled.header`
           margin: 0;
           padding: 0;
           position: relative;
+
           li {
-            position: relative;
+            position: relative;           
+
+            button, a {
+              text-decoration: none;
+              color: #000;
+              font-weight: bold;
+              line-height: 0.7 !important;
+              position: relative;
+              &:hover {
+                color: #555;
+                }
+            }
+
             .btn-1 {
               appearance: none;
               background: transparent;
               border: 0;
               color: #000;
-              cursor: pointer;
+              cursor: pointer !important;
               font: inherit;
               font-weight: bold;
               line-height: 0.7 !important;
               position: relative;
               padding: 0;
+              margin-top: 5px;
+
+              display: flex;
+              .arrow {
+                width: 25px;
+                height: 25px;
+                margin: -5px 0 0 0px;
+                // background: red;
+              }
 
               &:hover {
                 color: #555;
@@ -209,16 +427,15 @@ const MainHeaderV0Wrapper = styled.header`
               }
             }
 
-            a {
-              text-decoration: none;
-              color: #000;
-              font-weight: bold;
-              line-height: 0.7 !important;
-              position: relative;
-              &:hover {
-                color: #555;
-                }
+            .desktop-services-menu {
+              position: absolute;
+              top: calc(100% + 1rem);
+              left: 50%;
+              transform: translateX(-50%);
+              min-width: 18rem;
+              z-index: 20;
             }
+
           }
         }
       }
@@ -229,20 +446,26 @@ const MainHeaderV0Wrapper = styled.header`
       position: absolute;
       z-index: 15;
     }
-
-    @media all and (min-width: 768px) {
-
-      .header-holder  {
-        top: 20px;
-      }
-
-      ._left {
-        top: 0; left: 0;
-        width: 200px;
-      }
-      ._center {
-        left: 0;
-      }
-    }
+  
   }
+
+@media all and (min-width: 768px) {
+
+  .header-holder  {
+    top: 20px;
+  }
+
+  ._left {
+    top: 0; left: 0;
+    width: 200px !important;
+  }
+  ._left:before {
+    width: 230px !important;
+    height: 100px !important;
+    top: -120px; left: 0;
+  }
+  ._center {
+    left: 0;
+  }
+}
 `;

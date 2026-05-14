@@ -1,22 +1,14 @@
 'use client'
 
-import React, { useEffect } from "react";
+import React from "react";
 import styled from "styled-components";
 
-import { Button, CloseButton, Dialog, For, HStack, Portal } from "@chakra-ui/react";
-import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
+import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 
 function HomePageComp() {
 
-  const [modalIsOpen, setModalIsOpen] = React.useState<boolean | undefined>(undefined);
-  const [formType, setFormType] = React.useState<'waiting-list' | 'design-request'>('waiting-list');
-
-  const { isSignedIn } = useGlobalAppStates() || {};
-
-  useEffect(() => {
-    if( !modalIsOpen ) return;
-  }, [modalIsOpen]);
+  const [modalIsOpen, setModalIsOpen] = React.useState(false);
 
   // “On-demand branding & web design powered by AI, directed by humans.”
 
@@ -41,44 +33,47 @@ function HomePageComp() {
      </h1> */}
 
      {/* <div className="lara-chat-bot">
-        <div id="lara-user-input" contentEditable="true" role="textbox" aria-multiline="true" aria-label="Editable description area" aria-placeholder="Describe your design idea..." className="relative min-h-[120px] w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 empty:before:content-[attr(aria-placeholder)] empty:before:text-gray-400 empty:before:absolute empty:before:left-3 empty:before:top-3 empty:before:cursor-text" onClick={ () => (setFormType('design-request'), setModalIsOpen(true)) }>
+        <div id="lara-user-input" contentEditable="true" role="textbox" aria-multiline="true" aria-label="Editable description area" aria-placeholder="Describe your design idea..." className="relative min-h-[120px] w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-500 empty:before:content-[attr(aria-placeholder)] empty:before:text-gray-400 empty:before:absolute empty:before:left-3 empty:before:top-3 empty:before:cursor-text" onClick={ () => setModalIsOpen(true) }>
         </div>
         <span>Lara, our design AI-powered project manager, uses AI to help you refine your design brief using AI powered pre-made designs, uploaded references, and your initial design brief. It then manages the communication with our world-class design talents to execute your ideas in hours, not weeks!</span>
      </div> */}
 
     </HomePageWrapper>
-    <Dialog.Root key="modal-form" size="lg" open={modalIsOpen} onOpenChange={(open) => setModalIsOpen(open.open)}>
-      <Portal>
-        <Dialog.Backdrop />
-        <Dialog.Positioner>
-          <Dialog.Content>
-            <Dialog.Header>
-              <Dialog.Title>
-                {/* { formType === 'waiting-list' ? 'Join our Waiting List' : 'Request a Design' } */}
-                <p className="text-2xl font-bold">This feature is launching soon 🚀</p>
-              </Dialog.Title>
-            </Dialog.Header>
-            <Dialog.Body>
-              {/* <>Dialog Body Content here...</> */}
-              <p className="text-lg">We are working hard to launch this feature in the next few weeks. Stay tuned!</p>
-              <h2 className="text-3xl! font-bold! mt-4!">In the meantime, explore our services:</h2>
-              <div className="ctas" style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center', textAlign: 'center', lineHeight: 1.0 }}>
-
-                <Link href="/services/design" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our design services</Link>
-                <Link href="/services/web-development" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our Web development services</Link>
-                <Link href="/services/ai-integrations" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our AI Integration services</Link>
-
-              </div>
-            </Dialog.Body>
-            <Dialog.Footer>
-            </Dialog.Footer>
-            <Dialog.CloseTrigger asChild>
-              <CloseButton size="sm" />
-            </Dialog.CloseTrigger>
-          </Dialog.Content>
-        </Dialog.Positioner>
-      </Portal>
-    </Dialog.Root>
+    {modalIsOpen && (
+      <Dialog.Root
+        key="modal-form"
+        size="lg"
+        open={modalIsOpen}
+        onOpenChange={(open) => setModalIsOpen(open.open)}
+      >
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>
+                  <p className="text-2xl font-bold">This feature is launching soon 🚀</p>
+                </Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Body>
+                <p className="text-lg">We are working hard to launch this feature in the next few weeks. Stay tuned!</p>
+                <h2 className="text-3xl! font-bold! mt-4!">In the meantime, explore our services:</h2>
+                <div className="ctas" style={{ display: 'flex', gap: '1rem', alignItems: 'center', justifyContent: 'center', textAlign: 'center', lineHeight: 1.0 }}>
+                  <Link href="/services/design" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our design services</Link>
+                  <Link href="/services/web-development" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our Web development services</Link>
+                  <Link href="/services/ai-integrations" className="inline-block rounded-full border border-[#ccc] mt-2! bg-[#222] px-4! py-2! font-extrabold! text-[#ccc]! transition hover:border-[#222] hover:bg-[#000] hover:text-[#f7f7f7]!">See our AI Integration services</Link>
+                </div>
+              </Dialog.Body>
+              <Dialog.Footer>
+              </Dialog.Footer>
+              <Dialog.CloseTrigger asChild>
+                <CloseButton size="sm" />
+              </Dialog.CloseTrigger>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    )}
     </>
   )
 }
