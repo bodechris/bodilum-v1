@@ -129,11 +129,12 @@ const MainHeaderV0Wrapper = styled.header`
     align-items: center;
 
     ._left {
+      width: 50px;
       top: 20px; left: 0;
       position: absolute;
       width: auto;
       height: auto;
-      z-index: 10;
+      z-index: 15;
 
       svg {
         width: 100%;
@@ -154,9 +155,9 @@ const MainHeaderV0Wrapper = styled.header`
       justify-content: center;
       align-items: center;
       position: absolute;
-      top: 20px; left: 0;
+      top: 20px; left: 50px;
 
-      z-index: 5;
+      z-index: 10;
 
       nav {
       width: auto;
@@ -165,6 +166,7 @@ const MainHeaderV0Wrapper = styled.header`
       border-radius: 1rem;
       background: #fff3;
       backdrop-filter: blur(10px);
+      
 
       -webkit-transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
       -moz-transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
@@ -206,6 +208,7 @@ const MainHeaderV0Wrapper = styled.header`
               text-decoration: none;
               color: #000;
               font-weight: bold;
+              line-height: 0.9;
               &:hover {
                 color: #555;
                 }
@@ -218,7 +221,14 @@ const MainHeaderV0Wrapper = styled.header`
     ._right {
       top: 0; right: 0;
       position: absolute;
-      z-index: 8;
+      z-index: 15;
+    }
+
+    @media all and (min-width: 768px) {
+      ._left {
+        top: 20px; left: 20px;
+        width: 200px;
+      }
     }
   }
 `;
