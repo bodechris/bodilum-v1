@@ -130,12 +130,13 @@ const MainHeaderV0Wrapper = styled.header`
     top: 0;
 
     ._left {
-      width: 50px;
+      width: 60px;
+      height: 60px;
       top: 0; left: 0;
       position: absolute;
-      width: auto;
-      height: auto;
       z-index: 15;
+
+      // border: 2px solid pink;
 
       svg {
         width: 100%;
@@ -156,7 +157,7 @@ const MainHeaderV0Wrapper = styled.header`
       justify-content: center;
       align-items: center;
       position: absolute;
-      top: 0; left: 50px;
+      top: 0; left: 100px;
 
       z-index: 10;
 
@@ -182,7 +183,9 @@ const MainHeaderV0Wrapper = styled.header`
           list-style: none;
           margin: 0;
           padding: 0;
+          position: relative;
           li {
+            position: relative;
             .btn-1 {
               appearance: none;
               background: transparent;
@@ -191,7 +194,8 @@ const MainHeaderV0Wrapper = styled.header`
               cursor: pointer;
               font: inherit;
               font-weight: bold;
-              line-height: 1;
+              line-height: 0.7 !important;
+              position: relative;
               padding: 0;
 
               &:hover {
@@ -209,7 +213,8 @@ const MainHeaderV0Wrapper = styled.header`
               text-decoration: none;
               color: #000;
               font-weight: bold;
-              line-height: 0.9;
+              line-height: 0.7 !important;
+              position: relative;
               &:hover {
                 color: #555;
                 }
@@ -232,8 +237,11 @@ const MainHeaderV0Wrapper = styled.header`
       }
 
       ._left {
-        top: 0; left: 20px;
+        top: 0; left: 0;
         width: 200px;
+      }
+      ._center {
+        left: 0;
       }
     }
   }
