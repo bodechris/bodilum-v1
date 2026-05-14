@@ -127,10 +127,11 @@ const MainHeaderV0Wrapper = styled.header`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    top: 0;
 
     ._left {
       width: 50px;
-      top: 20px; left: 0;
+      top: 0; left: 0;
       position: absolute;
       width: auto;
       height: auto;
@@ -155,7 +156,7 @@ const MainHeaderV0Wrapper = styled.header`
       justify-content: center;
       align-items: center;
       position: absolute;
-      top: 20px; left: 50px;
+      top: 0; left: 50px;
 
       z-index: 10;
 
@@ -225,8 +226,13 @@ const MainHeaderV0Wrapper = styled.header`
     }
 
     @media all and (min-width: 768px) {
+
+      .header-holder  {
+        top: 20px;
+      }
+
       ._left {
-        top: 20px; left: 20px;
+        top: 0; left: 20px;
         width: 200px;
       }
     }
