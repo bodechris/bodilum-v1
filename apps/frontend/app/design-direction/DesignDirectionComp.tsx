@@ -1,43 +1,83 @@
 import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
+import { DesignDirectionDataType } from './designDirectionData';
+import LocalizedServicePrice from '../services/LocalizedServicePrice';
 
-type DesignDirectionCompProps = PropsWithChildren<{}>;
+type DesignDirectionCompProps = PropsWithChildren & DesignDirectionDataType;
 function DesignDirectionComp(props: DesignDirectionCompProps) {
+    const { title, description, category, layout, price, timeline, bestFor, thumbnails, sections } = props;
   return (
     <DesignDirectionCompWrapper>
+       <div className="design-card-header">
+        <h1>{title}</h1>
+        <p>{description}</p>
+       </div>
        <div className="design-card-item cover">
         <div className="bg-cover">
-            <img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design Direction Cover"/>
+            <img src={typeof sections?.cover?.mainImg === 'string' ? sections.cover.mainImg : ''} alt="Design Direction Cover"/>
         </div>
         <div className="cover-info">
             <div className="cover-info__item">
                 <h4>Overview</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                {
+                    sections && sections.cover && sections.cover.overview && sections.cover.overview.length > 0 ? (
+                        sections.cover.overview.map((sentence: string, index: number) => (
+                            <p key={index}>{sentence}</p>
+                        ))
+                    ) : null
+                }
             </div>
             <div className="cover-info__item">
                 <h4>Highlights</h4>
                 <ul>
-                    <li>Brand Identity Design</li>
-                    <li>Logo Design</li>
-                    <li>Color Palette Development</li>
-                    <li>Typography Selection</li>
-                    <li>Visual Style Guide Creation</li>
+                    {sections && sections.cover && sections.cover.highlights && sections.cover.highlights.length > 0 ? (
+                        sections.cover.highlights.map((highlight: string, index: number) => (
+                            <li key={index}>{highlight}</li>
+                        ))
+                    ) : null}
                 </ul>
+            </div>
+            <div className="cover-info__item">
+                <h4>Process</h4>
+                <ul>
+                    {sections && sections.cover && sections.cover.process && sections.cover.process.length > 0 ? (
+                        sections.cover.process.map((step: string, index: number) => (
+                            <li key={index}>{step}</li>
+                        ))
+                    ) : null}
+                </ul>
+            </div>
+            <div className="cover-info__item">
+                <h4>What you get</h4>
+                <ul>
+                    {sections && sections.cover && sections.cover.outcomes && sections.cover.outcomes.length > 0 ? (
+                        sections.cover.outcomes.map((outcome: string, index: number) => (
+                            <li key={index}>{outcome}</li>
+                        ))
+                    ) : null}
+                </ul>
+            </div>
+            <div className="cover-info__price-and-cta">
+                <div className="price">
+                    <LocalizedServicePrice price={price || ''} />
+                </div>
+                <button className="cta-button">Get Started</button>
             </div>
         </div>
         <div className="all-designs-preview">
             <div className="designs-preview__grid masonry">
-                <div className="masonry-item item-1"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 1"/></div>
-                <div className="masonry-item item-2"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 2"/></div>
-                <div className="masonry-item item-3"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 3"/></div>
-                <div className="masonry-item item-4"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 4"/></div>
-                <div className="masonry-item item-5"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 5"/></div>
-                <div className="masonry-item item-6"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 6"/></div>
-                <div className="masonry-item item-7"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 7"/></div>
-                <div className="masonry-item item-8"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 8"/></div>
-                <div className="masonry-item item-9"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 9"/></div>
-                <div className="masonry-item item-10"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 10"/></div>
-                <div className="masonry-item item-11"><img src="/images/real-estate-savanah-nest/savanah_nest_2560x1440.webp" alt="Design 11"/></div>
+                <div className="masonry-item item-1"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[0] ? sections.cover.previewImgs[0] : ''} alt="Design 1"/></div>
+                <div className="masonry-item item-2"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[1] ? sections.cover.previewImgs[1] : ''} alt="Design 2"/></div>
+                <div className="masonry-item item-3"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[2] ? sections.cover.previewImgs[2] : ''} alt="Design 3"/></div>
+                <div className="masonry-item item-4"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[3] ? sections.cover.previewImgs[3] : ''} alt="Design 4"/></div>
+                <div className="masonry-item item-5"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[4] ? sections.cover.previewImgs[4] : ''} alt="Design 5"/></div>
+                <div className="masonry-item item-6"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[5] ? sections.cover.previewImgs[5] : ''} alt="Design 6"/></div>
+                <div className="masonry-item item-7"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[6] ? sections.cover.previewImgs[6] : ''} alt="Design 7"/></div>
+                <div className="masonry-item item-8"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[7] ? sections.cover.previewImgs[7] : ''} alt="Design 8"/></div>
+                <div className="masonry-item item-9"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[8] ? sections.cover.previewImgs[8] : ''} alt="Design 9"/></div>
+                <div className="masonry-item item-10"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[9] ? sections.cover.previewImgs[9] : ''} alt="Design 10"/></div>
+                <div className="masonry-item item-11"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[10] ? sections.cover.previewImgs[10] : ''} alt="Design 11"/></div>
+                <div className="masonry-item item-12"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[11] ? sections.cover.previewImgs[11] : ''} alt="Design 12"/></div>
             </div>
         </div>
        </div>
@@ -94,6 +134,9 @@ const DesignDirectionCompWrapper = styled.div`
     width: 100%;
     padding: 32px;
     position: relative;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .cover-info h4,
@@ -147,6 +190,10 @@ const DesignDirectionCompWrapper = styled.div`
     //   height: 320px;
     }
 
+    .cover-info {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .designs-preview__grid.masonry {
       grid-template-columns: repeat(4, 1fr);
       grid-auto-rows: 120px;
@@ -171,7 +218,8 @@ const DesignDirectionCompWrapper = styled.div`
     .item-5,
     .item-8,
     .item-9,
-    .item-10 {
+    .item-10,
+    .item-12 {
       grid-column: span 2;
       grid-row: span 2;
     }
@@ -185,6 +233,10 @@ const DesignDirectionCompWrapper = styled.div`
   @media (min-width: 769px) {
     .bg-cover {
     //   height: 360px;
+    }
+
+    .cover-info {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     }
 
     .designs-preview__grid.masonry {
@@ -205,7 +257,8 @@ const DesignDirectionCompWrapper = styled.div`
     .item-5,
     .item-8,
     .item-9,
-    .item-10 {
+    .item-10,
+    .item-12 {
       grid-column: span 3;
       grid-row: span 2;
     }
@@ -280,6 +333,11 @@ const DesignDirectionCompWrapper = styled.div`
 
     .item-11 {
       grid-column: span 4;
+      grid-row: span 2;
+    }
+
+    .item-12 {
+      grid-column: span 2;
       grid-row: span 2;
     }
   }

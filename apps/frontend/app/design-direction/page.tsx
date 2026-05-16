@@ -2,152 +2,10 @@ import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import LocalizedServicePrice from '../services/LocalizedServicePrice';
+import { designDirectionData } from './designDirectionData';
 
-type DesignDirectionDataType = {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  thumbnails: string[];
-  layout?: string;
-  price?: string;
-  timeline?: string;
-  bestFor?: string;
-  faqs?: { question: string; answer: string }[];
-}
-function DesignDirectionPage() {
-  const designDirectionData: DesignDirectionDataType[] = [
-    {
-      id: 1,
-      title: 'savanah nest brand identity',
-      description: 'Description for Design Direction 1',
-      category: 'Real Estate',
-      layout: 'layout-5',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Real Estate, Interior Design, Architecture",
-      thumbnails: [
-        '/images/real-estate-savanah-nest/savanah-nest-img-8.webp',
-        '/images/real-estate-savanah-nest/savanah-nest-img-9.webp',
-        '/images/real-estate-savanah-nest/savanah-nest-img-10.webp',
-        '/images/real-estate-savanah-nest/savanah-nest-img-11.webp',
-        '/images/real-estate-savanah-nest/savanah-nest-img-12.webp',
-      ]
-    },
-    {
-      id: 2,
-      title: 'moria beauty brand identity',
-      description: 'Description for Design Direction 2',
-      category: 'Beauty',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Beauty, Skincare, Wellness",
-      thumbnails: [
-        '/images/beauty-moria/mori-logo-bg-1.webp',
-        '/images/beauty-moria/moria-img-1.webp',
-        '/images/beauty-moria/moria-img-2.webp',
-        '/images/beauty-moria/moria-img-3.webp',
-        '/images/beauty-moria/moria-img-4.webp',
-        '/images/beauty-moria/moria-img-5.webp',
-        '/images/beauty-moria/moria-img-6.webp',
-        '/images/beauty-moria/moria-img-7.webp',
-        '/images/beauty-moria/moria-img-8.webp',
-      ]
-    },
-    {
-      id: 3,
-      title: 'Yossi beauty brand identity',
-      description: 'Description for Design Direction 3',
-      category: 'Beauty',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Beauty, Skincare, Wellness",
-      thumbnails: [
-        '/images/beauty-yossi/yossi-img-3.webp',
-        '/images/beauty-yossi/yossi-img-1.webp',
-        '/images/beauty-yossi/yossi-img-5.webp',
-        '/images/beauty-yossi/yossi-img-4.webp',
-        '/images/beauty-yossi/yossi-img-6.webp',
-        '/images/beauty-yossi/yossi-img-7.webp',
-        '/images/beauty-yossi/yossi-img-8.webp',
-        '/images/beauty-yossi/yossi-img-9.webp',
-        '/images/beauty-yossi/yossi-img-10.webp',
-        '/images/beauty-yossi/yossi-img-11.webp',
-        '/images/beauty-yossi/yossi-img-12.webp',
-      ]
-    },
-    {
-      id: 4,
-      title: 'Moveasi brand identity',
-      description: 'Description for Design Direction 4',
-      category: 'Tech & Saas',
-      layout: 'layout-3',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Tech & Saas, Startups, Innovation",
-      thumbnails: [
-        '/images/tech-saas-moveasi/moveasi-img-4.webp',
-        '/images/tech-saas-moveasi/moveasi-img-2.webp',
-        '/images/tech-saas-moveasi/moveasi-img-3.webp',
-        '/images/tech-saas-moveasi/moveasi-img-1.webp',
-        '/images/tech-saas-moveasi/moveasi-img-5.webp',
-        '/images/tech-saas-moveasi/moveasi-img-6.webp',
-        '/images/tech-saas-moveasi/moveasi-img-7.webp',
-        '/images/tech-saas-moveasi/moveasi-img-8.webp',
-        '/images/tech-saas-moveasi/moveasi-img-9.webp',
-        '/images/tech-saas-moveasi/moveasi-img-10.webp',
-        '/images/tech-saas-moveasi/moveasi-img-11.webp',
-        '/images/tech-saas-moveasi/moveasi-img-12.webp',
-      ]
-    },
-    {
-      id: 5,
-      title: 'Mormon brand identity',
-      description: 'Description for Design Direction 5',
-      category: 'Real Estate',
-      layout: 'layout-5',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Real Estate, Interior Design, Architecture",
-      thumbnails: [
-        '/images/real-estate-mormon/mormon-img-22.webp',
-        '/images/real-estate-mormon/mormon-img-2.webp',
-        '/images/real-estate-mormon/mormon-img-3.webp',
-        '/images/real-estate-mormon/mormon-img-1.webp',
-        '/images/real-estate-mormon/mormon-img-5.webp',
-        '/images/real-estate-mormon/mormon-img-6.webp',
-        '/images/real-estate-mormon/mormon-img-7.webp',
-        '/images/real-estate-mormon/mormon-img-8.webp',
-        '/images/real-estate-mormon/mormon-img-9.webp',
-        '/images/real-estate-mormon/mormon-img-10.webp',
-        '/images/real-estate-mormon/mormon-img-11.webp',
-        '/images/real-estate-mormon/mormon-img-12.webp',
-      ]
-    },
-    {
-      id: 6,
-      title: 'Fleoxx brand identity',
-      description: 'Description for Design Direction 6',
-      category: 'Tech & Saas',
-      price: ">=100",
-      timeline: "24 - 48 hours",
-      bestFor: "Tech & Saas, Startups, Innovation",
-      thumbnails: [
-        '/images/tech-saas-fleoxx/fleoxx-img-1.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-13.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-3.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-4.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-5.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-6.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-7.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-8.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-9.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-10.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-11.webp',
-        '/images/tech-saas-fleoxx/fleoxx-img-12.webp',
-      ]
-    },
-  ];
+
+function DesignDirectionPage() {  
 
   return (
     <DesignDirectionWrapper>
@@ -163,14 +21,21 @@ function DesignDirectionPage() {
 export default DesignDirectionPage;
 
 const DesignDirectionWrapper = styled.div`
+  --design-card-height: 44rem;
+
   width: 95%;
   height: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-  grid-template-rows: 600px;
-  gap: 50px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  grid-auto-rows: var(--design-card-height);
+  gap: 2rem;
+  padding: 1.25rem;
   margin: 5rem 0 10rem 0;
+
+  @media all and (min-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(30rem, 1fr));
+    gap: 3.125rem;
+  }
 
 `;
 type DesignDirectionItemProps = PropsWithChildren<{
@@ -213,12 +78,15 @@ type DesignDirectionItemWrapperProps = {
 }
 const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
   width: 100%;
-  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  height: var(--design-card-height);
   background-color: #fff;
-  border: 0.5px solid #f7f7f7;
+  border: 3px solid #fff;
   border-radius: 30px;
   box-shadow: 0 20px 40px 40px rgba(0, 0, 0, 0.06);
   overflow: hidden;
+  
 
   position: relative;
   display: flex;
@@ -228,9 +96,10 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
 
   .design-direction-preview-images {
     width: 100%;
+    min-height: 0;
     height: 100%;
-    max-height: 500px;
-    flex: 10;
+    max-height: none;
+    flex: 1 1 auto;
     position: relative;
     display: grid;
     // border: 5px solid red;
@@ -330,33 +199,33 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
 
 
 
-    .layout-4 {
+    &.layout-4 {
       aspect-ratio: 1 / 1;
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(2, 1fr);
     }
 
-    .layout-4 .item {
+    &.layout-4 .img-itm {
       position: relative;
     }
 
-    .layout-4 .caption.top-right {
+    &.layout-4 .caption.top-right {
       top: 16px;
       right: 16px;
     }
 
-    .layout-4 .caption.bottom-left {
+    &.layout-4 .caption.bottom-left {
       left: 16px;
       bottom: 16px;
     }
 
-    .layout-4 .caption.bottom-center {
+    &.layout-4 .caption.bottom-center {
       left: 50%;
       bottom: 16px;
       transform: translateX(-50%);
     }
 
-    .layout-4 .caption.bottom-right {
+    &.layout-4 .caption.bottom-right {
       right: 16px;
       bottom: 16px;
     }
@@ -364,33 +233,33 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
 
 
 
-    .layout-5 {
+    &.layout-5 {
       aspect-ratio: 1.18 / 1;
       grid-template-columns: repeat(6, 1fr);
       grid-template-rows: 2fr 1fr;
     }
 
-    .layout-5 .item:nth-child(1) {
+    &.layout-5 .img-itm:nth-child(1) {
       grid-column: 1 / span 3;
       grid-row: 1;
     }
 
-    .layout-5 .item:nth-child(2) {
+    &.layout-5 .img-itm:nth-child(2) {
       grid-column: 4 / span 3;
       grid-row: 1;
     }
 
-    .layout-5 .item:nth-child(3) {
+    &.layout-5 .img-itm:nth-child(3) {
       grid-column: 1 / span 2;
       grid-row: 2;
     }
 
-    .layout-5 .item:nth-child(4) {
+    &.layout-5 .img-itm:nth-child(4) {
       grid-column: 3 / span 2;
       grid-row: 2;
     }
 
-    .layout-5 .item:nth-child(5) {
+    &.layout-5 .img-itm:nth-child(5) {
       grid-column: 5 / span 2;
       grid-row: 2;
     }
@@ -399,7 +268,7 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
 
   .info-price-panel {
     width: 100%;
-    height: 100%;
+    height: auto;
     position: relative;
     display: flex;
     flex: 2;
@@ -450,12 +319,15 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
   .cta-panel {
     width: 100%;
     display: flex;    
-    flex: 1;
+    flex: 3;
     background: #f7f7f7;
+    flex-wrap: wrap;
+    flex-direction: column;
+
     a {
       width: 100%;
       height: 100%;
-      font-size: clamp(10px, 1.5vw, 14px);
+      font-size: clamp(14px, 1.5vw, 16px);
       text-transform: uppercase;
       font-weight: bolder;
       color: #333;
@@ -466,9 +338,12 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
       justify-content: center;
       align-items: center;
 
-      border-right: 0.5px solid #eee;
+      min-height: 3.5rem;
+      border-right: none;
+      border-bottom: 0.5px solid #eee;
+
       &:last-child {
-        border-right: none;
+        border-bottom: none;
       }
 
       &:hover {
@@ -482,6 +357,80 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
         &:hover {
           background: #000;
           color: #fff;
+        }
+      }
+    }
+  }
+
+  border-radius: 22px;
+
+  .design-direction-preview-images {
+    min-height: 0;
+  }
+
+  .info-price-panel {
+    flex-direction: column;
+    gap: 0;
+
+    .info-panel,
+    .price-panel {
+      width: 100%;
+      padding: 1rem 1rem 0;
+    }
+
+    .info-price-panel {
+      .info-panel {
+        p {
+          margin-top: 0.35rem;
+        }
+      }
+
+      .price-panel {
+        align-items: flex-start;
+        padding-bottom: 1rem;
+
+        .price {
+          text-align: left;
+        }
+      }
+    }
+
+  @media all and (min-width: 768px) {
+    border-radius: 30px;
+
+    .info-price-panel {
+      flex-direction: row;
+      gap: 5px;
+
+      .info-panel {
+        width: auto;
+        padding: 20px;
+
+        p {
+          margin-top: 0.5rem;
+        }
+      }
+
+      .price-panel {
+        width: auto;
+        align-items: flex-end;
+        padding: 0 20px 0 0;
+
+        .price {
+          text-align: right;
+        }
+      }
+    }
+
+    .cta-panel {
+      flex-direction: row;
+
+      a {
+        border-right: 0.5px solid #eee;
+        border-bottom: none;
+
+        &:last-child {
+          border-right: none;
         }
       }
     }
