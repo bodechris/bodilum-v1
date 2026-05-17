@@ -32,12 +32,19 @@ position: absolute;
 top: 0; left: 0;
 
 .featured-works {
-  width: max-content;
-  height: max-content;
-  display: flex;
-  justify-content: center;
-  position: relative;
-//   border: 5px solid pink;
-  transform: translateY(-60vh);
-}
+    width: max-content;
+    height: max-content;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    transform: translateY(-70vh);
+    border: 50px solid skyblue;
+  }
+
+  @media all and (min-width: 768px) {
+    .featured-works {
+      transform: translateY(-60vh);
+      border: 5px solid pink;
+    }
+  }
 `;

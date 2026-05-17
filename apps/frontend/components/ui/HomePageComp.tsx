@@ -90,7 +90,7 @@ const HomePageWrapper = styled.div`
   margin-bottom: 10rem;
 
     h1 {
-      margin-top: 15rem;
+      margin-top: 5rem;
       text-align: center;
       font-size: clamp(2.0rem, 5vw, 3.5rem);
       line-height: 1.2;
@@ -129,6 +129,12 @@ const HomePageWrapper = styled.div`
         color: #555;
     }
 
+    @media all and (min-width: 768px) {
+        h1 {
+          margin-top: 15rem;
+        }
+    }
+
     .home-page-ctas {
       width: min(650px, 90%);
       display: flex;
@@ -138,8 +144,10 @@ const HomePageWrapper = styled.div`
       text-align: center;
       line-height: 1.0;
 
+      flex-direction: column;
+
       a, button {
-        display: inline-block;
+        display: block;
         padding: 1rem 2rem;
         border-radius: 40px;
         border: 2px solid #222;
@@ -167,11 +175,30 @@ const HomePageWrapper = styled.div`
     }
 
     .small-info {
-        font-size: clamp(12px, 2vw, 16px);
-        margin-top: -1rem;
-        margin-bottom: 2rem;
-        color: #999;
+      font-size: clamp(12px, 2vw, 16px);
+      margin-top: -1rem;
+      margin-bottom: 2rem;
+      color: #999;
+    }
+
+
+    @media all and (min-width: 768px) {
+      .home-page-ctas {
+        flex-direction: row;
+
+        a, button {
+
+          &:hover {
+          }
+        }
+        
+        .primary-cta {
+
+          &:hover {
+          }
+        }
       }
+    }
 
     @media all and (min-width: 1024px) {
         h1 {
