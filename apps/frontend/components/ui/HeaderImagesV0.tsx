@@ -37,7 +37,7 @@ top: 0; left: 0;
     display: flex;
     justify-content: center;
     position: relative;
-    transform: translateY(-70vh);
+    transform: translateY(-72vh);
     border: 50px solid skyblue;
   }
 
