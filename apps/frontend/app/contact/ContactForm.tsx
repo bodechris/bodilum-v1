@@ -22,7 +22,7 @@ type SubmitState =
   | { status: "success"; message: string }
   | { status: "error"; message: string };
 
-function FieldError({ message }: { message?: string }) {
+function FieldError({ message }: { message?: string }) {   
   if (!message) {
     return null;
   }
