@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Popover } from "@chakra-ui/react";
+import Link from "next/link";
 import styled from "styled-components";
 import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 import SvgIcons from "@/assets/SvgIcons";
@@ -93,8 +95,10 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
   const [selectedSingleDesignSlots, setSelectedSingleDesignSlots] = useState<number[]>([]);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+  const [isMobileOfferManagerOpen, setIsMobileOfferManagerOpen] = useState(false);
 
   const screenDim = useWindowResize();
+  const screenWidth = screenDim?.[0] ?? 0;
 
   const offerPreviews: OfferPreview[] = (service?.offers ?? []).map((offer, index) => ({
     id: index + 1,
@@ -191,6 +195,14 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
     ),
   );
   const visibleGalleryImages = galleryImages.slice(0, 6);
+  const showDesktopContextFilters = screenWidth >= 1024;
+  const showMobileOfferManager = !selectedOffer && offerFilterOptions.length > 0 && screenWidth > 0 && screenWidth < 1024;
+
+  useEffect(() => {
+    if (!showMobileOfferManager) {
+      setIsMobileOfferManagerOpen(false);
+    }
+  }, [showMobileOfferManager]);
 
   const toggleFilter = (filterId: OfferFilterId) => {
     setActiveFilterIds((currentFilters) =>
@@ -305,7 +317,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
         ) : null}
 
         {
-            screenDim && screenDim[0] && screenDim[0] >= 768 ? 
+          showDesktopContextFilters ? 
             <div className="context-block__content">
                 <p>{service.summary ?? service.description}</p>
 
@@ -328,7 +340,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
 
       </ContextBlock>
 
-      <DrawerScreensViewport>
+      <DrawerScreensViewport className={showMobileOfferManager ? "has-mobile-offer-manager" : undefined}>
         {selectedOffer ? (
           <DrawerScreen>
             <OfferDetailCard>
@@ -497,6 +509,61 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
               : "Order design"}
           </button>
         </DrawerFooter>
+      ) : null}
+
+      { showMobileOfferManager ? (
+        <MobileOfferManagerFooter>
+          <Link href={service.link} className="mobile-offers-manager__link">
+            See full offer
+          </Link>
+
+          <Popover.Root
+            lazyMount
+            unmountOnExit
+            open={isMobileOfferManagerOpen}
+            onOpenChange={(details) => setIsMobileOfferManagerOpen(details.open)}
+            positioning={{ placement: "top" }}
+          >
+            <Popover.Trigger asChild>
+              <button type="button" className="mobile-offers-manager__trigger">
+                manage offers
+              </button>
+            </Popover.Trigger>
+
+            <Popover.Positioner>
+              <Popover.Content
+                bg="white"
+                border="1px solid rgba(17, 17, 17, 0.08)"
+                borderRadius="24px"
+                boxShadow="0 24px 48px rgba(17, 17, 17, 0.16)"
+                p="1rem"
+                width="min(22rem, calc(100vw - 2rem))"
+              >
+                <Popover.Body p="0">
+                  <div className="mobile-offers-manager__body">
+                    <div className="mobile-offers-manager__header">
+                      <span className="mobile-offers-manager__eyebrow">Offer options</span>
+                      <p>Choose which offers should appear in this direction.</p>
+                    </div>
+
+                    <div className="mobile-offers-manager__filters" role="group" aria-label="Offer categories">
+                      {offerFilterOptions.map((filter) => (
+                        <label key={filter.id} className="mobile-offers-manager__filter-option">
+                          <input
+                            type="checkbox"
+                            checked={activeFilterIds.includes(filter.id)}
+                            onChange={() => toggleFilter(filter.id)}
+                          />
+                          <span>{filter.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </Popover.Body>
+              </Popover.Content>
+            </Popover.Positioner>
+          </Popover.Root>
+        </MobileOfferManagerFooter>
       ) : null}
 
       {activeGalleryIndex !== null && galleryImages[activeGalleryIndex] ? (
@@ -856,6 +923,12 @@ const DrawerScreensViewport = styled.div`
   overflow-anchor: none;
   scroll-behavior: auto;
   scrollbar-gutter: stable;
+
+  &.has-mobile-offer-manager {
+    @media (max-width: 63.99875rem) {
+      padding-bottom: 5.75rem;
+    }
+  }
 `;
 
 const DrawerScreen = styled.div`
@@ -1143,6 +1216,105 @@ const DrawerFooter = styled.div`
 
   .drawer-footer__action:not(:disabled):hover {
     transform: translateY(-1px);
+  }
+`;
+
+const MobileOfferManagerFooter = styled.div`
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0 0;
+
+  @media (min-width: 64rem) {
+    display: none;
+  }
+
+  .mobile-offers-manager__link,
+  .mobile-offers-manager__trigger {
+    min-height: 3.25rem;
+    padding: 0.8rem 1.4rem;
+    border: 1px solid rgba(17, 17, 17, 0.08);
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    box-shadow: 0 18px 36px rgba(17, 17, 17, 0.18);
+    white-space: nowrap;
+  }
+
+  .mobile-offers-manager__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    color: #111;
+    text-decoration: none;
+  }
+
+  .mobile-offers-manager__trigger {
+    background: rgba(17, 17, 17, 0.96);
+    color: #fff;
+    text-transform: lowercase;
+  }
+
+  .mobile-offers-manager__body {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .mobile-offers-manager__header {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .mobile-offers-manager__eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #767676;
+  }
+
+  .mobile-offers-manager__header p {
+    color: #666;
+    line-height: 1.55;
+  }
+
+  .mobile-offers-manager__filters {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .mobile-offers-manager__filter-option {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+    gap: 0.85rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 1rem;
+    background: #fcfcfb;
+    border: 1px solid rgba(17, 17, 17, 0.08);
+    color: #222;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  .mobile-offers-manager__filter-option input {
+    margin: 0.15rem 0 0;
+    width: 1rem;
+    height: 1rem;
+    accent-color: #111;
+    flex: 0 0 auto;
+  }
+
+  .mobile-offers-manager__filter-option span {
+    display: block;
+    min-width: 0;
   }
 `;
 

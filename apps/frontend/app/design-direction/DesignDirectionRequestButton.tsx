@@ -286,14 +286,14 @@ export default function DesignDirectionRequestButton({
       >
         <Portal>
           <Drawer.Backdrop bg="rgba(17, 17, 17, 0.55)" />
-          <Drawer.Positioner p={{ base: "0", md: "4" }}>
+          <Drawer.Positioner p="0">
             <Drawer.Content
               width={{ base: "100%", md: "65vw" }}
               minW={{ base: "100%", md: "65vw" }}
               maxW={{ base: "100%", md: "65vw" }}
-              h={{ base: "88vh", md: "calc(100vh - 2rem)" }}
-              maxH={{ base: "88vh", md: "calc(100vh - 2rem)" }}
-              borderRadius={{ base: "1.5rem 1.5rem 0 0", md: "1.75rem" }}
+              h="100dvh"
+              maxH="100dvh"
+              borderRadius="0"
               boxShadow="-24px 0 64px rgba(0, 0, 0, 0.18)"
               overflowX="hidden"
               overflowY="hidden"
@@ -327,7 +327,7 @@ export default function DesignDirectionRequestButton({
               </Drawer.Body>
 
               {showFooterLink ? (
-                <Drawer.Footer display="flex" justifyContent="flex-start" pt="0.25rem">
+                <Drawer.Footer display={{ base: "none", lg: "flex" }} justifyContent="flex-start" pt="0.25rem">
                   <Button
                     asChild
                     minH="44px"
