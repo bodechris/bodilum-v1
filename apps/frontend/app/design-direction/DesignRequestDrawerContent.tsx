@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Popover, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 import styled from "styled-components";
@@ -96,6 +96,8 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
   const [isMobileOfferManagerOpen, setIsMobileOfferManagerOpen] = useState(false);
+  const [pendingScrollOfferId, setPendingScrollOfferId] = useState<number | null>(null);
+  const offerPreviewRefs = useRef<Record<number, HTMLButtonElement | null>>({});
 
   const screenDim = useWindowResize();
   const screenWidth = screenDim?.[0] ?? 0;
@@ -204,12 +206,46 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
     }
   }, [showMobileOfferManager]);
 
+  useEffect(() => {
+    if (pendingScrollOfferId === null) {
+      return;
+    }
+
+    const targetOffer = offerPreviewRefs.current[pendingScrollOfferId];
+
+    if (targetOffer) {
+      targetOffer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    setPendingScrollOfferId(null);
+  }, [pendingScrollOfferId, visibleOffers]);
+
   const toggleFilter = (filterId: OfferFilterId) => {
     setActiveFilterIds((currentFilters) =>
       currentFilters.includes(filterId)
         ? currentFilters.filter((currentFilterId) => currentFilterId !== filterId)
         : [...currentFilters, filterId],
     );
+  };
+
+  const toggleMobileFilter = (filterId: OfferFilterId) => {
+    const isFilterActive = activeFilterIds.includes(filterId);
+
+    if (isFilterActive) {
+      toggleFilter(filterId);
+      return;
+    }
+
+    const nextFilterIds = [...activeFilterIds, filterId];
+    const nextVisibleOfferIds = offerFilterOptions
+      .filter((filter) => nextFilterIds.includes(filter.id))
+      .flatMap((filter) => filter.offerIds);
+    const nextVisibleOffers = offerPreviews.filter((offer) => nextVisibleOfferIds.includes(offer.id));
+    const lastVisibleOfferId = nextVisibleOffers.at(-1)?.id ?? null;
+
+    setIsMobileOfferManagerOpen(false);
+    setPendingScrollOfferId(lastVisibleOfferId);
+    setActiveFilterIds(nextFilterIds);
   };
 
   const toggleSingleDesignSelection = (slotIndex: number) => {
@@ -447,6 +483,9 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
                     key={offer.id}
                     className="offer-preview"
                     type="button"
+                    ref={(node) => {
+                      offerPreviewRefs.current[offer.id] = node;
+                    }}
                     onClick={() => setSelectedOfferId(offer.id)}
                   >
                     <div className="offer-preview__content">
@@ -526,7 +565,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
           >
             <Popover.Trigger asChild>
               <button type="button" className="mobile-offers-manager__trigger">
-                manage offers
+                Manage offers
               </button>
             </Popover.Trigger>
 
@@ -565,7 +604,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
                             <input
                               type="checkbox"
                               checked={activeFilterIds.includes(filter.id)}
-                              onChange={() => toggleFilter(filter.id)}
+                              onChange={() => toggleMobileFilter(filter.id)}
                             />
                             <span>{filter.label}</span>
                           </label>
