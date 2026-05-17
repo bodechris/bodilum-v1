@@ -1223,26 +1223,34 @@ const MobileOfferManagerFooter = styled.div`
   position: sticky;
   bottom: 0;
   z-index: 20;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: center;
   gap: 0.75rem;
-  padding: 0.25rem 0 0;
+  width: 100%;
+  min-width: 0;
+  padding: 0.25rem max(0.75rem, env(safe-area-inset-right)) calc(0.5rem + env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
 
   @media (min-width: 64rem) {
     display: none;
+  }
+
+  @media (max-width: 23.5rem) {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .mobile-offers-manager__link,
   .mobile-offers-manager__trigger {
     min-height: 3.25rem;
     padding: 0.8rem 1.4rem;
+    width: 100%;
+    min-width: 0;
     border: 1px solid rgba(17, 17, 17, 0.08);
     border-radius: 999px;
     font-size: 0.95rem;
     font-weight: 700;
     box-shadow: 0 18px 36px rgba(17, 17, 17, 0.18);
-    white-space: nowrap;
+    text-align: center;
   }
 
   .mobile-offers-manager__link {
