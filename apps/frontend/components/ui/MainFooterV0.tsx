@@ -205,7 +205,8 @@ export default MainFooterV0;
 
 const MainFooterV0Wrapper = styled.footer`
   width: 100%;
-  min-height: 70vh !important;
+  height: auto !important;
+  // min-height: 70vh !important;
   background: #111;
   display: flex;
   position: relative;
