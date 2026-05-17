@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import AppFrontend from "@/components/modules/app-frontend/AppFrontend";
 import { Lato, Bricolage_Grotesque } from "next/font/google";
 import { headers } from "next/headers";
@@ -66,6 +67,7 @@ export default async function RootLayout({
             {children}
           </AppFrontend>
         </Providers>
+        {process.env.NEXT_PUBLIC_GA_ID ? <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} /> : null}
       </body>
     </html>
   );
