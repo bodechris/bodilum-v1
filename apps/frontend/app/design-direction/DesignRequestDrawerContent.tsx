@@ -6,6 +6,7 @@ import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 import SvgIcons from "@/assets/SvgIcons";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import { ServiceDrawerPayload } from "../services/ServiceSectionDrawerContext";
+import useWindowResize from "@bod/utils/hooks/useWindowResize";
 
 type DesignRequestDrawerContentProps = {
   service?: ServiceDrawerPayload | null;
@@ -92,6 +93,8 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
   const [selectedSingleDesignSlots, setSelectedSingleDesignSlots] = useState<number[]>([]);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderError, setOrderError] = useState<string | null>(null);
+
+  const screenDim = useWindowResize();
 
   const offerPreviews: OfferPreview[] = (service?.offers ?? []).map((offer, index) => ({
     id: index + 1,
@@ -301,24 +304,28 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
           </button>
         ) : null}
 
-        <div className="context-block__content">
-          <p>{service.summary ?? service.description}</p>
+        {
+            screenDim && screenDim[0] && screenDim[0] >= 768 ? 
+            <div className="context-block__content">
+                <p>{service.summary ?? service.description}</p>
 
-          {!selectedOffer ? (
-            <div className="context-block__filters" role="group" aria-label="Offer categories">
-              {offerFilterOptions.map((filter) => (
-                <label key={filter.id} className="context-block__filter-option">
-                  <input
-                    type="checkbox"
-                    checked={activeFilterIds.includes(filter.id)}
-                    onChange={() => toggleFilter(filter.id)}
-                  />
-                  <span>{filter.label}</span>
-                </label>
-              ))}
-            </div>
-          ) : null}
-        </div>
+                {!selectedOffer ? (
+                    <div className="context-block__filters" role="group" aria-label="Offer categories">
+                    {offerFilterOptions.map((filter) => (
+                        <label key={filter.id} className="context-block__filter-option">
+                        <input
+                            type="checkbox"
+                            checked={activeFilterIds.includes(filter.id)}
+                            onChange={() => toggleFilter(filter.id)}
+                        />
+                        <span>{filter.label}</span>
+                        </label>
+                    ))}
+                    </div>
+                ) : null}
+            </div> : null
+        }
+
       </ContextBlock>
 
       <DrawerScreensViewport>
