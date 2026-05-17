@@ -117,10 +117,7 @@ function ServiceSectionPage(props: ServiceSectionPageProps) {
                 </Drawer.CloseTrigger>
 
                 <Drawer.Body display="flex" flexDirection="column" gap="1rem">
-                  <ServiceRequestDrawerContent
-                    service={activeService}
-                    onClose={() => setIsDrawerOpen(false)}
-                  />
+                  <ServiceRequestDrawerContent />
                 </Drawer.Body>
 
                 {activeService?.link ? (

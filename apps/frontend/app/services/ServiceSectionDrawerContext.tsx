@@ -2,6 +2,38 @@
 
 import { createContext, useContext } from "react";
 
+export type ServiceDrawerPricingOption = {
+  key: string;
+  title: string;
+  priceLabel: string;
+  timeline: string;
+  paymentTerms: string;
+  summary: string;
+  includes?: string[];
+  badge?: string;
+  depositLabel?: string;
+};
+
+export type ServiceDrawerPaymentOption = {
+  title: string;
+  amountLabel: string;
+  note: string;
+};
+
+export type ServiceDrawerOffer = {
+  name: string;
+  title: string;
+  timeline: string;
+  price: string;
+  description: string;
+  coverImg: string;
+  businessOutcomes: string[];
+  deliverables: string[];
+  bestFor: string;
+  singleDesignGallery?: number[];
+  singleDesignImages?: string[];
+};
+
 export type ServiceDrawerPayload = {
   title: string;
   description: string;
@@ -12,6 +44,13 @@ export type ServiceDrawerPayload = {
   bestFor?: string;
   deliverables?: string[];
   thumbnail?: string;
+  previewImages?: string[];
+  requestKind?: "service" | "design-direction";
+  priceHighlights?: string[];
+  pricingOptions?: ServiceDrawerPricingOption[];
+  bundleOptions?: ServiceDrawerPricingOption[];
+  paymentOptions?: ServiceDrawerPaymentOption[];
+  offers?: ServiceDrawerOffer[];
 };
 
 export type ServiceSectionDrawerContextValue = {

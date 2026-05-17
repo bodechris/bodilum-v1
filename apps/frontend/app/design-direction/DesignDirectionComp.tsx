@@ -2,6 +2,7 @@ import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import { DesignDirectionDataType } from './designDirectionData';
 import LocalizedServicePrice from '../services/LocalizedServicePrice';
+import DesignDirectionRequestButton from './DesignDirectionRequestButton';
 
 type DesignDirectionCompProps = PropsWithChildren & DesignDirectionDataType;
 function DesignDirectionComp(props: DesignDirectionCompProps) {
@@ -57,13 +58,16 @@ function DesignDirectionComp(props: DesignDirectionCompProps) {
                     ) : null}
                 </ul>
             </div>
-            <div className="cover-info__price-and-cta">
-                <div className="price">
-                    <LocalizedServicePrice price={price || ''} />
-                </div>
-                <button className="cta-button">Get Started</button>
-            </div>
         </div>
+
+        <div className="cover-price-and-cta">
+            <b>Customise this direction from</b>
+            <div className="price">
+                <LocalizedServicePrice price={price || ''} />
+            </div>
+            <DesignDirectionRequestButton className="cta-button" direction={props}>Request a custom design</DesignDirectionRequestButton>
+        </div>
+
         <div className="all-designs-preview">
             <div className="designs-preview__grid masonry">
                 <div className="masonry-item item-1"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[0] ? sections.cover.previewImgs[0] : ''} alt="Design 1"/></div>
@@ -80,11 +84,11 @@ function DesignDirectionComp(props: DesignDirectionCompProps) {
                 <div className="masonry-item item-12"><img src={sections && sections.cover && sections.cover.previewImgs && sections.cover.previewImgs[11] ? sections.cover.previewImgs[11] : ''} alt="Design 12"/></div>
             </div>
         </div>
-       </div>
+       </div>       
 
-       <div className="design-card-item cover">
+       {/* <div className="design-card-item cover">
         <h2>Logo + Brand discovery + Brand colors + Typography</h2>
-       </div>
+       </div> */}
     </DesignDirectionCompWrapper>
   )
 }
@@ -100,6 +104,31 @@ const DesignDirectionCompWrapper = styled.div`
   flex-direction: column;
   gap: 5rem;
 
+  .design-card-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+    h1 {
+        max-width: 800px;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 1.2;
+        font-weight: bolder;
+        text-transform: capitalize;
+    }
+    p {
+        max-width: 600px;
+        font-size: clamp(10px, 2.0vw, 15px);
+        line-height: 1.5;
+        color: #555;
+        // background: pink;
+    }
+  }
+
   .design-card-item {
     width: 100%;
     min-height: 50vh;
@@ -111,11 +140,49 @@ const DesignDirectionCompWrapper = styled.div`
     box-shadow: 0px 40px 50px 2px rgba(0, 0, 0, 0.05);
   }
 
-  .cover {
-    height: auto;
-    display: grid;
-    grid-template-rows: auto auto auto;
-  }
+
+    .cover {
+        height: auto;
+        display: grid;
+        grid-template-rows: auto auto auto;
+        position: relative;
+
+        .cover-price-and-cta {
+            width: 100%;
+            display: flex;
+            position: relative;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0 6rem 0;
+            gap: 1rem;
+
+            .price {
+                font-size: clamp(1.5rem, 3vw, 2rem);
+                font-weight: bolder;
+                position: relative;
+            }
+            .cta-button {
+                cursor: pointer;
+                padding: 1rem 2rem;
+                border-radius: 40px;
+                border: 2px solid #222;
+                background: #222;
+                color: #ccc;
+                font-weight: bold;
+                border-radius: 40px;
+                transition: all 0.3s ease-in-out;
+                position: relative;
+
+                text-transform: capitalize;
+
+                &:hover {
+                    background: #000;
+                    color: #fff;
+                }
+            }
+        }
+    }
 
   .bg-cover {
     width: 100%;
@@ -132,11 +199,11 @@ const DesignDirectionCompWrapper = styled.div`
 
   .cover-info {
     width: 100%;
-    padding: 32px;
+    padding: 4rem;
     position: relative;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
+    gap: 2rem;
   }
 
   .cover-info h4,
@@ -156,6 +223,41 @@ const DesignDirectionCompWrapper = styled.div`
   .cover-info ul {
     margin: 0;
     padding-left: 1.2rem;
+  }
+
+
+  .cover-info__item {
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    p {
+    }
+
+    ul {
+       padding-left: 0;
+       position: relative;
+       display: flex;
+       flex-direction: column;
+       gap: 0.75rem;
+       margin: 0;
+        li {
+            position: relative;
+            margin-left: 1.5rem;
+
+            &::before {
+                content: '';
+                border-left: 6px solid #222;
+                position: absolute;
+                left: -1.5rem;
+                top: 10px;
+                height: 8px;
+            }
+        }
+    }
+
   }
 
   .all-designs-preview {

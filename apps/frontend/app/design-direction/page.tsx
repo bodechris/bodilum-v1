@@ -2,7 +2,8 @@ import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import LocalizedServicePrice from '../services/LocalizedServicePrice';
-import { designDirectionData } from './designDirectionData';
+import { designDirectionData, DesignDirectionDataType } from './designDirectionData';
+import DesignDirectionRequestButton from './DesignDirectionRequestButton';
 
 
 function DesignDirectionPage() {  
@@ -11,7 +12,7 @@ function DesignDirectionPage() {
     <DesignDirectionWrapper>
       {
         designDirectionData.map((item) => (
-          <DesignDirectionItem key={item.id} title={item.title} description={item.description} category={item.category || ''} thumbnails={item.thumbnails || []} layout={ item.layout || 'layout-1' } price={item.price} />
+          <DesignDirectionItem key={item.id} direction={item} />
         ))
       }
     </DesignDirectionWrapper>
@@ -40,14 +41,10 @@ const DesignDirectionWrapper = styled.div`
 `;
 type DesignDirectionItemProps = PropsWithChildren<{
   key: number;
-  title: string;
-  description: string;
-  category: string;
-  thumbnails: string[];
-  layout?: string;
-  price?: string;
+  direction: DesignDirectionDataType;
 }>;
-const DesignDirectionItem = ({ title, description, category, thumbnails, layout='layout-1', price }: DesignDirectionItemProps) => {
+const DesignDirectionItem = ({ direction }: DesignDirectionItemProps) => {
+    const { title, category, thumbnails, layout='layout-1', price } = direction;
     return (
         <DesignDirectionItemWrapper>
           <Link className={`design-direction-preview-images ${layout}`} href={`/design-direction/${title.toLowerCase().replace(/\s/g, '-')}`}>
@@ -63,12 +60,15 @@ const DesignDirectionItem = ({ title, description, category, thumbnails, layout=
               <p>{category}</p>
             </div>
             <div className="price-panel">
-              <div className="price"><LocalizedServicePrice price={price} /></div>
+              <div className="price">
+                <b>Customise this direction from</b>
+                <LocalizedServicePrice price={price} />
+              </div>
             </div>
           </div>
           <div className="cta-panel">
             <Link href={`/design-direction/${title.toLowerCase().replace(/\s/g, '-')}`}><span>View Details</span></Link>
-            <Link className="primary-btn" href={`/contact?subject=Inquiry about ${title} design direction`}><span>Request Design</span></Link>
+            <DesignDirectionRequestButton className="primary-btn" direction={direction}>Request Design</DesignDirectionRequestButton>
           </div>
         </DesignDirectionItemWrapper>
     );
@@ -308,9 +308,25 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
       .price {
         width: 100%;
         text-align: right;
-        font-size: clamp(13px, 2vw, 18px);
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
         line-height: 1.2;
         font-weight: 500;
+
+        align-items: flex-end;
+
+        b {
+          width: 75%;
+          display: block;
+          font-size: clamp(10px, 2vw, 13px);
+          font-weight: bolder;
+        }
+
+        .price-meta {
+          display: block;
+          font-size: clamp(13px, 2vw, 18px);
+        }
       }
     }
   }
@@ -324,7 +340,8 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
     flex-wrap: wrap;
     flex-direction: column;
 
-    a {
+    a,
+    button {
       width: 100%;
       height: 100%;
       font-size: clamp(14px, 1.5vw, 16px);
@@ -337,6 +354,9 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
       display: flex;
       justify-content: center;
       align-items: center;
+      appearance: none;
+      border: 0;
+      background: transparent;
 
       min-height: 3.5rem;
       border-right: none;
@@ -425,7 +445,8 @@ const DesignDirectionItemWrapper = styled.div<DesignDirectionItemWrapperProps>`
     .cta-panel {
       flex-direction: row;
 
-      a {
+      a,
+      button {
         border-right: 0.5px solid #eee;
         border-bottom: none;
 
