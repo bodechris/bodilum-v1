@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { SingleServiceProp } from './ServiceSectionPage';
 import { useGlobalAppStates } from '@bod/utils/contexts/GlobalAppVarProvider';
 import Link from 'next/link';
+import { trackMetaCustomEvent } from '@/lib/metaPixelEvents';
 import { useServiceSectionDrawer } from './ServiceSectionDrawerContext';
 
 function SingleServiceV0({
@@ -21,6 +22,25 @@ function SingleServiceV0({
   const { currencyCode, formatUsdPrice, isExchangeRateLoading } = useGlobalAppStates();
   const { openDrawer } = useServiceSectionDrawer();
   const showPriceLoader = Boolean(price) && currencyCode !== 'USD' && isExchangeRateLoading;
+
+  const handleOpenDrawer = () => {
+    trackMetaCustomEvent('ServiceRequestStarted', {
+      service_name: title,
+      service_path: link,
+    });
+
+    openDrawer({
+      title,
+      description,
+      link,
+      price,
+      summary,
+      timeline,
+      thumbnail,
+      bestFor,
+      deliverables,
+    });
+  };
 
   return (
     <SingleServiceV0Wrapper>
@@ -43,19 +63,7 @@ function SingleServiceV0({
         <div className="service-actions">
           <button
             type="button"
-            onClick={() =>
-              openDrawer({
-                title,
-                description,
-                link,
-                price,
-                summary,
-                timeline,
-                thumbnail,
-                bestFor,
-                deliverables,
-              })
-            }
+            onClick={handleOpenDrawer}
           >
             Request this service
           </button>

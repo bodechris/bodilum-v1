@@ -4,6 +4,7 @@ import { Button, CloseButton, Drawer, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo, useState } from "react";
+import { trackMetaCustomEvent } from "@/lib/metaPixelEvents";
 import DesignRequestDrawerContent from "./DesignRequestDrawerContent";
 import {
   ServiceDrawerPayload,
@@ -271,9 +272,17 @@ export default function DesignDirectionRequestButton({
   const drawerPayload = useMemo(() => buildDesignDirectionPayload(direction), [direction]);
   const showFooterLink = pathname === "/design-direction";
 
+  const handleOpenDrawer = () => {
+    trackMetaCustomEvent("DesignDirectionRequestStarted", {
+      direction_name: drawerPayload.title,
+      source_path: pathname,
+    });
+    setIsDrawerOpen(true);
+  };
+
   return (
     <>
-      <button style={{ cursor: "pointer" }} className={className} type="button" onClick={() => setIsDrawerOpen(true)}>
+      <button style={{ cursor: "pointer" }} className={className} type="button" onClick={handleOpenDrawer}>
         <span>{children}</span>
       </button>
 

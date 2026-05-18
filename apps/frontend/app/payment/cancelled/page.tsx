@@ -1,8 +1,18 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { trackMetaCustomEvent } from "@/lib/metaPixelEvents";
 
 export default function PaymentCancelledPage() {
+  useEffect(() => {
+    trackMetaCustomEvent("CheckoutCancelled", {
+      checkout_type: "paypal-order",
+    });
+  }, []);
+
   return (
     <PageV0>
       <CancelledShell>
