@@ -3,6 +3,7 @@ export type StoredPayPalSubscription = {
   paypalSubscriptionId?: string;
   planKey: string;
   planTitle: string;
+  amountUsd: number;
   status: "pending" | "approved";
   createdAt: string;
 };
@@ -38,6 +39,10 @@ export function attachPayPalSubscriptionId(internalSubscriptionId: string, paypa
 
   savePayPalSubscription(updatedSubscription);
   return updatedSubscription;
+}
+
+export function getPayPalSubscriptionByInternalId(internalSubscriptionId: string) {
+  return getSubscriptionStore().get(internalSubscriptionId) ?? null;
 }
 
 export function markPayPalSubscriptionApproved(params: {

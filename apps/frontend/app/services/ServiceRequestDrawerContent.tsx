@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import useReactForm from "@/hooks/useReactForm";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import LocalizedServicePrice from "./LocalizedServicePrice";
 import {
   ServiceSectionDrawerContext,
@@ -364,6 +365,10 @@ export default function ServiceRequestDrawerContent({ service }: ServiceRequestD
     }
 
     reset(buildDefaultValues(resolvedService, paymentTerms));
+    trackMetaEvent("Lead", {
+      content_name: resolvedService?.title ?? "Service Request",
+      content_category: "Design Service",
+    });
     setSubmitState({
       status: "success",
       message: payload?.message ?? "Your request has been sent. We will reply shortly.",

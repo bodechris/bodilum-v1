@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { trackMetaEvent } from '@/lib/metaPixelEvents';
 import {
   FaArrowRight,
   FaEnvelope,
@@ -80,6 +81,10 @@ function MainFooterV0() {
 
     setEmail('');
     setWebsite('');
+    trackMetaEvent('Subscribe', {
+      content_name: 'Bodilum Newsletter',
+      content_category: 'Newsletter',
+    });
     setSubmitState({
       status: 'success',
       message: payload?.message ?? 'You have been added to the Bodilum updates list.',

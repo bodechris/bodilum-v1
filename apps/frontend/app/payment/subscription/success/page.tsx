@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import { getPublicErrorMessage } from "@/lib/publicError";
 
 type SubscriptionDetailsResponse = {
@@ -13,6 +14,9 @@ type SubscriptionDetailsResponse = {
   subscriberEmail: string | null;
   subscriberName: string | null;
   planId: string | null;
+  planKey: string | null;
+  planTitle: string | null;
+  amountUsd: number | null;
   startTime: string | null;
   error?: string;
 };
@@ -22,6 +26,21 @@ export default function SubscriptionSuccessPage() {
   const [details, setDetails] = useState<SubscriptionDetailsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const hasTrackedPurchaseRef = useRef(false);
+
+  useEffect(() => {
+    if (!details || hasTrackedPurchaseRef.current) {
+      return;
+    }
+
+    hasTrackedPurchaseRef.current = true;
+    trackMetaEvent("Purchase", {
+      content_name: details.planTitle || "Monthly Support Subscription",
+      content_category: "Monthly Support",
+      value: details.amountUsd ?? 0,
+      currency: "USD",
+    });
+  }, [details]);
 
   useEffect(() => {
     const subscriptionId = searchParams.get("subscription_id");

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { markPayPalSubscriptionApproved } from "@/lib/paypalSubscriptionStore";
+import {
+  getPayPalSubscriptionByInternalId,
+  markPayPalSubscriptionApproved,
+} from "@/lib/paypalSubscriptionStore";
 import { getPayPalAccessToken, getPayPalBaseUrl } from "@/lib/paypal";
 import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 
@@ -84,6 +87,10 @@ export async function GET(request: Request) {
       });
     }
 
+    const storedSubscription = internalSubscriptionId
+      ? getPayPalSubscriptionByInternalId(internalSubscriptionId)
+      : null;
+
     return NextResponse.json({
       subscriptionId: payload.id,
       status: payload.status || null,
@@ -91,6 +98,9 @@ export async function GET(request: Request) {
       subscriberName:
         [payload.subscriber?.name?.given_name, payload.subscriber?.name?.surname].filter(Boolean).join(" ") || null,
       planId: payload.plan_id || null,
+      planKey: storedSubscription?.planKey || null,
+      planTitle: storedSubscription?.planTitle || null,
+      amountUsd: storedSubscription?.amountUsd ?? null,
       startTime: payload.start_time || null,
     });
   } catch (error) {

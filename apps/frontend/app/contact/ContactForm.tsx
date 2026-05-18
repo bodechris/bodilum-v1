@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import useReactForm from "@/hooks/useReactForm";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import {
   contactFormSchema,
   type ContactFormValues,
@@ -71,6 +72,14 @@ export default function ContactForm() {
     }
 
     reset(defaultValues);
+    trackMetaEvent("Lead", {
+      content_name: "Bodilum Contact Form",
+      content_category: "Contact",
+    });
+    trackMetaEvent("Contact", {
+      content_name: "Bodilum Contact Form",
+      content_category: "Contact",
+    });
     setSubmitState({
       status: "success",
       message: payload?.message ?? "Your message has been sent. We will reply shortly.",

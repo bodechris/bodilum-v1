@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import { getPublicErrorMessage } from "@/lib/publicError";
 
 type CaptureResponse = {
@@ -39,6 +40,21 @@ export default function PaymentSuccessPage() {
   const [result, setResult] = useState<CaptureResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const hasTrackedPurchaseRef = useRef(false);
+
+  useEffect(() => {
+    if (!result || hasTrackedPurchaseRef.current) {
+      return;
+    }
+
+    hasTrackedPurchaseRef.current = true;
+    trackMetaEvent("Purchase", {
+      content_name: result.offerName || result.directionTitle || "Bodilum Purchase",
+      content_category: result.directionTitle || "Premade Design",
+      value: result.amountUsd ?? 0,
+      currency: result.currency,
+    });
+  }, [result]);
 
   useEffect(() => {
     const orderId = searchParams.get("token");

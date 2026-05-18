@@ -6,6 +6,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 import SvgIcons from "@/assets/SvgIcons";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import { getPublicErrorMessage } from "@/lib/publicError";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import { ServiceDrawerPayload } from "../services/ServiceSectionDrawerContext";
@@ -335,6 +336,13 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
           }),
         );
       }
+
+      trackMetaEvent("InitiateCheckout", {
+        content_name: selectedOffer.title,
+        content_category: service.title,
+        value: finalPrice,
+        currency: "USD",
+      });
 
       onClose?.();
       window.location.assign(payload.approveUrl);

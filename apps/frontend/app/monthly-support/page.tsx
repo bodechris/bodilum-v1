@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { trackMetaEvent } from "@/lib/metaPixelEvents";
 import { getPublicErrorMessage } from "@/lib/publicError";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import useReactForm from "@/hooks/useReactForm";
@@ -147,6 +148,8 @@ function MonthlySupportPage() {
     setIsSubmittingPlanKey(planKey);
     setSubscriptionError(null);
 
+    const selectedPlan = MONTHLY_SUPPORT_PLANS.find((plan) => plan.key === planKey);
+
     try {
       const response = await fetch("/api/paypal/create-subscription", {
         method: "POST",
@@ -159,6 +162,15 @@ function MonthlySupportPage() {
 
       if (!response.ok || !payload?.approveUrl) {
         throw new Error(payload?.error || "Could not start the PayPal subscription checkout.");
+      }
+
+      if (selectedPlan) {
+        trackMetaEvent("InitiateCheckout", {
+          content_name: selectedPlan.title,
+          content_category: "Monthly Support",
+          value: Number(selectedPlan.usdPrice),
+          currency: "USD",
+        });
       }
 
       window.location.assign(payload.approveUrl);
@@ -194,6 +206,10 @@ function MonthlySupportPage() {
       setRequestState({
         kind: "success",
         message: payload?.message || "Your request has been sent.",
+      });
+      trackMetaEvent("Lead", {
+        content_name: "Monthly Support Request",
+        content_category: "Monthly Support",
       });
       reset();
     } catch (error) {

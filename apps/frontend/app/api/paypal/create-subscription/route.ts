@@ -15,14 +15,17 @@ import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 const PLAN_DEFINITIONS = {
   "brand-care": {
     title: "Brand Care",
+    priceUsd: 499,
     envKey: "PAYPAL_PLAN_ID_BRAND_CARE",
   },
   "campaign-support": {
     title: "Campaign Support",
+    priceUsd: 999,
     envKey: "PAYPAL_PLAN_ID_CAMPAIGN_SUPPORT",
   },
   "creative-partner": {
     title: "Creative Partner",
+    priceUsd: 1999,
     envKey: "PAYPAL_PLAN_ID_CREATIVE_PARTNER",
   },
 } as const;
@@ -66,6 +69,7 @@ export async function POST(request: Request) {
       internalSubscriptionId,
       planKey,
       planTitle: planDefinition.title,
+      amountUsd: planDefinition.priceUsd,
       status: "pending",
       createdAt: new Date().toISOString(),
     });

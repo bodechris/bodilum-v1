@@ -7,6 +7,7 @@ import Providers from "@/providers/Providers";
 import "./globals.css";
 
 import { MetaPixel } from "@/components/integrations/MetaPixel";
+import { MetaPixelTracker } from "@/components/integrations/MetaPixelTracker";
 
 
 const lato = Lato({
@@ -70,7 +71,12 @@ export default async function RootLayout({
           </AppFrontend>
         </Providers>
         {process.env.NEXT_PUBLIC_GA_ID ? <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} /> : null}
-        {process.env.NEXT_PUBLIC_META_PIXEL_ID ? <MetaPixel /> : null}
+        {process.env.NEXT_PUBLIC_META_PIXEL_ID ? (
+          <>
+            <MetaPixel />
+            <MetaPixelTracker />
+          </>
+        ) : null}
       </body>
     </html>
   );
