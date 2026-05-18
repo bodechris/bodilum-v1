@@ -6,6 +6,8 @@ import { headers } from "next/headers";
 import Providers from "@/providers/Providers";
 import "./globals.css";
 
+import { MetaPixel } from "@/components/integrations/MetaPixel";
+
 
 const lato = Lato({
   weight: ["100", "300", "400", "700", "900"],
@@ -68,6 +70,7 @@ export default async function RootLayout({
           </AppFrontend>
         </Providers>
         {process.env.NEXT_PUBLIC_GA_ID ? <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} /> : null}
+        {process.env.NEXT_PUBLIC_META_PIXEL_ID ? <MetaPixel /> : null}
       </body>
     </html>
   );
