@@ -10,6 +10,7 @@ import {
   getPayPalBrandName,
   getSiteUrl,
 } from "@/lib/paypal";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 
 const PLAN_DEFINITIONS = {
   "brand-care": {
@@ -51,7 +52,10 @@ export async function POST(request: Request) {
     if (!planId) {
       return NextResponse.json(
         {
-          error: `PayPal plan ID is missing. Set ${planDefinition.envKey} in apps/frontend/.env.local.`,
+          error: getPublicErrorMessage({
+            internalMessage: `PayPal plan ID is missing. Set ${planDefinition.envKey} in apps/frontend/.env.local.`,
+            publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+          }),
         },
         { status: 500 },
       );
@@ -96,8 +100,25 @@ export async function POST(request: Request) {
       | null;
 
     if (!response.ok || !payload?.id) {
+      const internalMessage =
+        payload?.details?.[0]?.description || "Could not create PayPal subscription.";
+
+      logInternalError({
+        context: "api/paypal/create-subscription:paypal-create-failed",
+        error: payload,
+        details: {
+          status: response.status,
+          planKey,
+        },
+      });
+
       return NextResponse.json(
-        { error: payload?.details?.[0]?.description || "Could not create PayPal subscription." },
+        {
+          error: getPublicErrorMessage({
+            internalMessage,
+            publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+          }),
+        },
         { status: 502 },
       );
     }
@@ -108,7 +129,12 @@ export async function POST(request: Request) {
 
     if (!approveUrl) {
       return NextResponse.json(
-        { error: "PayPal approval link is missing from the subscription response." },
+        {
+          error: getPublicErrorMessage({
+            internalMessage: "PayPal approval link is missing from the subscription response.",
+            publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+          }),
+        },
         { status: 502 },
       );
     }
@@ -119,7 +145,20 @@ export async function POST(request: Request) {
       approveUrl,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not create PayPal subscription.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    logInternalError({
+      context: "api/paypal/create-subscription:unhandled",
+      error,
+    });
+
+    return NextResponse.json(
+      {
+        error: getPublicErrorMessage({
+          internalMessage:
+            error instanceof Error ? error.message : "Could not create PayPal subscription.",
+          publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+        }),
+      },
+      { status: 500 },
+    );
   }
 }

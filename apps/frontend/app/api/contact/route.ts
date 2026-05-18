@@ -4,6 +4,7 @@ import {
   contactFormSchema,
   type ContactFormValues,
 } from "@/app/contact/contactFormSchema";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 import { rateLimit } from "@/lib/rateLimit";
 
 function buildSlackFields(values: ContactFormValues) {
@@ -14,6 +15,10 @@ function buildSlackFields(values: ContactFormValues) {
     { type: "mrkdwn", text: `*company:* ${values.company || "Not provided"}` },
     { type: "mrkdwn", text: `*message:* ${values.message}` },
   ];
+}
+
+function getMissingSlackConfigMessage(keys: string[]) {
+  return `Slack is not configured. Missing ${keys.join(", ")}.`;
 }
 
 export async function POST(request: Request) {
@@ -34,10 +39,25 @@ export async function POST(request: Request) {
   const slackChannelId = process.env.SLACK_CONTACT_CHANNEL_ID;
 
   if (!slackToken || !slackChannelId) {
+    const missingKeys = [
+      !slackToken ? "SLACK_BOT_TOKEN" : null,
+      !slackChannelId ? "SLACK_CONTACT_CHANNEL_ID" : null,
+    ].filter((value): value is string => Boolean(value));
+
+    logInternalError({
+      context: "api/contact:missing-slack-config",
+      details: {
+        hasSlackToken: Boolean(slackToken),
+        hasSlackChannelId: Boolean(slackChannelId),
+      },
+    });
+
     return NextResponse.json(
       {
-        message:
-          "Slack is not configured. Set SLACK_BOT_TOKEN and SLACK_CONTACT_CHANNEL_ID.",
+        message: getPublicErrorMessage({
+          internalMessage: getMissingSlackConfigMessage(missingKeys),
+          publicMessage: "We could not send your message right now. Please try again shortly.",
+        }),
       },
       { status: 500 },
     );
@@ -114,9 +134,20 @@ export async function POST(request: Request) {
           ? `Slack rejected the message: ${slackPayload.error}`
           : "Slack rejected the message.";
 
+    logInternalError({
+      context: "api/contact:slack-post-failed",
+      error: slackPayload,
+      details: {
+        status: slackResponse.status,
+      },
+    });
+
     return NextResponse.json(
       {
-        message,
+        message: getPublicErrorMessage({
+          internalMessage: message,
+          publicMessage: "We could not send your message right now. Please try again shortly.",
+        }),
       },
       { status: 502 },
     );

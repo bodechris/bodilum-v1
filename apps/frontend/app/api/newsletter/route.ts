@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 import { rateLimit } from "@/lib/rateLimit";
 
 const newsletterSchema = z.object({
@@ -10,6 +11,10 @@ const newsletterSchema = z.object({
 });
 
 const fallbackNewsletterChannelId = "C0B35QRT6CQ";
+
+function getMissingSlackConfigMessage(keys: string[]) {
+  return `Slack is not configured. Missing ${keys.join(", ")}.`;
+}
 
 export async function POST(request: Request) {
   const rawBody = await request.json().catch(() => null);
@@ -29,10 +34,24 @@ export async function POST(request: Request) {
   const slackChannelId = process.env.SLACK_NEWSLETTER_CHANNEL_ID ?? fallbackNewsletterChannelId;
 
   if (!slackToken || !slackChannelId) {
+    const missingKeys = [!slackToken ? "SLACK_BOT_TOKEN" : null].filter(
+      (value): value is string => Boolean(value),
+    );
+
+    logInternalError({
+      context: "api/newsletter:missing-slack-config",
+      details: {
+        hasSlackToken: Boolean(slackToken),
+        hasSlackChannelId: Boolean(slackChannelId),
+      },
+    });
+
     return NextResponse.json(
       {
-        message:
-          "Slack is not configured. Set SLACK_BOT_TOKEN and SLACK_NEWSLETTER_CHANNEL_ID.",
+        message: getPublicErrorMessage({
+          internalMessage: getMissingSlackConfigMessage(missingKeys),
+          publicMessage: "We could not process your signup right now. Please try again shortly.",
+        }),
       },
       { status: 500 },
     );
@@ -123,9 +142,20 @@ export async function POST(request: Request) {
           ? `Slack rejected the newsletter signup: ${slackPayload.error}`
           : "Slack rejected the newsletter signup.";
 
+    logInternalError({
+      context: "api/newsletter:slack-post-failed",
+      error: slackPayload,
+      details: {
+        status: slackResponse.status,
+      },
+    });
+
     return NextResponse.json(
       {
-        message,
+        message: getPublicErrorMessage({
+          internalMessage: message,
+          publicMessage: "We could not process your signup right now. Please try again shortly.",
+        }),
       },
       { status: 502 },
     );

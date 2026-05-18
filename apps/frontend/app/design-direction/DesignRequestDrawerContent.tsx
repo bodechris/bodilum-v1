@@ -6,6 +6,7 @@ import Link from "next/link";
 import styled from "styled-components";
 import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 import SvgIcons from "@/assets/SvgIcons";
+import { getPublicErrorMessage } from "@/lib/publicError";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import { ServiceDrawerPayload } from "../services/ServiceSectionDrawerContext";
 import useWindowResize from "@bod/utils/hooks/useWindowResize";
@@ -339,7 +340,10 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
       window.location.assign(payload.approveUrl);
     } catch (error) {
       setOrderError(
-        error instanceof Error ? error.message : "Could not start the PayPal checkout.",
+        getPublicErrorMessage({
+          internalMessage: error instanceof Error ? error.message : undefined,
+          publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+        }),
       );
       setIsSubmittingOrder(false);
     }

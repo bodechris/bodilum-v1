@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { getPublicErrorMessage } from "@/lib/publicError";
 
 type SubscriptionDetailsResponse = {
   subscriptionId: string;
@@ -52,9 +53,11 @@ export default function SubscriptionSuccessPage() {
       } catch (lookupError) {
         if (isMounted) {
           setError(
-            lookupError instanceof Error
-              ? lookupError.message
-              : "Could not verify your PayPal subscription.",
+            getPublicErrorMessage({
+              internalMessage: lookupError instanceof Error ? lookupError.message : undefined,
+              publicMessage:
+                "We could not confirm your subscription right now. Please contact us if this continues.",
+            }),
           );
         }
       } finally {

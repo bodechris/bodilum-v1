@@ -12,6 +12,7 @@ import {
   getPayPalBrandName,
   getSiteUrl,
 } from "@/lib/paypal";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 
 const createOrderSchema = z.object({
   offerType: z.string().trim().min(1),
@@ -180,10 +181,25 @@ export async function POST(request: Request) {
       | null;
 
     if (!response.ok || !paypalOrder?.id) {
+      const internalMessage =
+        paypalOrder?.details?.[0]?.description || "Could not create PayPal order.";
+
+      logInternalError({
+        context: "api/paypal/create-order:paypal-create-failed",
+        error: paypalOrder,
+        details: {
+          status: response.status,
+          directionSlug: body.directionSlug,
+          offerName: body.offerName,
+        },
+      });
+
       return NextResponse.json(
         {
-          error:
-            paypalOrder?.details?.[0]?.description || "Could not create PayPal order.",
+          error: getPublicErrorMessage({
+            internalMessage,
+            publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+          }),
         },
         { status: 502 },
       );
@@ -195,7 +211,12 @@ export async function POST(request: Request) {
 
     if (!approveUrl) {
       return NextResponse.json(
-        { error: "PayPal approval link is missing from the order response." },
+        {
+          error: getPublicErrorMessage({
+            internalMessage: "PayPal approval link is missing from the order response.",
+            publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+          }),
+        },
         { status: 502 },
       );
     }
@@ -206,7 +227,19 @@ export async function POST(request: Request) {
       approveUrl,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not create PayPal order.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    logInternalError({
+      context: "api/paypal/create-order:unhandled",
+      error,
+    });
+
+    return NextResponse.json(
+      {
+        error: getPublicErrorMessage({
+          internalMessage: error instanceof Error ? error.message : "Could not create PayPal order.",
+          publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+        }),
+      },
+      { status: 500 },
+    );
   }
 }

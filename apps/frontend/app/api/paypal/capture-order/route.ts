@@ -6,6 +6,7 @@ import {
   markPayPalOrderPaid,
 } from "@/lib/paypalOrderStore";
 import { getPayPalAccessToken, getPayPalBaseUrl } from "@/lib/paypal";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 
 const captureOrderSchema = z.object({
   orderId: z.string().trim().min(1),
@@ -66,10 +67,26 @@ export async function POST(request: Request) {
       | null;
 
     if (!response.ok) {
+      const internalMessage =
+        capturePayload?.details?.[0]?.description || "Could not capture the PayPal order.";
+
+      logInternalError({
+        context: "api/paypal/capture-order:paypal-capture-failed",
+        error: capturePayload,
+        details: {
+          status: response.status,
+          orderId,
+          internalOrderId,
+        },
+      });
+
       return NextResponse.json(
         {
-          error:
-            capturePayload?.details?.[0]?.description || "Could not capture the PayPal order.",
+          error: getPublicErrorMessage({
+            internalMessage,
+            publicMessage:
+              "We could not confirm your PayPal payment right now. Please contact us if this continues.",
+          }),
         },
         { status: 502 },
       );
@@ -98,7 +115,20 @@ export async function POST(request: Request) {
       status: paidOrder?.status || "paid",
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not capture PayPal order.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    logInternalError({
+      context: "api/paypal/capture-order:unhandled",
+      error,
+    });
+
+    return NextResponse.json(
+      {
+        error: getPublicErrorMessage({
+          internalMessage: error instanceof Error ? error.message : "Could not capture PayPal order.",
+          publicMessage:
+            "We could not confirm your PayPal payment right now. Please contact us if this continues.",
+        }),
+      },
+      { status: 500 },
+    );
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { markPayPalSubscriptionApproved } from "@/lib/paypalSubscriptionStore";
 import { getPayPalAccessToken, getPayPalBaseUrl } from "@/lib/paypal";
+import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 
 const subscriptionDetailsSchema = z.object({
   subscriptionId: z.string().trim().min(1),
@@ -51,8 +52,27 @@ export async function GET(request: Request) {
       | null;
 
     if (!response.ok || !payload?.id) {
+      const internalMessage =
+        payload?.details?.[0]?.description || "Could not load PayPal subscription details.";
+
+      logInternalError({
+        context: "api/paypal/subscription-details:paypal-lookup-failed",
+        error: payload,
+        details: {
+          status: response.status,
+          subscriptionId,
+          internalSubscriptionId,
+        },
+      });
+
       return NextResponse.json(
-        { error: payload?.details?.[0]?.description || "Could not load PayPal subscription details." },
+        {
+          error: getPublicErrorMessage({
+            internalMessage,
+            publicMessage:
+              "We could not confirm your PayPal subscription right now. Please contact us if this continues.",
+          }),
+        },
         { status: 502 },
       );
     }
@@ -74,7 +94,21 @@ export async function GET(request: Request) {
       startTime: payload.start_time || null,
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not load PayPal subscription details.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    logInternalError({
+      context: "api/paypal/subscription-details:unhandled",
+      error,
+    });
+
+    return NextResponse.json(
+      {
+        error: getPublicErrorMessage({
+          internalMessage:
+            error instanceof Error ? error.message : "Could not load PayPal subscription details.",
+          publicMessage:
+            "We could not confirm your PayPal subscription right now. Please contact us if this continues.",
+        }),
+      },
+      { status: 500 },
+    );
   }
 }

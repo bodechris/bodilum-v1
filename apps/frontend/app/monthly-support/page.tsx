@@ -3,6 +3,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { getPublicErrorMessage } from "@/lib/publicError";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import useReactForm from "@/hooks/useReactForm";
 import {
@@ -163,9 +164,10 @@ function MonthlySupportPage() {
       window.location.assign(payload.approveUrl);
     } catch (error) {
       setSubscriptionError(
-        error instanceof Error
-          ? error.message
-          : "Could not start the PayPal subscription checkout.",
+        getPublicErrorMessage({
+          internalMessage: error instanceof Error ? error.message : undefined,
+          publicMessage: "We could not start the PayPal checkout right now. Please try again shortly.",
+        }),
       );
       setIsSubmittingPlanKey(null);
     }
@@ -197,10 +199,10 @@ function MonthlySupportPage() {
     } catch (error) {
       setRequestState({
         kind: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "Could not send your monthly support request.",
+        message: getPublicErrorMessage({
+          internalMessage: error instanceof Error ? error.message : undefined,
+          publicMessage: "We could not send your request right now. Please try again shortly.",
+        }),
       });
     }
   });

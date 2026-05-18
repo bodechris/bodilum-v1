@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import styled from "styled-components";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { getPublicErrorMessage } from "@/lib/publicError";
 
 type CaptureResponse = {
   internalOrderId: string | null;
@@ -72,9 +73,11 @@ export default function PaymentSuccessPage() {
       } catch (captureError) {
         if (isMounted) {
           setError(
-            captureError instanceof Error
-              ? captureError.message
-              : "Could not capture your PayPal payment.",
+            getPublicErrorMessage({
+              internalMessage: captureError instanceof Error ? captureError.message : undefined,
+              publicMessage:
+                "We could not confirm your payment right now. Please contact us if this continues.",
+            }),
           );
         }
       } finally {
