@@ -88,7 +88,8 @@ const BxPanelWrapper = styled.div`
         position: relative;
         width: min(600px, 90%);
         height: auto;
-        background: #fff9;
+        // background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.82));
+        // border: 1px solid rgba(255, 255, 255, 0.5);
         border-radius: 10px;
         padding: 2.5rem 1.5rem;
         display: flex;
@@ -96,8 +97,9 @@ const BxPanelWrapper = styled.div`
         justify-content: center;
         flex-direction: column;
         text-align: center;
-        backdrop-filter: blur(30px);
         border-radius: 20px;
+        overflow: hidden;
+        isolation: isolate;
 
         -webkit-transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
         -moz-transition: all 1.0s cubic-bezier(0.16, 1, 0.3, 1);
@@ -108,17 +110,42 @@ const BxPanelWrapper = styled.div`
         -moz-box-shadow:    0px 20px 30px 2px rgba(0,0,0,0.05);
         box-shadow:         0px 20px 30px 2px rgba(0,0,0,0.05); 
 
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.64));
+        }
+
+        @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            &::before {
+                backdrop-filter: blur(24px);
+                -webkit-backdrop-filter: blur(24px);
+            }
+        }
+
         h2 {
             font-size: clamp(1.5rem, 2.5vw, 2.5rem);
             margin-bottom: 1rem;
             line-height: 1.2;
+            color: #171717;
+
+            b {
+                color: #111;
+            }
+        }
+
+        h3 {
+            color: #3f3f46;
+            line-height: 1.45;
         }
 
         a {
             margin-top: 1.5rem;
             padding: 0.8rem 2rem;
             background: #222;
-            color: #ccc;
+            color: #f7f7f7;
             border-radius: 15px;
             font-weight: bold;
             text-decoration: none;
