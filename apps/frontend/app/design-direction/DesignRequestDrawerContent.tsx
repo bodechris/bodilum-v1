@@ -71,10 +71,37 @@ function parsePriceValue(price: string) {
   return Number.isFinite(parsedPrice) ? parsedPrice : 0;
 }
 
+function getPriceRoundingIncrement(value: number) {
+  if (value >= 10000) {
+    return 500;
+  }
+
+  if (value >= 1000) {
+    return 50;
+  }
+
+  if (value >= 100) {
+    return 10;
+  }
+
+  if (value >= 10) {
+    return 5;
+  }
+
+  return 1;
+}
+
 function formatUserLocalValue(price: number, exchangeRate: number, currencyCode: string) {
-  const localValue = currencyCode === "USD"
-    ? price
-    : Math.round((price * exchangeRate) / 500) * 500;
+  if (currencyCode === "USD") {
+    return price;
+  }
+
+  const convertedValue = price * exchangeRate;
+  const roundingIncrement = getPriceRoundingIncrement(convertedValue);
+  const localValue = Math.max(
+    Math.round(convertedValue / roundingIncrement) * roundingIncrement,
+    roundingIncrement,
+  );
 
   return localValue;
 }

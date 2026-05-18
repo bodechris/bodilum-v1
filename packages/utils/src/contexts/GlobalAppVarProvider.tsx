@@ -18,8 +18,6 @@ import {
 const DEFAULT_COUNTRY: Countries = 'US';
 const DEFAULT_CURRENCY: Currencies = 'USD';
 const DEFAULT_CURRENCY_SYMBOL = '$';
-const PRICE_ROUNDING_INCREMENT = 500;
-
 type GeoState = {
   country: Countries;
   currencyCode: Currencies;
@@ -109,6 +107,26 @@ function resolveGeoState(countryCode?: string): GeoState {
   };
 }
 
+function getPriceRoundingIncrement(value: number): number {
+  if (value >= 10000) {
+    return 500;
+  }
+
+  if (value >= 1000) {
+    return 50;
+  }
+
+  if (value >= 100) {
+    return 10;
+  }
+
+  if (value >= 10) {
+    return 5;
+  }
+
+  return 1;
+}
+
 function formatPriceString(price: string, rate: number, currencyCode: Currencies): string {
   const formatter = new Intl.NumberFormat(undefined, {
     style: 'currency',
@@ -118,7 +136,11 @@ function formatPriceString(price: string, rate: number, currencyCode: Currencies
 
   return price.replace(/\d+(?:\.\d+)?/g, (value) => {
     const convertedValue = Number(value) * rate;
-    const roundedValue = Math.round(convertedValue / PRICE_ROUNDING_INCREMENT) * PRICE_ROUNDING_INCREMENT;
+    const roundingIncrement = getPriceRoundingIncrement(convertedValue);
+    const roundedValue = Math.max(
+      Math.round(convertedValue / roundingIncrement) * roundingIncrement,
+      roundingIncrement,
+    );
 
     return formatter.format(roundedValue);
   });
