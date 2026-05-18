@@ -19,7 +19,7 @@ const MONTHLY_SUPPORT_PLANS = [
     bestFor:
       "Small businesses that need consistent design help every month without handing over full campaign pressure.",
     activeRequests: "1 active request at a time",
-    taskLimit: "Up to 6 small design tasks per month",
+    taskLimit: "Up to 10 small design tasks per month",
     turnaround: "48-72 hour average turnaround per small task",
     isPopular: false,
     features: [
@@ -41,7 +41,7 @@ const MONTHLY_SUPPORT_PLANS = [
     bestFor:
       "Businesses running offers, launches, events, promotions, or monthly campaigns that need design linked to revenue.",
     activeRequests: "2 active requests at a time",
-    taskLimit: "Up to 12 design tasks per month",
+    taskLimit: "Up to 20 design tasks per month",
     turnaround: "Priority turnaround",
     isPopular: true,
     features: [
@@ -64,7 +64,7 @@ const MONTHLY_SUPPORT_PLANS = [
     bestFor:
       "Founders, churches, agencies, startups, real estate brands, and service businesses that need Bodilum as a part-time creative department.",
     activeRequests: "3 active requests at a time",
-    taskLimit: "Up to 25 design or support tasks per month",
+    taskLimit: "Up to 35 design or support tasks per month",
     turnaround: "Faster turnaround",
     isPopular: false,
     features: [
