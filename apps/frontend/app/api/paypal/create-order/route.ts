@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { designDirectionData } from "@/app/design-direction/designDirectionData";
+import { designRequestCheckoutSchema } from "@/app/design-direction/designRequestCheckoutSchema";
 import {
   attachPayPalOrderId,
   savePayPalOrder,
@@ -21,6 +22,7 @@ const createOrderSchema = z.object({
   directionTitle: z.string().trim().min(1),
   selectedDesignIndexes: z.array(z.number().int().nonnegative()).default([]),
   selectedMedia: z.array(z.string()).default([]),
+  customerDetails: designRequestCheckoutSchema,
   userLocalValue: z.number().nonnegative().optional(),
   userCurrency: z.string().trim().min(1).optional(),
   customerNotes: z.string().trim().max(2000).default(""),
@@ -112,6 +114,14 @@ export async function POST(request: Request) {
       directionTitle: direction.title,
       selectedDesignIndexes: body.selectedDesignIndexes,
       selectedMedia,
+      customerDetails: {
+        firstName: body.customerDetails.firstName,
+        lastName: body.customerDetails.lastName,
+        workEmail: body.customerDetails.workEmail,
+        phoneNumber: body.customerDetails.phoneNumber || null,
+        companyAddress: body.customerDetails.companyAddress || null,
+        additionalNotes: body.customerDetails.additionalNotes || "",
+      },
       userLocalValue: body.userLocalValue ?? null,
       userCurrency: body.userCurrency ?? null,
       customerNotes: body.customerNotes,

@@ -1,3 +1,12 @@
+export type StoredPayPalOrderCustomerDetails = {
+  firstName: string;
+  lastName: string;
+  workEmail: string;
+  phoneNumber: string | null;
+  companyAddress: string | null;
+  additionalNotes: string;
+};
+
 export type StoredPayPalOrder = {
   internalOrderId: string;
   paypalOrderId?: string;
@@ -8,6 +17,7 @@ export type StoredPayPalOrder = {
   directionTitle: string;
   selectedDesignIndexes: number[];
   selectedMedia: string[];
+  customerDetails: StoredPayPalOrderCustomerDetails;
   userLocalValue: number | null;
   userCurrency: string | null;
   customerNotes: string;

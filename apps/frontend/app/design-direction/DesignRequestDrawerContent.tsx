@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Popover, Portal } from "@chakra-ui/react";
 import Link from "next/link";
 import styled from "styled-components";
 import { useGlobalAppStates } from "@bod/utils/contexts/GlobalAppVarProvider";
 import SvgIcons from "@/assets/SvgIcons";
+import useReactForm from "@/hooks/useReactForm";
 import { trackMetaCustomEvent, trackMetaEvent } from "@/lib/metaPixelEvents";
 import { getPublicErrorMessage } from "@/lib/publicError";
 import LocalizedServicePrice from "../services/LocalizedServicePrice";
 import { ServiceDrawerPayload } from "../services/ServiceSectionDrawerContext";
 import useWindowResize from "@bod/utils/hooks/useWindowResize";
+import {
+  designRequestCheckoutSchema,
+  type DesignRequestCheckoutValues,
+} from "./designRequestCheckoutSchema";
 
 type DesignRequestDrawerContentProps = {
   service?: ServiceDrawerPayload | null;
@@ -116,6 +121,25 @@ function formatCurrencyValue(value: number, currencyCode: string) {
   }).format(value);
 }
 
+function buildDefaultCheckoutValues(): DesignRequestCheckoutValues {
+  return {
+    firstName: "",
+    lastName: "",
+    workEmail: "",
+    phoneNumber: "",
+    companyAddress: "",
+    additionalNotes: "",
+  };
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) {
+    return null;
+  }
+
+  return <FieldErrorText>{message}</FieldErrorText>;
+}
+
 export default function DesignRequestDrawerContent({ service, onClose }: DesignRequestDrawerContentProps) {
   const { currencyCode, usdExchangeRate } = useGlobalAppStates();
   const [selectedOfferId, setSelectedOfferId] = useState<number | null>(null);
@@ -130,6 +154,18 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
 
   const screenDim = useWindowResize();
   const screenWidth = screenDim?.[0] ?? 0;
+  const defaultCheckoutValues = useMemo(() => buildDefaultCheckoutValues(), []);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid },
+  } = useReactForm({
+    schema: designRequestCheckoutSchema,
+    defaultValues: defaultCheckoutValues,
+    mode: "onChange",
+  });
 
   const offerPreviews: OfferPreview[] = (service?.offers ?? []).map((offer, index) => ({
     id: index + 1,
@@ -170,6 +206,10 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
     setIsSubmittingOrder(false);
     setOrderError(null);
   }, [service?.title]);
+
+  useEffect(() => {
+    reset(buildDefaultCheckoutValues());
+  }, [reset, service?.title]);
 
   useEffect(() => {
     setSelectedSingleDesignSlots([]);
@@ -228,6 +268,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
   const visibleGalleryImages = galleryImages.slice(0, 6);
   const showDesktopContextFilters = screenWidth >= 1024;
   const showMobileOfferManager = !selectedOffer && offerFilterOptions.length > 0 && screenWidth > 0 && screenWidth < 1024;
+  const checkoutDisabled = orderDisabled || isSubmittingOrder || !isValid;
 
   useEffect(() => {
     if (!showMobileOfferManager) {
@@ -285,7 +326,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
     );
   };
 
-  const handleOrderDesign = async () => {
+  const handleOrderDesign = handleSubmit(async (checkoutValues) => {
     if (!selectedOffer || orderDisabled) {
       return;
     }
@@ -301,9 +342,10 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
       directionTitle: service.title,
       selectedDesignIndexes: selectedSingleDesignIndexes,
       selectedMedia: selectedSingleDesignMedia,
+      customerDetails: checkoutValues,
       userLocalValue: finalLocalValue,
       userCurrency: currencyCode,
-      customerNotes: "",
+      customerNotes: checkoutValues.additionalNotes,
     };
 
     try {
@@ -330,6 +372,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
             offerTitle: selectedOffer.title,
             selectedDesignIndexes: selectedSingleDesignIndexes,
             selectedMedia: selectedSingleDesignMedia,
+            customerDetails: checkoutValues,
             finalPrice,
             userLocalValue: finalLocalValue,
             userCurrency: currencyCode,
@@ -355,7 +398,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
       );
       setIsSubmittingOrder(false);
     }
-  };
+  });
 
   const closeGallery = () => setActiveGalleryIndex(null);
 
@@ -521,7 +564,58 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
                 </div>
               ) : null}
 
-              
+              <CheckoutForm
+                id="design-request-checkout-form"
+                className="offer-detail__section offer-detail__checkout"
+                onSubmit={handleOrderDesign}
+                noValidate
+              >
+                <div className="offer-detail__checkout-intro">
+                  <h4>Client details before payment</h4>
+                  {/* <p>Add the required details below. PayPal stays locked until the required fields are complete.</p> */}
+                  <p>Add the required details below to continue with your payment.</p>
+                </div>
+
+                <div className="offer-detail__checkout-grid">
+                  <FieldLabel>
+                    First name
+                    <TextInput type="text" autoComplete="given-name" placeholder="Ada" {...register("firstName")} />
+                    <FieldError message={errors.firstName?.message} />
+                  </FieldLabel>
+
+                  <FieldLabel>
+                    Last name
+                    <TextInput type="text" autoComplete="family-name" placeholder="Lovelace" {...register("lastName")} />
+                    <FieldError message={errors.lastName?.message} />
+                  </FieldLabel>
+                </div>
+
+                <div className="offer-detail__checkout-grid">
+                  <FieldLabel>
+                    Work email
+                    <TextInput type="email" autoComplete="email" placeholder="team@company.com" {...register("workEmail")} />
+                    <FieldError message={errors.workEmail?.message} />
+                  </FieldLabel>
+
+                  <FieldLabel>
+                    Phone number <span className="offer-detail__optional">Optional</span>
+                    <TextInput type="tel" autoComplete="tel" placeholder="+27 82 000 0000" {...register("phoneNumber")} />
+                    <FieldError message={errors.phoneNumber?.message} />
+                  </FieldLabel>
+                </div>
+
+                <FieldLabel>
+                  Company address <span className="offer-detail__optional">Optional</span>
+                  <TextInput type="text" autoComplete="street-address" placeholder="123 Business Street, City" {...register("companyAddress")} />
+                  <FieldError message={errors.companyAddress?.message} />
+                </FieldLabel>
+
+                <FieldLabel>
+                  Additional notes <span className="offer-detail__optional">Optional</span>
+                  <MessageInput placeholder={`Anything we should know before we receive payment for ${selectedOffer.title}?`} {...register("additionalNotes")} />
+                  <FieldError message={errors.additionalNotes?.message} />
+                </FieldLabel>
+              </CheckoutForm>
             </OfferDetailCard>
           </DrawerScreen>
         ) : (
@@ -582,14 +676,15 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
             ) : (
               <p className="drawer-footer__note">Ready to place your order for this offer. PayPal will charge ${finalPrice.toFixed(2)} USD.</p>
             )}
+            {!isValid ? <p className="drawer-footer__note">Enter first name, last name, and work email before continuing to PayPal.</p> : null}
             {orderError ? <p className="drawer-footer__error">{orderError}</p> : null}
           </div>
 
           <button
-            type="button"
+            type="submit"
+            form="design-request-checkout-form"
             className="drawer-footer__action"
-            onClick={handleOrderDesign}
-            disabled={orderDisabled || isSubmittingOrder}
+            disabled={checkoutDisabled}
           >
             {isSubmittingOrder
               ? "Redirecting to PayPal..."
@@ -1204,6 +1299,35 @@ const OfferDetailCard = styled.section`
     font-weight: 600;
   }
 
+  .offer-detail__checkout {
+    gap: 1rem;
+  }
+
+  .offer-detail__checkout-intro {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .offer-detail__checkout-intro p {
+    color: #666;
+    line-height: 1.55;
+  }
+
+  .offer-detail__checkout-grid {
+    display: grid;
+    gap: 1rem;
+
+    @media (min-width: 40rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .offer-detail__optional {
+    color: #767676;
+    font-size: 0.82rem;
+    font-weight: 500;
+  }
+
   .offer-detail__gallery-thumb {
     padding: 0;
     border: 0;
@@ -1240,6 +1364,50 @@ const OfferDetailCard = styled.section`
 const EmptyState = styled.div`
   ${sharedCardStyles}
   color: #666;
+`;
+
+const CheckoutForm = styled.form`
+  display: grid;
+  gap: 1rem;
+`;
+
+const FieldLabel = styled.label`
+  display: grid;
+  gap: 0.5rem;
+  color: #111;
+  font-size: 0.92rem;
+  font-weight: 600;
+`;
+
+const inputStyles = `
+  min-height: 3rem;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 1rem;
+  background: #fff;
+  padding: 0.75rem 1rem;
+  outline: none;
+  transition: border-color 160ms ease;
+
+  &:focus {
+    border-color: #111;
+  }
+`;
+
+const TextInput = styled.input`
+  ${inputStyles}
+`;
+
+const MessageInput = styled.textarea`
+  ${inputStyles}
+  min-height: 8rem;
+  border-radius: 1.25rem;
+  resize: vertical;
+`;
+
+const FieldErrorText = styled.span`
+  font-size: 0.8125rem;
+  color: #c62828;
 `;
 
 const DrawerFooter = styled.div`
