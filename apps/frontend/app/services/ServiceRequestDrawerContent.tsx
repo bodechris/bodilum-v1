@@ -1289,6 +1289,9 @@ const ActionsRow = styled.div`
   flex-wrap: wrap;
   gap: 0.75rem;
   padding-top: 0.25rem;
+  button {
+    border-radius: 30px;
+  }
 `;
 
 const FieldErrorText = styled.span`
