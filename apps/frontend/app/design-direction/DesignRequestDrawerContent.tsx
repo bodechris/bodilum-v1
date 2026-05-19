@@ -151,6 +151,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
   const [isMobileOfferManagerOpen, setIsMobileOfferManagerOpen] = useState(false);
   const [pendingScrollOfferId, setPendingScrollOfferId] = useState<number | null>(null);
   const offerPreviewRefs = useRef<Record<number, HTMLButtonElement | null>>({});
+  const checkoutFormRef = useRef<HTMLFormElement | null>(null);
 
   const screenDim = useWindowResize();
   const screenWidth = screenDim?.[0] ?? 0;
@@ -433,6 +434,22 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
     });
   };
 
+  const scrollToCheckoutForm = () => {
+    const checkoutFormElement = checkoutFormRef.current;
+
+    if (!checkoutFormElement) {
+      return;
+    }
+
+    checkoutFormElement.scrollIntoView({ behavior: "smooth", block: "start" });
+
+    window.setTimeout(() => {
+      const firstField = checkoutFormElement.querySelector<HTMLElement>("input, textarea, select");
+
+      firstField?.focus();
+    }, 250);
+  };
+
   return (
     <DrawerContentShell>
       <ContextBlock>
@@ -566,6 +583,7 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
 
               <CheckoutForm
                 id="design-request-checkout-form"
+                ref={checkoutFormRef}
                 className="offer-detail__section offer-detail__checkout"
                 onSubmit={handleOrderDesign}
                 noValidate
@@ -680,18 +698,26 @@ export default function DesignRequestDrawerContent({ service, onClose }: DesignR
             {orderError ? <p className="drawer-footer__error">{orderError}</p> : null}
           </div>
 
-          <button
-            type="submit"
-            form="design-request-checkout-form"
-            className="drawer-footer__action"
-            disabled={checkoutDisabled}
-          >
-            {isSubmittingOrder
-              ? "Redirecting to PayPal..."
-              : selectedOffer.name === "single-design-customisation" && selectedSingleDesignCount > 0
-              ? `Order ${selectedSingleDesignCount} design${selectedSingleDesignCount > 1 ? "s" : ""}`
-              : "Order design"}
-          </button>
+          <div className="drawer-footer__actions">
+            {!isValid ? (
+              <button type="button" className="drawer-footer__action drawer-footer__action--secondary" onClick={scrollToCheckoutForm}>
+                Fill details
+              </button>
+            ) : null}
+
+            <button
+              type="submit"
+              form="design-request-checkout-form"
+              className="drawer-footer__action"
+              disabled={checkoutDisabled}
+            >
+              {isSubmittingOrder
+                ? "Redirecting to PayPal..."
+                : selectedOffer.name === "single-design-customisation" && selectedSingleDesignCount > 0
+                ? `Order ${selectedSingleDesignCount} design${selectedSingleDesignCount > 1 ? "s" : ""}`
+                : "Order design"}
+            </button>
+          </div>
         </DrawerFooter>
       ) : null}
 
@@ -1432,6 +1458,17 @@ const DrawerFooter = styled.div`
     min-width: 0;
   }
 
+  .drawer-footer__actions {
+    display: grid;
+    gap: 0.75rem;
+
+    @media (min-width: 48rem) {
+      grid-auto-flow: column;
+      grid-auto-columns: max-content;
+      justify-content: end;
+    }
+  }
+
   .drawer-footer__label {
     font-size: 0.75rem;
     font-weight: 700;
@@ -1478,6 +1515,12 @@ const DrawerFooter = styled.div`
     font-weight: 800;
     cursor: pointer;
     transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  .drawer-footer__action--secondary {
+    border: 1px solid rgba(17, 17, 17, 0.14);
+    background: #fff;
+    color: #111;
   }
 
   .drawer-footer__action:disabled {
