@@ -127,7 +127,7 @@ export default function SubscriptionSuccessPage() {
 
           <div className="state-card__actions">
             <Link href="/contact">Contact Bodilum</Link>
-            <Link href="/monthly-support">Back to monthly support</Link>
+            <Link href="/growth-systems">Back to growth systems</Link>
           </div>
         </section>
       </SubscriptionStateShell>

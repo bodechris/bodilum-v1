@@ -3,8 +3,10 @@
 import React from "react";
 import styled from "styled-components";
 
+import HeaderImagesV0 from "@/components/ui/HeaderImagesV0";
 import { CloseButton, Dialog, Portal } from "@chakra-ui/react";
 import Link from "next/link";
+import { RadialFollowLink} from "./RadialFollowLink";
 
 function HomePageComp() {
 
@@ -15,16 +17,33 @@ function HomePageComp() {
 
   return (
     <>
+    {/* <h1>Bodilum helps businesses and agencies design, build and launch premium digital experiences, AI workflows and conversion-focused systems.</h1> */}
+    <HeaderImagesV0 />
     <HomePageWrapper>
 
       <h1>
-        <span className="emp1">Premium design,</span> <b>without starting from scratch.</b>
+        <span className="emp1">Premium design, web & AI systems</span> <b>for growing businesses.</b>
      </h1>
-     <p>Choose from beautiful pre-made design directions for websites, brands, campaigns, and business assets. Then work with our creative team to customize everything around your business, your message, and your goals.</p>
+     <p>From brand identity and web experiences to AI-powered workflows and monthly creative support, Bodilum helps ambitious businesses and creative teams build conversion-focused systems, and a sharper digital presence.</p>
+     {/* <p>Bodilum helps ambitious small businesses and creative teams create sharper brands, better websites, premium web experiences and practical AI-powered workflows — without hiring a full in-house team.</p> */}
+     
+     
      <div className="home-page-ctas">
 
-        <Link href="/design-direction" className="primary-cta">Choose Design Direction</Link>
-        <Link href="/monthly-support">View Monthly Support Packages</Link>
+        {/* <Link href="/design-direction" className="primary-cta">Choose Design Direction</Link> */}
+        {/* <Link href="/growth-systems">View Monthly Growth System Packages</Link> */}
+
+        <RadialFollowLink href="/growth-systems" tone="dark">
+          View Monthly Plans
+        </RadialFollowLink>
+
+        <RadialFollowLink
+          href="mailto:hello@bodilum.com?subject=Project%20Enquiry%20for%20Bodilum"
+          tone="outline"
+          prefetch={false}
+        >
+          Start a Project
+        </RadialFollowLink>
 
       </div>
 
@@ -93,16 +112,16 @@ const HomePageWrapper = styled.div`
       margin-top: 5rem;
       text-align: center;
       font-size: clamp(2.0rem, 5vw, 3.5rem);
-      line-height: 1.2;
+      line-height: 1.5;
     }
 
     h1 .emp1 {
         display: block;
         text-transform: capitalize;
         font-weight: bolder;
-        font-size: clamp(3.5rem, 15vw, 10rem);
+        font-size: clamp(3.5rem, 15vw, 9rem);
         letter-spacing: -1px;
-        line-height: 0.8;
+        line-height: 1.2;
     }
     h2{
         display: block;
@@ -146,32 +165,32 @@ const HomePageWrapper = styled.div`
 
       flex-direction: column;
 
-      a, button {
-        display: block;
-        padding: 1rem 2rem;
-        border-radius: 40px;
-        border: 2px solid #222;
-        background: #fff;
-        color: #222;
-        font-weight: bold;
-        transition: all 0.3s ease-in-out;
+      // a, button {
+      //   display: block;
+      //   padding: 1rem 2rem;
+      //   border-radius: 40px;
+      //   border: 2px solid #222;
+      //   background: #fff;
+      //   color: #222;
+      //   font-weight: bold;
+      //   transition: all 0.3s ease-in-out;
 
-        &:hover {
-          background: #f7f7f7;
-          color: #000;
-        }
-      }
+      //   &:hover {
+      //     background: #f7f7f7;
+      //     color: #000;
+      //   }
+      // }
       
-      .primary-cta {
-        padding: 1rem 2rem;
-        background: #222;
-        color: #fff;
+      // .primary-cta {
+      //   padding: 1rem 2rem;
+      //   background: #222;
+      //   color: #fff;
 
-        &:hover {
-          background: #000;
-          color: #f7f7f7;
-        }
-      }
+      //   &:hover {
+      //     background: #000;
+      //     color: #f7f7f7;
+      //   }
+      // }
     }
 
     .small-info {
@@ -186,17 +205,17 @@ const HomePageWrapper = styled.div`
       .home-page-ctas {
         flex-direction: row;
 
-        a, button {
+        // a, button {
 
-          &:hover {
-          }
-        }
+        //   &:hover {
+        //   }
+        // }
         
-        .primary-cta {
+        // .primary-cta {
 
-          &:hover {
-          }
-        }
+        //   &:hover {
+        //   }
+        // }
       }
     }
 
@@ -207,7 +226,7 @@ const HomePageWrapper = styled.div`
         }
         h1 .emp1 {
             letter-spacing: -10px;
-            line-height: 0.8;
+            line-height: 0.9;
         }
     }
 

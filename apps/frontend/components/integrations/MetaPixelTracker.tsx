@@ -29,7 +29,7 @@ function getViewContentPayload(pathname: string) {
     };
   }
 
-  if (pathname === "/monthly-support") {
+  if (pathname === "/growth-systems") {
     return {
       content_name: "Monthly Support",
       content_category: "Subscription Offer",

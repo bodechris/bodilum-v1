@@ -19,11 +19,11 @@ These are the events currently sent to Meta using `fbq("track", ...)`.
 | Event | Trigger | Primary file |
 | --- | --- | --- |
 | `PageView` | Every client-side route view | `components/integrations/MetaPixelTracker.tsx` |
-| `ViewContent` | Design-direction pages, service pages, monthly support, pricing | `components/integrations/MetaPixelTracker.tsx` |
-| `Lead` | Successful contact, service request, or monthly support request submission | `app/contact/ContactForm.tsx`, `app/services/ServiceRequestDrawerContent.tsx`, `app/monthly-support/page.tsx` |
+| `ViewContent` | Design-direction pages, service pages, growth systems, pricing | `components/integrations/MetaPixelTracker.tsx` |
+| `Lead` | Successful contact, service request, or monthly support request submission | `app/contact/ContactForm.tsx`, `app/services/ServiceRequestDrawerContent.tsx`, `app/growth-systems/page.tsx` |
 | `Contact` | Successful contact form submission | `app/contact/ContactForm.tsx` |
 | `Subscribe` | Successful newsletter signup from the footer form | `components/ui/MainFooterV0.tsx` |
-| `InitiateCheckout` | Successful PayPal handoff for one-time orders or subscriptions | `app/design-direction/DesignRequestDrawerContent.tsx`, `app/monthly-support/page.tsx` |
+| `InitiateCheckout` | Successful PayPal handoff for one-time orders or subscriptions | `app/design-direction/DesignRequestDrawerContent.tsx`, `app/growth-systems/page.tsx` |
 | `Purchase` | PayPal success after order capture or subscription confirmation | `app/payment/success/page.tsx`, `app/payment/subscription/success/page.tsx` |
 
 ## Custom Events
@@ -78,7 +78,7 @@ Expected results:
 - `app/services/SingleServiceV0.tsx`
 - `app/design-direction/DesignDirectionRequestButton.tsx`
 - `app/design-direction/DesignRequestDrawerContent.tsx`
-- `app/monthly-support/page.tsx`
+- `app/growth-systems/page.tsx`
 - `app/payment/success/page.tsx`
 - `app/payment/cancelled/page.tsx`
 - `app/payment/subscription/success/page.tsx`

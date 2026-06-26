@@ -5,7 +5,7 @@ import { getPublicErrorMessage, logInternalError } from "@/lib/publicError";
 import {
   monthlySupportRequestFormSchema,
   type MonthlySupportRequestFormValues,
-} from "@/app/monthly-support/monthlySupportFormSchema";
+} from "@/app/growth-systems/monthlySupportFormSchema";
 
 const FALLBACK_MONTHLY_SUPPORT_CHANNEL_ID = "C0B2A63CTM4";
 

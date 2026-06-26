@@ -47,7 +47,7 @@ function AppFrontend({
           <MainHeaderV0 />
           <main className="mainApp w-[95%]">
               {children}
-              <BxPanelV0 />
+              {/* <BxPanelV0 /> */}
           </main>
           <MainFixedFooterV0 />
           <MainFooterV0 />

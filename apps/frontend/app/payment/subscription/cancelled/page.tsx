@@ -19,9 +19,9 @@ export default function SubscriptionCancelledPage() {
         <section className="state-card">
           <span className="state-card__eyebrow">Subscription cancelled</span>
           <h1>Your PayPal subscription checkout was cancelled.</h1>
-          <p>You can return to the monthly support page, review the plans again, and restart when ready.</p>
+          <p>You can return to the growth systems page, review the plans again, and restart when ready.</p>
           <div className="state-card__actions">
-            <Link href="/monthly-support">Back to monthly support</Link>
+            <Link href="/growth-systems">Back to growth systems</Link>
             <Link href="/contact">Contact Bodilum</Link>
           </div>
         </section>
