@@ -23,8 +23,9 @@ const bricolage_grotesque = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Bodilum AI Design Agency",
-  description: "Create stunning designs with Bodilum AI Design Agency. Choose from pre-designed templates or craft a custom brief to elevate your brand effortlessly.",
+  title: "Bodilum | Motion-led Design & Web Experiences",
+  description:
+    "Bodilum creates motion-led brand identities, cinematic web experiences, and growth systems for ambitious businesses and creative teams. We take your brand beyond the ordinary.",
 };
 
 function normalizeCountryCode(value?: string | null) {

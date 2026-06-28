@@ -22,9 +22,9 @@ function HomePageComp() {
     <HomePageWrapper>
 
       <h1>
-        <span className="emp1">Premium design, web & AI systems</span> <b>for growing businesses.</b>
+        <span className="emp1">Motion-led Design, Web Experiences & Growth Systems</span> <b>for ambitious businesses and creative teams.</b>
      </h1>
-     <p>From brand identity and web experiences to AI-powered workflows and monthly creative support, Bodilum helps ambitious businesses and creative teams build conversion-focused systems, and a sharper digital presence.</p>
+     <p>From brand direction and cinematic web experiences to AI-powered workflows and monthly studio support, Bodilum helps ambitious businesses build sharper digital presence, stronger storytelling, and systems that convert.</p>
      {/* <p>Bodilum helps ambitious small businesses and creative teams create sharper brands, better websites, premium web experiences and practical AI-powered workflows — without hiring a full in-house team.</p> */}
      
      
