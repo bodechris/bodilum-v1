@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { trackMetaEvent } from '@/lib/metaPixelEvents';
 import {
@@ -10,6 +10,7 @@ import {
   FaFileLines,
   FaGlobe,
 } from 'react-icons/fa6';
+import gsap from "gsap";
 
 const exploreLinks = [
   { label: 'Home', href: '/' },
@@ -53,6 +54,71 @@ function MainFooterV0() {
     message: null,
   });
 
+
+  const videoWrapperRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  useEffect(() => {
+    const vidwrapper = videoWrapperRef.current;
+    const video = videoRef.current;
+
+    if( !vidwrapper || !video ) return;
+
+    let videoDuration = 0;
+    let movePlayhead: ((time: number) => void) | null = null;
+
+    const initialiseVideo = () => {
+      if( !Number.isFinite(video.duration) || video.duration <= 0 ) return;
+
+      videoDuration = video.duration;
+
+      // Optimize GSAP for repeated pointer movement
+      movePlayhead = gsap.quickTo( video, 'currentTime', {
+        duration: 0.01,
+        ease: 'none'
+        // ease: 'power2.out'
+      });
+
+      video.pause();
+
+      // Helps display the opening frame in some browsers
+      video.currentTime = 0.001;
+    }
+
+    const handlePointerMove = ( event: PointerEvent ) => {
+      if( !movePlayhead || !videoDuration ) return;
+
+      const bounds = vidwrapper.getBoundingClientRect();
+
+      const pointerPosition = ( event.clientX - bounds.left ) / bounds.width;
+      const progress = gsap.utils.clamp(0, 1, pointerPosition);
+      const targetTime = progress * videoDuration;
+
+      movePlayhead( targetTime );
+
+    }
+
+    const handlePointerEnter = () => video.pause();
+
+    if( video.readyState >= HTMLMediaElement.HAVE_METADATA ) {
+      initialiseVideo();
+    } else {
+      video.addEventListener( 'loadedmetadata', initialiseVideo );
+    }
+
+    vidwrapper.addEventListener( 'pointermove', handlePointerMove );
+    vidwrapper.addEventListener( 'pointerenter', handlePointerEnter );
+
+    return () => {
+      video.removeEventListener("loadedmetadata", initialiseVideo);
+      vidwrapper.removeEventListener("pointermove", handlePointerMove);
+      vidwrapper.removeEventListener("pointerenter", handlePointerEnter);
+
+      gsap.killTweensOf( video )
+    };
+    
+
+  }, []);
+
   async function handleSubscribe(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
@@ -93,6 +159,21 @@ function MainFooterV0() {
   }
 
   return (
+    <>
+    <MainFooterSubSectionV0Wrapper ref={videoWrapperRef}>
+      <video
+        ref={videoRef}
+        // src="/videos/bodilum-logo-anim-1.webm"
+        src="/videos/bodilum-logo-anim-0.mp4"
+        muted
+        playsInline
+        preload="auto"
+        controls={false}
+        disablePictureInPicture
+        aria-label="Bodilum animated logo"
+      />
+    </MainFooterSubSectionV0Wrapper>
+
     <MainFooterV0Wrapper>
       <div className="footer-shell">
         <div className="footer-grid">
@@ -203,6 +284,7 @@ function MainFooterV0() {
         </div>
       </div>
     </MainFooterV0Wrapper>
+    </>
   )
 }
 
@@ -457,4 +539,32 @@ const MainFooterV0Wrapper = styled.footer`
       width: 100%;
     }
   }
+`;
+
+
+const MainFooterSubSectionV0Wrapper = styled.div`  
+
+  position: relative;
+  width: 100%;
+  height: 80vh;
+  min-height: 80vh;
+  overflow: hidden;
+  background: #0d0d0d;
+  cursor: ew-resize;
+
+  video {
+    position: absolute;
+    inset: 0;
+
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    pointer-events: none;
+    user-select: none;
+  }
+
 `;

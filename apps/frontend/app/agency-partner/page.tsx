@@ -1,8 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef } from "react";
+import Link from "next/link";
 import styled from "styled-components";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import PageV0 from "@/components/ui/page-v0/PageV0";
+import { CustomEase } from "gsap/CustomEase";
+
+gsap.registerPlugin(ScrollTrigger);
+
+CustomEase.create("smoothReveal", "0.16, 1, 0.1, 1");
+
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, "-");
 
 const partnerOffers = [
   {
@@ -10,23 +21,39 @@ const partnerOffers = [
     name: "Studio Partner",
     price: "R18,500",
     cadence: "/ month",
+    subtitle: "Premium backup for small studios.",
     description:
-      "Senior creative, web, motion, and AI support for small studios that need premium backup without hiring.",
-    bestFor:
-      "Small creative studios, solo-led agencies, and boutique teams that need reliable senior execution.",
-    capacity: [
+      "Senior creative, web, motion and AI support for small studios that need sharper delivery without hiring another full-time specialist.",
+    outcomes: [
+      "Take on more polished digital work with less internal pressure.",
+      "Improve client-facing design, web sections, decks and campaign assets.",
+      "Add tasteful motion and frontend refinement where the work needs lift.",
+      "Bring simple AI workflow ideas into client projects without overcomplicating delivery.",
+    ],
+    bestFor: [
+      "Small creative studios",
+      "Solo-led agencies",
+      "Boutique design teams",
+      "Teams that need senior overflow support",
+    ],
+    included: [
       "1 active workstream at a time",
       "Approx. 20 monthly support hours",
       "Design direction and visual polish",
       "Landing page and web section support",
-      "Frontend styling and animation refinement",
+      "Frontend styling and interaction refinement",
       "Light motion and micro-interactions",
       "Simple AI workflow ideas and prototypes",
       "1 monthly creative review call",
       "White-label delivery available",
     ],
-    outcome:
-      "Your agency can take on better-looking digital work, improve client presentations, move faster on design/dev tasks, and add premium polish without carrying another salary.",
+    partnerLayer: [
+      "Quiet production support",
+      "Senior taste check",
+      "Clean handover assets",
+      "NDA-friendly collaboration",
+    ],
+    cta: "Start as Studio Partner",
   },
   {
     eyebrow: "02 / Growing agencies",
@@ -34,11 +61,22 @@ const partnerOffers = [
     price: "R45,000",
     cadence: "/ month",
     recommended: true,
+    subtitle: "A stronger creative and technical layer.",
     description:
-      "A stronger monthly partner layer for agencies that need faster delivery, sharper design, better frontend, motion, and practical AI capability.",
-    bestFor:
-      "Growing agencies with recurring client work, multiple campaigns, and an in-house team that needs extra senior capacity.",
-    capacity: [
+      "A higher-capacity partnership for agencies that need faster delivery, sharper design, better frontend, tasteful motion and practical AI support across recurring client work.",
+    outcomes: [
+      "Deliver more ambitious client work without slowing the studio down.",
+      "Reduce bottlenecks across design, frontend, decks, revisions and launches.",
+      "Raise the perceived value of your agency's digital output.",
+      "Add motion and AI capability without building a specialist team first.",
+    ],
+    bestFor: [
+      "Growing agencies",
+      "Recurring campaign teams",
+      "Studios with multiple active clients",
+      "Teams selling more premium digital work",
+    ],
+    included: [
       "2 active workstreams at a time",
       "Approx. 50 monthly support hours",
       "Senior design direction",
@@ -51,1019 +89,1108 @@ const partnerOffers = [
       "Priority turnaround",
       "White-label delivery available",
     ],
-    outcome:
-      "Your agency can deliver more ambitious client work, reduce production bottlenecks, add motion and AI capabilities, and raise the perceived value of your creative output.",
-  },
-  {
-    eyebrow: "03 / Larger studios",
-    name: "Embedded Partner",
-    price: "From R95,000",
-    cadence: "/ month",
-    description:
-      "A deeper embedded support pod for agencies and studios that need premium digital production capacity across serious client work.",
-    bestFor:
-      "Larger creative studios, marketing teams, and agencies handling higher-value digital, campaign, and innovation projects.",
-    capacity: [
-      "3–4 active workstreams",
-      "Approx. 100+ monthly support hours",
-      "Dedicated creative/dev support pod",
-      "Advanced frontend and animation support",
-      "Interactive landing pages and campaign microsites",
-      "AI workflow prototyping for clients",
-      "Design system and component support",
-      "Weekly production check-ins",
-      "Private white-label workflow",
-      "NDA-friendly collaboration",
-      "Optional sprint add-ons for launches",
+    partnerLayer: [
+      "Priority production rhythm",
+      "Creative systems review",
+      "Pitch and proposal support",
+      "Shared delivery queue",
     ],
-    outcome:
-      "Your agency can expand production capacity, accept higher-value digital projects, improve delivery speed, and offer advanced web, motion, and AI capabilities without building a full specialist team internally.",
+    cta: "Accelerate My Agency",
   },
 ];
 
-const supportAreas = [
+const partnershipPillars = [
   {
-    title: "Creative uplift",
-    text: "Design direction, visual systems, campaign concepts, deck polish, website refinement, and stronger client-facing presentation.",
+    number: "01",
+    title: "Taste",
+    text: "A senior eye on layout, hierarchy, polish, interaction and presentation quality.",
   },
   {
-    title: "Web experiences",
-    text: "Landing pages, microsites, responsive layouts, styled components, frontend polish, interaction details, and quality assurance.",
+    number: "02",
+    title: "Execution",
+    text: "Design, frontend, motion and launch support that plugs into your agency workflow.",
   },
   {
-    title: "Motion design",
-    text: "Scroll reveals, page transitions, micro-interactions, hero motion, product reveals, and lightweight animated details.",
-  },
-  {
-    title: "AI client systems",
-    text: "Fast replies, email helpers, review requests, client onboarding assistants, lead follow-up workflows, and simple knowledge assistants.",
-  },
-];
-
-const process = [
-  "We understand your agency workflow, client needs, and delivery rhythm.",
-  "You add Bodilum to selected projects as a quiet creative and technical partner.",
-  "We work through a shared queue with clear priorities and active workstreams.",
-  "We deliver design, dev, motion, or AI support your team can present confidently.",
-];
-
-const faqs = [
-  {
-    q: "Is this unlimited?",
-    a: "No. Each plan includes a defined monthly capacity and active workstream limit. This keeps the quality high and protects delivery focus.",
-  },
-  {
-    q: "Can you work white-label?",
-    a: "Yes. We can work quietly behind your agency, with client communication handled by you or shared depending on the project.",
-  },
-  {
-    q: "Can we upgrade or downgrade?",
-    a: "Yes. You can scale the partnership up or down with 30 days’ notice, depending on workload and budget.",
-  },
-  {
-    q: "Do you join client calls?",
-    a: "Yes, when helpful. We can join as Bodilum or remain behind the scenes as your production partner.",
+    number: "03",
+    title: "AI layer",
+    text: "Useful AI workflows for client operations, content, support and lightweight automation.",
   },
 ];
 
-function AgencyPartnerPage() {
-  const [openFaq, setOpenFaq] = useState(0);
+const capabilities = [
+  {
+    title: "Design direction",
+    text: "Visual systems, landing pages, campaign polish, decks, proposals and brand-led presentation work.",
+  },
+  {
+    title: "Frontend polish",
+    text: "Responsive sections, styled components, animation-ready interfaces, QA and UI refinement.",
+  },
+  {
+    title: "Motion details",
+    text: "Scroll reveals, hero movement, micro-interactions, transitions and lightweight motion systems.",
+  },
+  {
+    title: "Client AI systems",
+    text: "Fast replies, lead follow-up, onboarding helpers, internal knowledge flows and practical automation concepts.",
+  },
+];
+
+const workflow = [
+  "We map your agency rhythm, active clients, bottlenecks and the type of work you want us to support.",
+  "You add Bodilum to selected projects as a quiet white-label or visible specialist partner.",
+  "We work from a shared priority queue so active workstreams stay focused and quality stays protected.",
+  "Your team receives polished design, frontend, motion or AI support that is ready to present or integrate.",
+];
+
+const terms = [
+  "Monthly retainer with a defined capacity and active workstream limit.",
+  "30 days' notice to cancel, upgrade or downgrade after the first month.",
+  "Unused capacity may roll over for 30 days, up to 20% of the monthly plan.",
+  "Full platforms, complex 3D, advanced backend systems and large AI products are quoted separately.",
+  "White-label and NDA-friendly collaboration are available.",
+  "Rush work depends on availability and may attract a priority fee.",
+];
+
+export default function AgencyPartnerPage() {
+  const pageRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const page = pageRef.current;
+
+    if (!page) return;
+
+    gsap.registerPlugin(ScrollTrigger);
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const context = gsap.context(() => {
+      const revealElements = gsap.utils.toArray<HTMLElement>(
+        ".scroll-reveal",
+      );
+      const cardElements = gsap.utils.toArray<HTMLElement>(".scroll-card");
+      const lineElements = gsap.utils.toArray<HTMLElement>(".scroll-line");
+      const allAnimatedElements = [
+        ...revealElements,
+        ...cardElements,
+        ...lineElements,
+      ];
+
+      if (reduceMotion) {
+        gsap.set(allAnimatedElements, {
+          clearProps: "transform,clipPath,visibility,willChange",
+        });
+        return;
+      }
+
+      const getDelay = (element: HTMLElement) => {
+        const delayClass = Array.from(element.classList).find((className) =>
+          className.startsWith("scroll-delay-"),
+        );
+        const delayIndex = Number(delayClass?.replace("scroll-delay-", ""));
+
+        return Number.isFinite(delayIndex)
+          ? Math.max(0, delayIndex - 1) * 0.08
+          : 0;
+      };
+
+      const createMaskedReveal = (
+        element: HTMLElement,
+        distance: number,
+        duration: number,
+      ) => {
+        gsap.fromTo(
+          element,
+          {
+            y: distance,
+            opacity: 0,
+            visibility: "hidden",
+            willChange: "transform, opacity",
+          },
+          {
+            y: 0,
+            opacity: 1,
+            visibility: "visible",
+            duration,
+            delay: getDelay(element),
+            ease: "smoothReveal",
+            clearProps: "transform,opacity,visibility,willChange",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 88%",
+              once: true,
+            },
+          },
+        );
+      };
+
+      revealElements.forEach((element) =>
+        createMaskedReveal(element, 64, 1.15),
+      );
+
+      cardElements.forEach((element) =>
+        createMaskedReveal(element, 82, 1.2),
+      );
+
+      lineElements.forEach((element) =>
+        createMaskedReveal(element, 38, 0.95),
+      );
+    }, page);
+
+    return () => context.revert();
+  }, []);
 
   return (
     <PageV0>
-      <AgencyPartnerPageWrapper>
+      <AgencyPartnerPageWrapper ref={pageRef}>
         <HeroSection>
-          <HeroMeta>
-            <span>Agency Partner</span>
-            <span>Creative / Web / Motion / AI</span>
-          </HeroMeta>
+          <HeroGrid>
+            <HeroContent className="scroll-reveal">
+              <Eyebrow>Bodilum Agency Partner</Eyebrow>
+              <HeroTitle>Premium support for serious agencies.</HeroTitle>
+            </HeroContent>
 
-          <HeroContent>
-            <HeroEyebrow>For ambitious creative studios</HeroEyebrow>
-            <h1>Your agency’s premium creative and technology partner.</h1>
-            <p>
-              We work quietly alongside your in-house team to uplift client work
-              across design, web, motion, and AI — helping you move faster,
-              present stronger, and deliver digital experiences with a sharper,
-              more premium finish.
-            </p>
+            <HeroAside className="scroll-reveal scroll-delay-1">
+              <HeroText>
+                We plug into your agency as a senior creative, frontend, motion
+                and AI partner, helping your team deliver sharper client work
+                without adding another full-time hire.
+              </HeroText>
 
-            <HeroActions>
-              <a href="mailto:hello@bodilum.com?subject=Agency%20Partner%20Enquiry">
-                Become an Agency Partner
-              </a>
-              <a href="mailto:hello@bodilum.com?subject=Agency%20Fit%20Call">
-                Book a Fit Call
-              </a>
-            </HeroActions>
-          </HeroContent>
+              <ButtonRow>
+                <PrimaryButton href="/contact?package=agency-partner">
+                  Start the partnership
+                </PrimaryButton>
+
+                <SecondaryButton href="#offers">View offers</SecondaryButton>
+              </ButtonRow>
+            </HeroAside>
+          </HeroGrid>
         </HeroSection>
 
         <IntroSection>
-          <LargeStatement>
-            Your team already has taste, clients, and creative ambition.
-            Bodilum adds the extra senior capacity to make the work feel more
-            refined, more interactive, more useful, and more premium.
-          </LargeStatement>
+          <SectionLabel className="scroll-reveal">The partnership</SectionLabel>
 
-          <IntroGrid>
-            <IntroCard>
-              <span>01</span>
-              <h3>Not a freelancer list.</h3>
-              <p>
-                A focused creative partner for design direction, frontend
-                execution, motion polish, and practical AI support.
-              </p>
-            </IntroCard>
+          <IntroContent>
+            <LargeText className="scroll-reveal">
+              Your agency keeps the relationship. Bodilum strengthens the work
+              behind it.
+            </LargeText>
 
-            <IntroCard>
-              <span>02</span>
-              <h3>Not unlimited design.</h3>
-              <p>
-                Clear monthly capacity, focused workstreams, and senior-quality
-                execution instead of rushed, low-value output.
-              </p>
-            </IntroCard>
-
-            <IntroCard>
-              <span>03</span>
-              <h3>Built for agencies.</h3>
-              <p>
-                We can work white-label, support pitches, improve delivery, and
-                help your team sell more premium digital work.
-              </p>
-            </IntroCard>
-          </IntroGrid>
+            <PillarsGrid>
+              {partnershipPillars.map((pillar, index) => (
+                <PillarCard
+                  key={pillar.title}
+                  className={`scroll-card scroll-delay-${index + 1}`}
+                >
+                  <PillarNumber>{pillar.number}</PillarNumber>
+                  <div>
+                    <PillarTitle>{pillar.title}</PillarTitle>
+                    <PillarText>{pillar.text}</PillarText>
+                  </div>
+                </PillarCard>
+              ))}
+            </PillarsGrid>
+          </IntroContent>
         </IntroSection>
 
-        <PricingSection>
-          <SectionHeader $light>
-            <span>Partnership levels</span>
-            <h2>One offer. Three levels of support.</h2>
-            <p>
-              Start lean as a small studio or bring us in deeper when your
-              agency needs serious creative and technical capacity.
-            </p>
+        <OffersSection id="offers">
+          <SectionHeader className="scroll-reveal">
+            <div>
+              <SectionLabel>Offers</SectionLabel>
+              <SectionTitle>Choose the support layer.</SectionTitle>
+            </div>
+
+            <SectionHeaderText>
+              Two focused monthly partnerships. No bloated menu. No unlimited
+              promise. Just clear capacity, senior taste and better delivery.
+            </SectionHeaderText>
           </SectionHeader>
 
           <OfferList>
-            {partnerOffers.map((offer) => (
-              <OfferCard key={offer.name} $recommended={offer.recommended}>
-                <OfferTop>
-                  <OfferMeta>
-                    <span>{offer.eyebrow}</span>
-                    {offer.recommended && <Recommended>Recommended</Recommended>}
-                  </OfferMeta>
+            {partnerOffers.map((offer, index) => (
+              <OfferCard
+                key={offer.name}
+                className={`scroll-card scroll-delay-${index + 1}`}
+                $recommended={offer.recommended}
+              >
+                <OfferLeft>
+                  <div>
+                    <OfferEyebrow>{offer.eyebrow}</OfferEyebrow>
 
-                  <OfferTitle>
-                    <h3>{offer.name}</h3>
-                    <PriceBlock>
-                      <strong>{offer.price}</strong>
-                      <span>{offer.cadence}</span>
-                    </PriceBlock>
-                  </OfferTitle>
+                    <OfferTitleRow>
+                      <OfferTitle>{offer.name}</OfferTitle>
+                      {offer.recommended && <Recommended>Recommended</Recommended>}
+                    </OfferTitleRow>
 
+                    <OfferSubtitle>{offer.subtitle}</OfferSubtitle>
+                  </div>
+
+                  <OfferPriceBlock>
+                    <PriceLine>
+                      <Price>{offer.price}</Price>
+                      <PriceMeta>{offer.cadence}</PriceMeta>
+                    </PriceLine>
+
+                    <OfferButton href={`/contact?package=${slugify(offer.name)}`}>
+                      {offer.cta}
+                    </OfferButton>
+                  </OfferPriceBlock>
+                </OfferLeft>
+
+                <OfferRight>
                   <OfferDescription>{offer.description}</OfferDescription>
-                </OfferTop>
 
-                <OfferBody>
-                  <BestFor>
-                    <span>Best for</span>
-                    <p>{offer.bestFor}</p>
-                  </BestFor>
+                  <OutcomeBox>
+                    <OutcomeLabel>What your agency becomes able to do</OutcomeLabel>
 
-                  <Includes>
-                    {offer.capacity.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </Includes>
+                    <OutcomeList>
+                      {offer.outcomes.map((outcome) => (
+                        <li key={outcome}>{outcome}</li>
+                      ))}
+                    </OutcomeList>
+                  </OutcomeBox>
 
-                  <Outcome>
-                    <span>Outcome</span>
-                    <p>{offer.outcome}</p>
-                  </Outcome>
-                </OfferBody>
+                  <OfferColumns>
+                    <OfferColumn>
+                      <ColumnTitle>Best for</ColumnTitle>
+                      <CleanList>
+                        {offer.bestFor.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </CleanList>
+                    </OfferColumn>
+
+                    <OfferColumn>
+                      <ColumnTitle>Included</ColumnTitle>
+                      <CleanList>
+                        {offer.included.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </CleanList>
+                    </OfferColumn>
+
+                    <OfferColumn>
+                      <ColumnTitle>Partner layer</ColumnTitle>
+                      <CleanList>
+                        {offer.partnerLayer.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </CleanList>
+                    </OfferColumn>
+                  </OfferColumns>
+                </OfferRight>
               </OfferCard>
             ))}
           </OfferList>
-        </PricingSection>
+        </OffersSection>
 
-        <SupportSection>
-          <SectionHeader $spaced>
-            <span>What we help with</span>
-            <h2>Premium support where agency work usually slows down.</h2>
+        <CapabilitiesSection>
+          <SectionHeader className="scroll-reveal">
+            <div>
+              <SectionLabel>Where we plug in</SectionLabel>
+              <SectionTitle>Specialist support without studio bloat.</SectionTitle>
+            </div>
+
+            <SectionHeaderText>
+              Bring us in where the work needs more detail, speed or premium
+              finish. Keep your internal team focused on the client relationship
+              and creative direction.
+            </SectionHeaderText>
           </SectionHeader>
 
-          <SupportGrid>
-            {supportAreas.map((area) => (
-              <SupportCard key={area.title}>
-                <h3>{area.title}</h3>
-                <p>{area.text}</p>
-              </SupportCard>
+          <CapabilitiesGrid>
+            {capabilities.map((capability, index) => (
+              <CapabilityCard
+                key={capability.title}
+                className={`scroll-card scroll-delay-${index + 1}`}
+              >
+                <CapabilityTitle>{capability.title}</CapabilityTitle>
+                <CapabilityText>{capability.text}</CapabilityText>
+              </CapabilityCard>
             ))}
-          </SupportGrid>
-        </SupportSection>
+          </CapabilitiesGrid>
+        </CapabilitiesSection>
 
-        <OutcomesSection>
-          <SectionHeader $spaced>
-            <span>Agency outcomes</span>
-            <h2>What your studio becomes able to do.</h2>
-          </SectionHeader>
+        <WorkflowSection>
+          <SectionLabel className="scroll-reveal">How it works</SectionLabel>
 
-          <OutcomeGrid>
-            <OutcomeCard>
-              <span>01</span>
-              <h3>Take on better projects.</h3>
-              <p>
-                Add senior creative and technical support when a client brief
-                needs more polish, interaction, or digital depth.
-              </p>
-            </OutcomeCard>
+          <WorkflowGrid>
+            <SectionTitle className="scroll-reveal">
+              A calm extension of your team.
+            </SectionTitle>
 
-            <OutcomeCard>
-              <span>02</span>
-              <h3>Move faster.</h3>
-              <p>
-                Reduce delays across design, frontend, motion, presentation
-                work, and client revisions.
-              </p>
-            </OutcomeCard>
-
-            <OutcomeCard>
-              <span>03</span>
-              <h3>Sell more premium work.</h3>
-              <p>
-                Show clients stronger visual direction, sharper interactions,
-                and more advanced digital capability.
-              </p>
-            </OutcomeCard>
-
-            <OutcomeCard>
-              <span>04</span>
-              <h3>Add AI without pretending.</h3>
-              <p>
-                Bring useful AI workflows into client projects in simple,
-                practical, maintainable ways.
-              </p>
-            </OutcomeCard>
-          </OutcomeGrid>
-        </OutcomesSection>
-
-        <ProcessSection>
-          <SectionHeader $spaced>
-            <span>How it works</span>
-            <h2>A quiet extension of your team.</h2>
-          </SectionHeader>
-
-          <ProcessList>
-            {process.map((item, index) => (
-              <ProcessItem key={item}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <p>{item}</p>
-              </ProcessItem>
-            ))}
-          </ProcessList>
-        </ProcessSection>
+            <WorkflowList>
+              {workflow.map((item, index) => (
+                <WorkflowItem
+                  key={item}
+                  className={`scroll-line scroll-delay-${index + 1}`}
+                >
+                  <WorkflowNumber>{String(index + 1).padStart(2, "0")}</WorkflowNumber>
+                  <WorkflowText>{item}</WorkflowText>
+                </WorkflowItem>
+              ))}
+            </WorkflowList>
+          </WorkflowGrid>
+        </WorkflowSection>
 
         <TermsSection>
-          <TermsContent>
-            <SectionHeader $light $spaced>
-              <span>Terms</span>
-              <h2>Simple enough to start. Clear enough to scale.</h2>
-            </SectionHeader>
+          <DarkSectionLabel className="scroll-reveal">Terms</DarkSectionLabel>
 
-            <TermsList>
-              <li>Monthly retainer with 30 days’ notice to cancel.</li>
-              <li>Upgrade or downgrade as your agency workload changes.</li>
-              <li>Each plan includes a defined capacity and workstream limit.</li>
-              <li>
-                Unused capacity may roll over for 30 days, up to 20% of the
-                monthly plan.
-              </li>
-              <li>
-                Full platforms, complex 3D, advanced backend systems, and large
-                AI products are quoted separately.
-              </li>
-              <li>White-label and NDA-friendly collaboration are available.</li>
-              <li>
-                Rush work depends on availability and may attract a priority
-                fee.
-              </li>
-            </TermsList>
-          </TermsContent>
+          <TermsGrid>
+            <DarkTitle className="scroll-reveal">
+              Clear enough to start. Flexible enough to scale.
+            </DarkTitle>
 
-          <FaqList>
-            {faqs.map((faq, index) => {
-              const isOpen = openFaq === index;
-
-              return (
-                <FaqItem key={faq.q}>
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? -1 : index)}
-                    aria-expanded={isOpen}
-                  >
-                    <span>{faq.q}</span>
-                    <em>{isOpen ? "−" : "+"}</em>
-                  </button>
-
-                  {isOpen && <p>{faq.a}</p>}
-                </FaqItem>
-              );
-            })}
-          </FaqList>
+            <TermsCard className="scroll-reveal scroll-delay-1">
+              <TermsList>
+                {terms.map((term) => (
+                  <li key={term}>{term}</li>
+                ))}
+              </TermsList>
+            </TermsCard>
+          </TermsGrid>
         </TermsSection>
 
-        <FinalCta>
-          <span>Ready when your next client brief needs more.</span>
-          <h2>
-            Plug Bodilum into your agency and deliver work that feels sharper,
-            faster, and more premium.
-          </h2>
-          <a href="mailto:hello@bodilum.com?subject=Agency%20Partner%20Enquiry">
-            Start the partnership
-          </a>
+        <FinalCta className="scroll-reveal">
+          <FinalTitle>
+            Give your next client brief the finish it deserves.
+          </FinalTitle>
+
+          <FinalContent>
+            <FinalText>
+              Start with one focused partnership layer. Use Bodilum where the
+              work needs more polish, motion, frontend depth or practical AI.
+            </FinalText>
+
+            <FinalButton href="/contact?package=agency-partner">
+              Start the partnership
+            </FinalButton>
+          </FinalContent>
         </FinalCta>
       </AgencyPartnerPageWrapper>
     </PageV0>
   );
 }
 
-export default AgencyPartnerPage;
-
 const AgencyPartnerPageWrapper = styled.main`
-  width: min(100%, 1600px);
-  margin: 0 auto;
-  color: #111;
-  background: #f7f4ef;
-  overflow: hidden;
+  && {
+    width: min(92vw, 1500px);
+    margin: 0 auto;
+    padding: 150px 0 80px;
+    color: #090909;
+    position: relative;
+    z-index: 2;
+  }
 
   * {
     box-sizing: border-box;
   }
 
   a {
-    color: inherit;
     text-decoration: none;
   }
-`;
 
-const SectionHeader = styled.div<{ $light?: boolean; $spaced?: boolean }>`
-  max-width: 980px;
-  margin-bottom: ${({ $spaced }) =>
-    $spaced ? "clamp(40px, 6vw, 88px)" : "0"};
-
-  span {
-    display: inline-flex;
-    margin-bottom: 22px;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: ${({ $light }) =>
-      $light ? "rgba(247, 244, 239, 0.58)" : "rgba(17, 17, 17, 0.48)"};
+  .scroll-reveal,
+  .scroll-card,
+  .scroll-line {
+    transform-origin: 50% 100%;
   }
 
-  h2 {
-    margin: 0;
-    font-size: clamp(3rem, 7vw, 8rem);
-    line-height: 0.9;
-    letter-spacing: -0.075em;
-    font-weight: 500;
-  }
-
-  p {
-    max-width: 620px;
-    margin: 28px 0 0;
-    font-size: clamp(1rem, 1.4vw, 1.25rem);
-    line-height: 1.55;
-    color: ${({ $light }) =>
-      $light ? "rgba(247, 244, 239, 0.58)" : "rgba(17, 17, 17, 0.62)"};
+  @media (max-width: 768px) {
+    && {
+      width: min(92vw, 100%);
+      padding-top: 120px;
+    }
   }
 `;
 
 const HeroSection = styled.section`
-  min-height: 100vh;
-  padding: 32px clamp(20px, 4vw, 72px) 80px;
+  min-height: 82vh;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 `;
 
-const HeroMeta = styled.div`
-  display: flex;
-  justify-content: space-between;
-  gap: 24px;
-  font-size: clamp(0.75rem, 1vw, 0.95rem);
-  line-height: 1;
-  letter-spacing: 0.08em;
+const HeroGrid = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  gap: clamp(44px, 8vw, 128px);
+  align-items: end;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const HeroContent = styled.div``;
+
+const Eyebrow = styled.p`
+  margin: 0 0 34px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.55);
-
-  @media (max-width: 700px) {
-    flex-direction: column;
-  }
+  color: rgba(0, 0, 0, 0.58);
 `;
 
-const HeroContent = styled.div`
-  max-width: 1220px;
-  padding-top: 18vh;
-
-  h1 {
-    max-width: 1180px;
-    margin: 0;
-    font-size: clamp(4.5rem, 13vw, 13.5rem);
-    line-height: 0.82;
-    letter-spacing: -0.095em;
-    font-weight: 500;
-  }
-
-  p {
-    max-width: 720px;
-    margin: clamp(28px, 4vw, 56px) 0 0 auto;
-    font-size: clamp(1.05rem, 1.55vw, 1.55rem);
-    line-height: 1.45;
-    color: rgba(17, 17, 17, 0.68);
-  }
-
-  @media (max-width: 800px) {
-    padding-top: 14vh;
-
-    p {
-      margin-left: 0;
-    }
-  }
+const HeroTitle = styled.h1`
+  max-width: 1100px;
+  margin: 0;
+  font-size: clamp(68px, 11vw, 188px);
+  line-height: 0.83;
+  letter-spacing: -0.105em;
+  font-weight: 800;
 `;
 
-const HeroEyebrow = styled.span`
-  display: inline-flex;
-  margin-bottom: 28px;
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(17, 17, 17, 0.5);
+const HeroAside = styled.div`
+  padding-bottom: 14px;
 `;
 
-const HeroActions = styled.div`
+const HeroText = styled.p`
+  max-width: 650px;
+  margin: 0;
+  font-size: clamp(18px, 1.7vw, 27px);
+  line-height: 1.36;
+  color: rgba(0, 0, 0, 0.62);
+`;
+
+const ButtonRow = styled.div`
   display: flex;
-  justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 14px;
   margin-top: 36px;
+`;
 
-  a {
-    min-height: 56px;
-    padding: 0 24px;
-    border: 1px solid rgba(17, 17, 17, 0.22);
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    transition: transform 0.35s ease, background 0.35s ease, color 0.35s ease,
-      border-color 0.35s ease;
+const PrimaryButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: #050505;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, background 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #222;
   }
 
-  a:first-child {
-    background: #111;
-    color: #f7f4ef;
-    border-color: #111;
+  @media (max-width: 620px) {
+    width: 100%;
+  }
+`;
+
+const SecondaryButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  color: #050505;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: border-color 0.25s ease, transform 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: #050505;
   }
 
-  a:hover {
-    transform: translateY(-3px);
-    background: #111;
-    color: #f7f4ef;
-    border-color: #111;
-  }
-
-  a:first-child:hover {
-    background: transparent;
-    color: #111;
-  }
-
-  @media (max-width: 800px) {
-    justify-content: flex-start;
-
-    a {
-      width: 100%;
-    }
+  @media (max-width: 620px) {
+    width: 100%;
   }
 `;
 
 const IntroSection = styled.section`
-  padding: clamp(80px, 12vw, 180px) clamp(20px, 4vw, 72px);
-`;
-
-const LargeStatement = styled.p`
-  max-width: 1250px;
-  margin: 0;
-  font-size: clamp(2.6rem, 6.8vw, 8.8rem);
-  line-height: 0.94;
-  letter-spacing: -0.075em;
-  font-weight: 500;
-`;
-
-const IntroGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  margin-top: clamp(56px, 8vw, 120px);
-  background: rgba(17, 17, 17, 0.12);
-  border: 1px solid rgba(17, 17, 17, 0.12);
+  grid-template-columns: 0.75fr 1.25fr;
+  gap: clamp(40px, 8vw, 120px);
+  padding: clamp(96px, 12vw, 180px) 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 
-  @media (max-width: 900px) {
+  @media (max-width: 980px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const IntroCard = styled.article`
-  min-height: 320px;
-  padding: clamp(24px, 3vw, 44px);
-  background: #f7f4ef;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+const SectionLabel = styled.p`
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(0, 0, 0, 0.58);
+`;
 
-  span {
-    font-size: 0.78rem;
-    color: rgba(17, 17, 17, 0.45);
-  }
+const IntroContent = styled.div``;
 
-  h3 {
-    margin: auto 0 18px;
-    font-size: clamp(1.7rem, 2.8vw, 3.2rem);
-    line-height: 0.95;
-    letter-spacing: -0.055em;
-    font-weight: 500;
-  }
+const LargeText = styled.h2`
+  max-width: 980px;
+  margin: 0;
+  font-size: clamp(38px, 5.2vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.075em;
+  font-weight: 800;
+`;
 
-  p {
-    max-width: 360px;
-    margin: 0;
-    color: rgba(17, 17, 17, 0.62);
-    line-height: 1.55;
+const PillarsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-top: 56px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
   }
 `;
 
-const PricingSection = styled.section`
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
-  background: #111;
-  color: #f7f4ef;
+const PillarCard = styled.div`
+  min-height: 230px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px;
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, border-color 0.3s ease,
+    box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.06);
+  }
+`;
+
+const PillarNumber = styled.p`
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: rgba(0, 0, 0, 0.46);
+`;
+
+const PillarTitle = styled.h3`
+  margin: 0;
+  font-size: clamp(28px, 2.8vw, 44px);
+  line-height: 0.95;
+  letter-spacing: -0.065em;
+  font-weight: 800;
+`;
+
+const PillarText = styled.p`
+  margin: 14px 0 0;
+  color: rgba(0, 0, 0, 0.58);
+  line-height: 1.6;
+`;
+
+const OffersSection = styled.section`
+  padding: clamp(96px, 11vw, 170px) 0;
+`;
+
+const SectionHeader = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 430px;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 56px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const SectionTitle = styled.h2`
+  max-width: 900px;
+  margin: 22px 0 0;
+  font-size: clamp(46px, 6.8vw, 108px);
+  line-height: 0.9;
+  letter-spacing: -0.08em;
+  font-weight: 800;
+`;
+
+const SectionHeaderText = styled.p`
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.7;
+  color: rgba(0, 0, 0, 0.58);
 `;
 
 const OfferList = styled.div`
   display: grid;
-  gap: 18px;
-  margin-top: clamp(56px, 8vw, 110px);
-`;
-
-const OfferCard = styled.article<{ $recommended?: boolean }>`
-  position: relative;
-  overflow: hidden;
-  padding: clamp(24px, 4vw, 58px);
-  border: 1px solid
-    ${({ $recommended }) =>
-      $recommended ? "rgba(247, 244, 239, 0.5)" : "rgba(247, 244, 239, 0.14)"};
-  border-radius: clamp(24px, 4vw, 48px);
-  background: ${({ $recommended }) =>
-    $recommended ? "rgba(247, 244, 239, 0.1)" : "rgba(247, 244, 239, 0.035)"};
-  display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
-  gap: clamp(36px, 6vw, 90px);
-  transition: transform 0.45s ease, border-color 0.45s ease,
-    background 0.45s ease;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: auto -20% -40% auto;
-    width: 50vw;
-    height: 50vw;
-    border-radius: 999px;
-    background: radial-gradient(
-      circle,
-      rgba(247, 244, 239, 0.12),
-      transparent 62%
-    );
-    opacity: 0;
-    transition: opacity 0.45s ease;
-    pointer-events: none;
-  }
-
-  &:hover {
-    transform: translateY(-6px);
-    border-color: rgba(247, 244, 239, 0.48);
-    background: rgba(247, 244, 239, 0.09);
-  }
-
-  &:hover::before {
-    opacity: 1;
-  }
-
-  @media (max-width: 980px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const OfferTop = styled.div`
-  position: relative;
-  z-index: 1;
-`;
-
-const OfferMeta = styled.div`
-  min-height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  margin-bottom: clamp(36px, 5vw, 84px);
-
-  > span:first-child {
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(247, 244, 239, 0.52);
-  }
-`;
-
-const Recommended = styled.span`
-  padding: 9px 13px;
-  border: 1px solid rgba(247, 244, 239, 0.24);
-  border-radius: 999px;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #f7f4ef;
-`;
-
-const OfferTitle = styled.div`
-  h3 {
-    max-width: 640px;
-    margin: 0;
-    font-size: clamp(3rem, 6.5vw, 8.5rem);
-    line-height: 0.86;
-    letter-spacing: -0.085em;
-    font-weight: 500;
-  }
-`;
-
-const PriceBlock = styled.div`
-  margin-top: clamp(28px, 4vw, 52px);
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-
-  strong {
-    font-size: clamp(2.4rem, 4.6vw, 5.6rem);
-    line-height: 0.9;
-    letter-spacing: -0.06em;
-    font-weight: 500;
-  }
-
-  span {
-    padding-bottom: 8px;
-    color: rgba(247, 244, 239, 0.55);
-  }
-`;
-
-const OfferDescription = styled.p`
-  max-width: 560px;
-  margin: 32px 0 0;
-  color: rgba(247, 244, 239, 0.68);
-  font-size: clamp(1rem, 1.45vw, 1.25rem);
-  line-height: 1.55;
-`;
-
-const OfferBody = styled.div`
-  position: relative;
-  z-index: 1;
-  display: grid;
   gap: 28px;
 `;
 
-const BestFor = styled.div`
-  padding-bottom: 28px;
-  border-bottom: 1px solid rgba(247, 244, 239, 0.12);
-
-  span {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(247, 244, 239, 0.42);
-  }
-
-  p {
-    max-width: 620px;
-    margin: 0;
-    color: rgba(247, 244, 239, 0.75);
-    line-height: 1.55;
-  }
-`;
-
-const Includes = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  columns: 2;
-  column-gap: 30px;
-
-  li {
-    break-inside: avoid;
-    position: relative;
-    padding: 0 0 14px 20px;
-    color: rgba(247, 244, 239, 0.72);
-    line-height: 1.45;
-  }
-
-  li::before {
-    content: "";
-    position: absolute;
-    top: 0.63em;
-    left: 0;
-    width: 6px;
-    height: 6px;
-    border-radius: 999px;
-    background: rgba(247, 244, 239, 0.55);
-  }
-
-  @media (max-width: 700px) {
-    columns: 1;
-  }
-`;
-
-const Outcome = styled.div`
-  padding: clamp(22px, 3vw, 34px);
-  border-radius: 28px;
-  background: rgba(247, 244, 239, 0.08);
-
-  span {
-    display: block;
-    margin-bottom: 12px;
-    font-size: 0.75rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(247, 244, 239, 0.44);
-  }
-
-  p {
-    margin: 0;
-    color: rgba(247, 244, 239, 0.78);
-    line-height: 1.6;
-  }
-`;
-
-const SupportSection = styled.section`
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
-`;
-
-const SupportGrid = styled.div`
+const OfferCard = styled.article<{ $recommended?: boolean }>`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  border-top: 1px solid rgba(17, 17, 17, 0.14);
-  border-left: 1px solid rgba(17, 17, 17, 0.14);
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(40px, 6vw, 90px);
+  padding: clamp(34px, 5vw, 72px);
+  border-radius: clamp(34px, 4vw, 60px);
+  --card-ink: ${({ $recommended }) => ($recommended ? "#fff" : "#090909")};
+  --card-muted: ${({ $recommended }) =>
+    $recommended ? "rgba(255, 255, 255, 0.64)" : "rgba(0, 0, 0, 0.58)"};
+  --card-soft: ${({ $recommended }) =>
+    $recommended ? "rgba(255, 255, 255, 0.58)" : "rgba(0, 0, 0, 0.52)"};
+  --card-line: ${({ $recommended }) =>
+    $recommended ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.08)"};
+  --inverse-bg: ${({ $recommended }) => ($recommended ? "#fff" : "#050505")};
+  --inverse-ink: ${({ $recommended }) => ($recommended ? "#050505" : "#fff")};
 
-  @media (max-width: 1100px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 700px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const SupportCard = styled.article`
-  min-height: 420px;
-  padding: clamp(24px, 3vw, 42px);
-  border-right: 1px solid rgba(17, 17, 17, 0.14);
-  border-bottom: 1px solid rgba(17, 17, 17, 0.14);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  transition: background 0.35s ease, transform 0.35s ease;
-
-  h3 {
-    margin: 0 0 18px;
-    font-size: clamp(2rem, 3vw, 4rem);
-    line-height: 0.95;
-    letter-spacing: -0.065em;
-    font-weight: 500;
-  }
-
-  p {
-    margin: 0;
-    color: rgba(17, 17, 17, 0.6);
-    line-height: 1.55;
-  }
+  background: ${({ $recommended }) =>
+    $recommended ? "rgba(5, 5, 5, 0.96)" : "rgba(255, 255, 255, 0.84)"};
+  color: var(--card-ink);
+  border: 1px solid
+    ${({ $recommended }) =>
+      $recommended ? "rgba(255, 255, 255, 0.14)" : "rgba(0, 0, 0, 0.08)"};
+  box-shadow: ${({ $recommended }) =>
+    $recommended
+      ? "0 40px 120px rgba(0, 0, 0, 0.18)"
+      : "0 30px 100px rgba(0, 0, 0, 0.055)"};
+  transition: transform 0.35s ease, border-color 0.35s ease,
+    box-shadow 0.35s ease;
 
   &:hover {
-    background: #fffaf1;
-    transform: translateY(-4px);
+    transform: translateY(-6px);
+    border-color: ${({ $recommended }) =>
+      $recommended ? "rgba(255, 255, 255, 0.32)" : "rgba(0, 0, 0, 0.22)"};
+    box-shadow: ${({ $recommended }) =>
+      $recommended
+        ? "0 50px 140px rgba(0, 0, 0, 0.22)"
+        : "0 40px 120px rgba(0, 0, 0, 0.085)"};
   }
-`;
 
-const OutcomesSection = styled.section`
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
-  background: #ebe4d9;
-`;
-
-const OutcomeGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 18px;
-
-  @media (max-width: 800px) {
+  @media (max-width: 1080px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const OutcomeCard = styled.article`
-  min-height: 360px;
-  padding: clamp(24px, 4vw, 54px);
-  border-radius: 36px;
-  background: #f7f4ef;
+const OfferLeft = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-
-  span {
-    color: rgba(17, 17, 17, 0.4);
-    font-size: 0.8rem;
-  }
-
-  h3 {
-    max-width: 560px;
-    margin: auto 0 18px;
-    font-size: clamp(2.2rem, 4.4vw, 5.8rem);
-    line-height: 0.88;
-    letter-spacing: -0.075em;
-    font-weight: 500;
-  }
-
-  p {
-    max-width: 520px;
-    margin: 0;
-    color: rgba(17, 17, 17, 0.62);
-    line-height: 1.55;
-  }
+  gap: 64px;
 `;
 
-const ProcessSection = styled.section`
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
+const OfferEyebrow = styled.p`
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.36em;
+  text-transform: uppercase;
+  color: var(--card-soft);
 `;
 
-const ProcessList = styled.div`
-  display: grid;
-  border-top: 1px solid rgba(17, 17, 17, 0.14);
+const OfferTitleRow = styled.div`
+  margin-top: 34px;
 `;
 
-const ProcessItem = styled.article`
-  min-height: 180px;
-  padding: clamp(24px, 3vw, 42px) 0;
-  border-bottom: 1px solid rgba(17, 17, 17, 0.14);
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  gap: 30px;
+const OfferTitle = styled.h3`
+  max-width: 650px;
+  margin: 0;
+  font-size: clamp(50px, 6vw, 104px);
+  line-height: 0.9;
+  letter-spacing: -0.088em;
+  font-weight: 800;
+`;
+
+const Recommended = styled.span`
+  display: inline-flex;
+  width: fit-content;
+  min-height: 36px;
+  margin-top: 24px;
+  padding: 0 15px;
   align-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+`;
 
-  span {
-    color: rgba(17, 17, 17, 0.38);
-    font-size: 0.8rem;
+const OfferSubtitle = styled.p`
+  max-width: 520px;
+  margin: 28px 0 0;
+  font-size: clamp(18px, 1.6vw, 25px);
+  line-height: 1.45;
+  color: var(--card-muted);
+`;
+
+const OfferPriceBlock = styled.div``;
+
+const PriceLine = styled.div`
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
+const Price = styled.p`
+  margin: 0;
+  font-size: clamp(42px, 5vw, 76px);
+  line-height: 0.9;
+  letter-spacing: -0.078em;
+  font-weight: 800;
+`;
+
+const PriceMeta = styled.p`
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--card-soft);
+`;
+
+const OfferButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  margin-top: 28px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: var(--inverse-bg);
+  color: var(--inverse-ink);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.82;
+  }
+`;
+
+const OfferRight = styled.div``;
+
+const OfferDescription = styled.p`
+  max-width: 850px;
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--card-muted);
+`;
+
+const OutcomeBox = styled.div`
+  margin-top: 36px;
+  padding: clamp(24px, 3vw, 38px);
+  border-radius: 34px;
+  background: var(--inverse-bg);
+  color: var(--inverse-ink);
+`;
+
+const OutcomeLabel = styled.p`
+  margin: 0 0 24px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: currentColor;
+  opacity: 0.58;
+`;
+
+const OutcomeList = styled.ul`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 26px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    position: relative;
+    padding-left: 20px;
+    font-size: clamp(15px, 1.1vw, 17px);
+    line-height: 1.55;
+    color: currentColor;
+    opacity: 0.78;
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.72em;
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: 0.7;
+    }
   }
 
-  p {
-    max-width: 980px;
-    margin: 0;
-    font-size: clamp(1.8rem, 3.7vw, 5rem);
-    line-height: 0.98;
-    letter-spacing: -0.065em;
-  }
-
-  @media (max-width: 700px) {
+  @media (max-width: 760px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const TermsSection = styled.section`
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
-  background: #111;
-  color: #f7f4ef;
+const OfferColumns = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(340px, 0.7fr);
-  gap: clamp(40px, 7vw, 120px);
+  grid-template-columns: 0.9fr 1.2fr 0.9fr;
+  gap: 30px;
+  margin-top: 42px;
+
+  @media (max-width: 860px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const OfferColumn = styled.div``;
+
+const ColumnTitle = styled.p`
+  margin: 0 0 14px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--card-soft);
+`;
+
+const CleanList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 13px 0;
+    border-top: 1px solid var(--card-line);
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--card-muted);
+  }
+`;
+
+const CapabilitiesSection = styled.section`
+  padding: clamp(96px, 11vw, 170px) 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+`;
+
+const CapabilitiesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+
+  @media (max-width: 1080px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const CapabilityCard = styled.article`
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 30px;
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    border-color: rgba(0, 0, 0, 0.22);
+  }
+`;
+
+const CapabilityTitle = styled.h3`
+  max-width: 260px;
+  margin: 0;
+  font-size: clamp(30px, 3.2vw, 50px);
+  line-height: 0.94;
+  letter-spacing: -0.075em;
+  font-weight: 800;
+`;
+
+const CapabilityText = styled.p`
+  margin: 52px 0 0;
+  color: rgba(0, 0, 0, 0.58);
+  line-height: 1.6;
+`;
+
+const WorkflowSection = styled.section`
+  padding: clamp(96px, 11vw, 170px) 0;
+`;
+
+const WorkflowGrid = styled.div`
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: clamp(40px, 6vw, 90px);
+  margin-top: 28px;
 
   @media (max-width: 980px) {
     grid-template-columns: 1fr;
   }
 `;
 
-const TermsContent = styled.div``;
+const WorkflowList = styled.div`
+  display: grid;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+`;
+
+const WorkflowItem = styled.article`
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 28px;
+  padding: 28px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  align-items: start;
+
+  @media (max-width: 620px) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+`;
+
+const WorkflowNumber = styled.p`
+  margin: 0;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  color: rgba(0, 0, 0, 0.46);
+`;
+
+const WorkflowText = styled.p`
+  margin: 0;
+  font-size: clamp(18px, 2vw, 30px);
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+  color: rgba(0, 0, 0, 0.74);
+`;
+
+const TermsSection = styled.section`
+  padding: clamp(86px, 9vw, 140px);
+  border-radius: clamp(36px, 5vw, 70px);
+  background: #050505;
+  color: #fff;
+`;
+
+const DarkSectionLabel = styled(SectionLabel)`
+  color: rgba(255, 255, 255, 0.68);
+`;
+
+const TermsGrid = styled.div`
+  display: grid;
+  grid-template-columns: 0.82fr 1.18fr;
+  gap: clamp(40px, 6vw, 90px);
+  margin-top: 28px;
+
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const DarkTitle = styled(SectionTitle)`
+  margin-top: 0;
+  color: #fff;
+`;
+
+const TermsCard = styled.div`
+  padding: clamp(28px, 4vw, 52px);
+  border-radius: 44px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+`;
 
 const TermsList = styled.ul`
-  max-width: 720px;
-  margin: 0;
-  padding: 0;
   list-style: none;
+  padding: 0;
+  margin: 0;
 
   li {
-    padding: 18px 0;
-    border-bottom: 1px solid rgba(247, 244, 239, 0.12);
-    color: rgba(247, 244, 239, 0.68);
-    line-height: 1.55;
-  }
-`;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.72);
+    line-height: 1.65;
 
-const FaqList = styled.div`
-  display: grid;
-  align-content: start;
-  border-top: 1px solid rgba(247, 244, 239, 0.14);
-`;
-
-const FaqItem = styled.article`
-  border-bottom: 1px solid rgba(247, 244, 239, 0.14);
-
-  button {
-    width: 100%;
-    padding: 26px 0;
-    border: 0;
-    background: transparent;
-    color: #f7f4ef;
-    display: flex;
-    justify-content: space-between;
-    gap: 24px;
-    text-align: left;
-    cursor: pointer;
-  }
-
-  button span {
-    font-size: clamp(1.1rem, 1.6vw, 1.45rem);
-    letter-spacing: -0.035em;
-  }
-
-  button em {
-    font-style: normal;
-    color: rgba(247, 244, 239, 0.54);
-  }
-
-  p {
-    max-width: 560px;
-    margin: 0;
-    padding: 0 0 28px;
-    color: rgba(247, 244, 239, 0.62);
-    line-height: 1.6;
+    &:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
   }
 `;
 
 const FinalCta = styled.section`
-  min-height: 90vh;
-  padding: clamp(80px, 10vw, 160px) clamp(20px, 4vw, 72px);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: clamp(40px, 7vw, 100px);
+  align-items: end;
+  margin-top: 28px;
+  padding: clamp(44px, 7vw, 90px);
+  border-radius: clamp(36px, 5vw, 70px);
+  background: rgba(255, 255, 255, 0.84);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.055);
 
-  span {
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(17, 17, 17, 0.48);
+  @media (max-width: 980px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const FinalTitle = styled.h2`
+  max-width: 980px;
+  margin: 0;
+  font-size: clamp(52px, 8vw, 128px);
+  line-height: 0.88;
+  letter-spacing: -0.088em;
+  font-weight: 800;
+`;
+
+const FinalContent = styled.div``;
+
+const FinalText = styled.p`
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.65;
+  color: rgba(0, 0, 0, 0.58);
+`;
+
+const FinalButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  margin-top: 30px;
+  padding: 0 26px;
+  border-radius: 999px;
+  background: #050505;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: transform 0.25s ease, background 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: #222;
   }
 
-  h2 {
-    max-width: 1280px;
-    margin: clamp(80px, 10vw, 150px) 0 42px;
-    font-size: clamp(3.2rem, 8.2vw, 10.5rem);
-    line-height: 0.88;
-    letter-spacing: -0.085em;
-    font-weight: 500;
-  }
-
-  a {
-    width: fit-content;
-    min-height: 62px;
-    padding: 0 28px;
-    border-radius: 999px;
-    background: #111;
-    color: #f7f4ef;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    letter-spacing: -0.025em;
-    transition: transform 0.35s ease, background 0.35s ease, color 0.35s ease;
-  }
-
-  a:hover {
-    transform: translateY(-4px);
-    background: #ebe4d9;
-    color: #111;
-  }
-
-  @media (max-width: 700px) {
-    a {
-      width: 100%;
-    }
+  @media (max-width: 620px) {
+    width: 100%;
   }
 `;

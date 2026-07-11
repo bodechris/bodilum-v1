@@ -23,121 +23,390 @@ type PortfolioProject = {
   slides: Slide[];
 };
 
-const CTA_HREF =
-  "mailto:hello@bodilum.com?subject=Start%20a%20Web%20Xperience%20Project&body=Hi%20Bodilum%2C%0A%0AI%27d%20like%20to%20start%20a%20Web%20Xperience%20project.%0A%0ABusiness%20name%3A%0AWebsite%20type%3A%20One-page%20/%203-5%20pages%20/%203D%20experience%0ABudget%20range%3A%0ATimeline%3A%0A";
+const CTA_HREF = "mailto:hello@bodilum.com?subject=Start%20a%20Web%20Xperience%20Project&body=Hi%20Bodilum%2C%0A%0AI%27d%20like%20to%20start%20a%20Web%20Xperience%20project.%0A%0ABusiness%20name%3A%0AWebsite%20type%3A%20One-page%20/%203-5%20pages%20/%203D%20experience%0ABudget%20range%3A%0ATimeline%3A%0A";
 
 const portfolioProjects: PortfolioProject[] = [
   {
-    id: "beauty-commerce",
+    id: "world-cup-2026",
     number: "01",
-    eyebrow: "Beauty / booking / commerce",
-    title: "Kaykay Hair Studio",
+    eyebrow: "Motion / storytelling / interactive web / On-Going",
+    title: "World Cup 2026: Road to Glory",
     description:
-      "A clean, premium beauty web experience designed to turn services, products, memberships, lookbooks and before-after results into a confident booking journey.",
-    scope: "3–5 page Web Xperience",
-    outcome: "Book services, browse offers, explore visual proof and enquire faster.",
-    tone: "cream",
-    slides: [
-      {
-        title: "Home experience",
-        caption: "Large editorial hero with service-led conversion.",
-        src: "",
-      },
-      {
-        title: "Services story",
-        caption: "Slim typography, breathing space and guided package discovery.",
-        src: "",
-      },
-      {
-        title: "Shop preview",
-        caption: "Minimal product browsing for hair care and add-ons.",
-        src: "",
-      },
-      {
-        title: "Lookbook",
-        caption: "Awwwards-style image browsing for beauty inspiration.",
-        src: "",
-      },
-      {
-        title: "Before / after",
-        caption: "Interactive transformation sections with scroll reveal.",
-        src: "",
-      },
-    ],
-  },
-  {
-    id: "ai-office",
-    number: "02",
-    eyebrow: "AI product / dashboard / interface",
-    title: "Lola AI Digital Office",
-    description:
-      "A product-style web experience for an AI assistant interface, combining fixed navigation, deep content panels, clean chat flow and a premium system feel.",
-    scope: "Product Web Xperience",
-    outcome: "Explain the product, demonstrate the workflow and move users into action.",
+      "A cinematic scroll-driven web experience that follows the winning nation's journey from its opening match to the final whistle, combining match events, emotional turning points, motion design and African visual storytelling.",
+    scope: "Cinematic Motion + Web Xperience",
+    outcome:
+      "Transform the tournament timeline into an immersive digital story people can explore, feel and remember.",
     tone: "dark",
     slides: [
       {
-        title: "AI workspace",
-        caption: "ChatGPT/Gemini-inspired layout with a fixed left panel.",
-        src: "",
+        title: "Opening ceremony",
+        caption:
+          "A cinematic introduction to the tournament, host cities and the road ahead.",
+        src: "/portfolios/world-cup/world-cup-xp-04.webp",
       },
       {
-        title: "Brand office flow",
-        caption: "Guided creation journey for adding a business or brand.",
-        src: "",
+        title: "Group-stage journey",
+        caption:
+          "Scroll through the early matches, decisive moments, wins and setbacks.",
+        src: "/portfolios/world-cup/world-cup-xp-03.webp",
       },
       {
-        title: "Active chat state",
-        caption: "Clean conversation rhythm with space for generated assets.",
-        src: "",
+        title: "Emotional match chapters",
+        caption:
+          "Goals, losses and turning points expressed through motion, colour and sound.",
+        src: "/portfolios/world-cup/world-cup-xp-01.webp",
       },
       {
-        title: "Business memory",
-        caption: "A structured interface for brand context, files and tasks.",
-        src: "",
+        title: "African visual language",
+        caption:
+          "Patterns, cultural objects and sculptural forms used as transitions and narrative devices.",
+        src: "/portfolios/world-cup/world-cup-xp-02.webp",
       },
       {
-        title: "Responsive state",
-        caption: "Mobile-first simplification without losing the premium feel.",
-        src: "",
+        title: "The final",
+        caption:
+          "A climactic interactive sequence celebrating the winning nation’s rise to glory.",
+        src: "/portfolios/world-cup/world-cup-xp-05.webp",
       },
     ],
   },
   {
-    id: "webgl-lobby",
-    number: "03",
-    eyebrow: "3D / WebGL / immersive microsite",
-    title: "3D Brand Lobby",
+    id: "biznesxpo-microsites",
+    number: "02",
+    eyebrow: "Business tools / microsites / AI platform / On-Going",
+    title: "BiznesXpo Microsites",
     description:
-      "A lightweight WebGL microsite concept where users enter a minimal 3D lobby, click hotspots, explore brand pages and customise colours, logo and content.",
-    scope: "3D Web Xperience",
-    outcome: "Turn a brand profile into an interactive space people remember.",
+      "A modular microsite system that turns business information, brand assets, products, services and documents into polished digital profiles that can be created, customised and shared quickly.",
+    scope: "AI-Powered Microsite System",
+    outcome:
+      "Help small businesses establish a credible web presence without the cost or complexity of building a traditional website.",
+    tone: "cream",
+    slides: [
+      {
+        title: "Business profile",
+        caption:
+          "A premium introduction to the company, its story and its value proposition.",
+        src: "/portfolios/bx-microsites/3dOfficesV2.webp",
+      },
+      {
+        title: "Brand-led customisation",
+        caption:
+          "Colours, typography, logos and imagery generated from each business identity.",
+        src: "/portfolios/bx-microsites/Xpo-Office-MoreScreens_1C.webp",
+      },
+      {
+        title: "Products and services",
+        caption:
+          "Flexible sections for presenting offers, pricing and featured work.",
+        src: "/portfolios/bx-microsites/Xpo-Office-MoreScreens2.webp",
+      },
+      {
+        title: "Business documents",
+        caption:
+          "Invoices, quotations, brochures and other assets connected to the microsite.",
+        src: "/portfolios/bx-microsites/Xpo-Office-MoreScreens3.webp",
+      },
+      {
+        title: "Mobile sharing",
+        caption:
+          "Responsive profiles designed for WhatsApp, NFC cards and social distribution.",
+        src: "/portfolios/bx-microsites/microsite-1.webp",
+      },
+    ],
+  },
+  {
+    id: "bodilum-brand-identity",
+    number: "03",
+    eyebrow: "Brand identity / motion / design system / On-Going",
+    title: "Bodilum Brand Identity",
+    description:
+      "A living identity system for an African design and technology studio working across brand, software, motion and immersive digital experiences.",
+    scope: "Brand Identity + Motion System",
+    outcome:
+      "Position Bodilum as a distinctive African studio capable of delivering world-class creative and technical work.",
     tone: "warm",
     slides: [
       {
-        title: "Lobby view",
-        caption: "Minimal office lobby with calm spatial composition.",
-        src: "",
+        title: "Core identity",
+        caption:
+          "A refined visual system built around clarity, confidence and experimentation.",
+        src: "/portfolios/bodilum-indent/bodilum-indent-6.webp",
       },
       {
-        title: "Hotspot system",
-        caption: "Clickable zones for services, portfolio, contact and documents.",
-        src: "",
+        title: "Logo behaviour",
+        caption:
+          "Responsive lockups and animated expressions for digital environments.",
+        src: "/portfolios/bodilum-indent/logo-anim-1.webp",
       },
       {
-        title: "Brand customisation",
-        caption: "Colours, logo and typography applied to the environment.",
-        src: "",
+        title: "Typography system",
+        caption:
+          "Bold editorial hierarchy balanced with precise supporting typography.",
+        src: "/portfolios/bodilum-indent/bodilum-indent-5.webp",
       },
       {
-        title: "Content planes",
-        caption: "2D content panels arranged inside a 3D world.",
-        src: "",
+        title: "Motion language",
+        caption:
+          "Transitions, reveals and spatial movement designed to make the identity feel alive.",
+        src: "/portfolios/bodilum-indent/bodilum-indent-2.webp",
       },
       {
-        title: "Mobile transform",
-        caption: "Responsive camera and layout behaviour for smaller screens.",
-        src: "",
+        title: "Studio applications",
+        caption:
+          "The identity applied across web experiences, proposals, social content and presentations.",
+        src: "/portfolios/bodilum-indent/bodilum-indent-4.webp",
+      },
+    ],
+  },
+  {
+    id: "bobobo-ai-challenger",
+    number: "04",
+    eyebrow: "AI gaming / multiplayer / character system / On-Going",
+    title: "Bobobo — Your AI Challenger",
+    description:
+      "A playful game experience where players compete against Bobobo, a bold AI personality, on Ludo & Chess board games, with reactions, banter, progression and social competition.",
+    scope: "AI Game + Interactive Experience",
+    outcome:
+      "Turn traditional games into a character-led digital experience that feels modern, competitive, social and endlessly replayable.",
+    tone: "dark",
+    slides: [
+  {
+    title: "Meet Bobobo",
+    caption:
+      "A sharp, funny and instantly recognizable game companion built to make every challenge feel personal.",
+    src: "/portfolios/bobobo/bobobo-11.webp",
+  },
+  {
+    title: "A challenge arrives",
+    caption:
+      "Each experience begins with a message inviting Bobobo into a new game, puzzle or competitive moment.",
+    src: "/portfolios/bobobo/bobobo-12.webp",
+  },
+  {
+    title: "Challenge accepted",
+    caption:
+      "Bobobo responds with confidence, setting the tone before the player enters the game.",
+    src: "/portfolios/bobobo/bobobo-14.webp",
+  },
+  {
+    title: "Choose your game",
+    caption:
+      "Select from quick strategy games, familiar classics and new challenges designed around Bobobo’s personality.",
+    src: "/portfolios/bobobo/bobobo-1.webp",
+  },
+  {
+    title: "Set the difficulty",
+    caption:
+      "Adjust the challenge level and decide whether Bobobo should play casually, strategically or without mercy.",
+    src: "/portfolios/bobobo/bobobo-2.webp",
+  },
+  {
+    title: "Enter the arena",
+    caption:
+      "A focused transition moves the player from character-led storytelling into the active game experience.",
+    src: "/portfolios/bobobo/bobobo-9.webp",
+  },
+  {
+    title: "Live gameplay",
+    caption:
+      "Clean, responsive game interfaces keep attention on every move while Bobobo reacts in real time.",
+    src: "/portfolios/bobobo/bobobo-10.webp",
+  },
+  {
+    title: "Playful reactions",
+    caption:
+      "Expressions, gestures and animated feedback make Bobobo feel present without interrupting the game.",
+    src: "/portfolios/bobobo/bobobo-6.webp",
+  },
+  {
+    title: "In-game banter",
+    caption:
+      "Text-based conversations bring humour, tension and personality directly into the active gameplay screen.",
+    src: "/portfolios/bobobo/bobobo-3.webp",
+  },
+  {
+    title: "Strategic personality",
+    caption:
+      "Bobobo thinks, celebrates, teases and adapts, turning a simple opponent into a memorable rival.",
+    src: "/portfolios/bobobo/bobobo-13.webp",
+  },
+  {
+    title: "Every move matters",
+    caption:
+      "Key decisions are reinforced with expressive character moments, visual feedback and competitive energy.",
+    src: "/portfolios/bobobo/bobobo-7.webp",
+  },
+  {
+    title: "Wins, losses and comebacks",
+    caption:
+      "Match outcomes build an evolving relationship between the player and Bobobo across repeated challenges.",
+    src: "/portfolios/bobobo/bobobo-4.webp",
+  },
+  {
+    title: "Rivalry progression",
+    caption:
+      "Track victories, streaks, rankings, achievements and the growing intensity of each rivalry.",
+    src: "/portfolios/bobobo/bobobo-5.webp",
+  },
+  {
+    title: "Social competition",
+    caption:
+      "Challenge friends, watch matches, compare results and share the moments worth remembering.",
+    src: "/portfolios/bobobo/bobobo-8.webp",
+  },
+  {
+    title: "A growing game universe",
+    caption:
+      "Bobobo is designed to expand across multiple games, stories, challenges and interactive experiences.",
+    src: "/portfolios/bobobo/bobobo-15.webp",
+  },
+],
+  },
+  {
+    id: "naija-fashion-index",
+    number: "05",
+    eyebrow: "Fashion archive / culture / editorial web / On-Going",
+    title: "Naija Fashion Index",
+    description:
+      "A living digital archive documenting Nigerian fashion, designers, garments, movements and cultural influences through an expressive editorial and interactive web experience.",
+    scope: "Cultural Archive Web Xperience",
+    outcome:
+      "Create a discoverable visual record of Nigerian fashion while giving designers, researchers and audiences a richer way to explore its evolution.",
+    tone: "cream",
+    slides: [
+      {
+        title: "Dele enters the runway",
+        caption:
+          "A confident opening look blending contemporary streetwear with Nigerian-inspired patterns and adornments.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-18.webp",
+      },
+      {
+        title: "Details of Dele",
+        caption:
+          "A closer look at the eyewear, beadwork, textures and graphic language defining Dele’s style.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-20.webp",
+      },
+      {
+        title: "Chichi in motion",
+        caption:
+          "A vibrant runway look combining flowing fabric, modern tailoring and culturally inspired accessories.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-2.webp",
+      },
+      {
+        title: "Details of Chichi",
+        caption:
+          "A close portrait celebrating expressive eyewear, braided hair, jewellery and bold colour combinations.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-3.webp",
+      },
+      {
+        title: "The fashion duo",
+        caption:
+          "Dele and Chichi walk together as complementary expressions of contemporary Nigerian fashion.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-4.webp",
+      },
+      {
+        title: "Culture in conversation",
+        caption:
+          "A cinematic two-character composition exploring contrast, harmony and shared cultural identity.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-5.webp",
+      },
+      {
+        title: "Across the aisle",
+        caption:
+          "An over-the-shoulder runway moment that makes the viewer feel present inside the fashion experience.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-8.webp",
+      },
+      {
+        title: "Ceremonial expression",
+        caption:
+          "A richly layered look featuring sculptural headwear, coral-inspired adornments and woven textiles.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-9.webp",
+      },
+      {
+        title: "The silhouette from behind",
+        caption:
+          "A rear view highlighting garment construction, fabric movement and the storytelling potential of the back.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-12.webp",
+      },
+      {
+        title: "Dele walks onward",
+        caption:
+          "A back-facing runway shot focused on scale, movement and the bold graphic composition of the outer garment.",
+        src: "/portfolios/naija-fashion-index/naija-fashion-index-22.webp",
+      },
+    ],
+  },
+  {
+    id: "afrochess",
+    number: "06",
+    eyebrow: "Cultural gaming / strategy / 3D world",
+    title: "Afrochess",
+    description:
+      "A reimagining of chess in which African royal powers, warriors, artefacts and architectural traditions replace the conventional European pieces and visual language.",
+    scope: "Cultural Strategy Game",
+    outcome:
+      "Build a globally recognisable chess experience rooted in African history, symbolism and storytelling.",
+    tone: "warm",
+    slides: [
+      {
+        title: "Enter AfroChess",
+        caption:
+          "A cinematic reimagining of chess through African-inspired royalty, craftsmanship and symbolism.",
+        src: "/portfolios/afrochess/afrochess-0.webp",
+      },
+      {
+        title: "The ceremonial battlefield",
+        caption:
+          "A polished chessboard staged like a monumental arena, waiting for the first strategic move.",
+        src: "/portfolios/afrochess/afrochess-3.webp",
+      },
+      {
+        title: "Strategy from above",
+        caption:
+          "A graphic top-down composition revealing the complete board through symmetry, order and tension.",
+        src: "/portfolios/afrochess/afrochess-10.webp",
+      },
+      {
+        title: "The royal assembly",
+        caption:
+          "Kings, queens, warriors and guardians form a unified sculptural family with distinctive silhouettes.",
+        src: "/portfolios/afrochess/afrochess-8.webp",
+      },
+      {
+        title: "The king’s authority",
+        caption:
+          "Commanding proportions, ceremonial regalia and symbolic details establish the centre of power.",
+        src: "/portfolios/afrochess/afrochess-13.webp",
+      },
+      {
+        title: "The queen’s presence",
+        caption:
+          "A poised royal figure balancing elegance, intelligence and unmistakable battlefield authority.",
+        src: "/portfolios/afrochess/afrochess-18.webp",
+      },
+      {
+        title: "The royal cavalry",
+        caption:
+          "The traditional knight is transformed through sculpted armour, engraved patterns and a powerful silhouette.",
+        src: "/portfolios/afrochess/afrochess-26.webp",
+      },
+      {
+        title: "Fortresses of the realm",
+        caption:
+          "Architectural rooks imagined as fortified monuments rather than conventional chess towers.",
+        src: "/portfolios/afrochess/afrochess-14.webp",
+      },
+      {
+        title: "Guardians of the frontline",
+        caption:
+          "Shield-bearing warriors give the front rank discipline, protection and a strong visual rhythm.",
+        src: "/portfolios/afrochess/afrochess-23.webp",
+      },
+      {
+        title: "Every move becomes theatre",
+        caption:
+          "Low camera angles, directional light and restrained motion turn each confrontation into a dramatic ritual.",
+        src: "/portfolios/afrochess/afrochess-7.webp",
       },
     ],
   },
@@ -321,8 +590,8 @@ function WebXperiencePage() {
         </OfferStrip>
 
         <PortfolioIntro data-reveal>
-          <span>Selected directions</span>
-          <h2>Three Web Xperiences currently in progress.</h2>
+          {/* <span>Selected directions</span> */}
+          <h2>Selected Web Xperiences</h2>
           <p>
            
           </p>
@@ -348,10 +617,10 @@ function WebXperiencePage() {
                         <strong>{project.scope}</strong>
                       </div>
 
-                      <div>
+                      {/* <div>
                         <small>Outcome</small>
                         <strong>{project.outcome}</strong>
-                      </div>
+                      </div> */}
                     </CaseFacts>
 
                     <InlineCta href={CTA_HREF}>Start a similar project →</InlineCta>
@@ -374,10 +643,10 @@ function WebXperiencePage() {
                         {String(project.slides.length).padStart(2, "0")}
                       </SlideCounter>
 
-                      <SlideCaption>
+                      {/* <SlideCaption>
                         <strong>{activeSlide.title}</strong>
                         <span>{activeSlide.caption}</span>
-                      </SlideCaption>
+                      </SlideCaption> */}
                     </MediaFrame>
 
                     <GalleryNav>
