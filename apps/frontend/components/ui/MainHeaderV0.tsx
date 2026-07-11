@@ -103,6 +103,11 @@ export default function MainHeaderV0() {
                 Home
               </Link>
             </li>
+            <li>
+              <Link href="/work" onClick={closeMenus}>
+                Work
+              </Link>
+            </li>
 
             <DesktopDropdown
               dropdownKey="products"
@@ -161,6 +166,9 @@ export default function MainHeaderV0() {
                   Home
                 </Link>
               </li>
+              <Link href="/work" onClick={closeMenus}>
+                Work
+              </Link>
 
               <MobileDropdown
                 dropdownKey="products"

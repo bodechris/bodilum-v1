@@ -164,7 +164,7 @@ const portfolioProjects: PortfolioProject[] = [
     eyebrow: "AI gaming / multiplayer / character system / On-Going",
     title: "Bobobo — Your AI Challenger",
     description:
-      "A playful game experience where players compete against Bobobo, a bold AI personality, on Ludo & Chess board games, with reactions, banter, progression and social competition.",
+      "A playful web game experience where players compete against Bobobo, a bold AI personality, on Ludo & Chess board games, with reactions, banter, progression and social competition.",
     scope: "AI Game + Interactive Experience",
     outcome:
       "Turn traditional games into a character-led digital experience that feels modern, competitive, social and endlessly replayable.",
