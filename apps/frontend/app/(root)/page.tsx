@@ -424,7 +424,9 @@ export default function Home() {
           </PathwayList>
         </PathwaysSection>
 
-        <TestimonialSection aria-labelledby="testimonial-heading">
+        {
+          /**
+           * <TestimonialSection aria-labelledby="testimonial-heading">
           <TestimonialIntro data-home-reveal>
             <div>
               <SectionEyebrow>Client perspective</SectionEyebrow>
@@ -511,6 +513,10 @@ export default function Home() {
             </CarouselControls>
           </TestimonialCarousel>
         </TestimonialSection>
+           */
+        }
+
+        
 
         <ClosingSection data-home-reveal>
           <ClosingEyebrow>
