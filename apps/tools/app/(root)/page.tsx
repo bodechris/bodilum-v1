@@ -52,7 +52,7 @@ export default function Home() {
       </section>
 
       <footer className="site-footer">
-        <p>Tools by <a href="https://www.bodilum.com" target="_blank" rel="noreferrer">Bodilum</a> — a Nigerian-owned creative technology studio based in Johannesburg.</p>
+        <p>Tools by <a href="https://www.bodilum.com" target="_blank" rel="noreferrer">Bodilum</a> & <a href="https://www.biznesxpo.com" target="_blank" rel="noreferrer">BiznesXpo</a></p>
         <div className="footer-meta"><LegalFooterLinks /><span>© {new Date().getFullYear()} Bodilum</span></div>
       </footer>
     </main>
