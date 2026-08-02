@@ -24,8 +24,10 @@ export const env = {
   demoMode: booleanValue(process.env.ENABLE_DEMO_MODE, !isProduction),
   prospectSearchEnabled: booleanValue(process.env.PROSPECT_SEARCH_ENABLED, true),
   prospectAnalysisEnabled: booleanValue(process.env.PROSPECT_ANALYSIS_ENABLED, true),
+  brandScorecardEnabled: booleanValue(process.env.BRAND_SCORECARD_ENABLED, true),
   searchDailyLimit: positiveInteger(process.env.SEARCH_DAILY_LIMIT, 10),
   analysisDailyLimit: positiveInteger(process.env.ANALYSIS_DAILY_LIMIT, 2),
+  scorecardDailyLimit: positiveInteger(process.env.SCORECARD_DAILY_LIMIT, 3),
 };
 
 export function bedrockConfigured() {

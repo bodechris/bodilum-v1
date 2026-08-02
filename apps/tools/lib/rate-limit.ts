@@ -7,7 +7,7 @@ const memoryUsage = new Map<string, { count: number; expiresAt: number }>();
 let indexPromise: Promise<string> | null = null;
 
 export type RateLimitResult = { allowed: boolean; limit: number; remaining: number; resetAt: string };
-type UsageDocument = { _id: string; count: number; action: "search" | "analysis"; createdAt: Date; expiresAt: Date };
+type UsageDocument = { _id: string; count: number; action: "search" | "analysis" | "scorecard"; createdAt: Date; expiresAt: Date };
 
 export class RateLimitUnavailableError extends Error {
   constructor() {
@@ -56,7 +56,7 @@ function consumeMemory(key: string, limit: number, reset: Date): RateLimitResult
   return { allowed: true, limit, remaining: Math.max(0, limit - current.count), resetAt: reset.toISOString() };
 }
 
-export async function consumeDailyLimit(identity: string, action: "search" | "analysis", limit: number): Promise<RateLimitResult> {
+export async function consumeDailyLimit(identity: string, action: "search" | "analysis" | "scorecard", limit: number): Promise<RateLimitResult> {
   const { dateKey, reset } = dayWindow();
   const key = `${action}:${identity}:${dateKey}`;
   const db = await getDatabase().catch(() => null);
@@ -80,7 +80,7 @@ export async function consumeDailyLimit(identity: string, action: "search" | "an
   }
 }
 
-export async function refundDailyLimit(identity: string, action: "search" | "analysis") {
+export async function refundDailyLimit(identity: string, action: "search" | "analysis" | "scorecard") {
   const { dateKey } = dayWindow();
   const key = `${action}:${identity}:${dateKey}`;
   const db = await getDatabase().catch(() => null);

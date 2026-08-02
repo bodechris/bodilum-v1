@@ -82,3 +82,47 @@ export const AnalyseRequestSchema = z.object({
 export function firstValidationMessage(error: z.ZodError) {
   return error.issues[0]?.message ?? "The submitted information is invalid.";
 }
+
+export const BrandScorecardProfileSchema = z.object({
+  businessName: draftText(140),
+  website: draftText(500).refine(
+    (value) => !value || /^https?:\/\//i.test(value) || /^[a-z0-9.-]+\.[a-z]{2,}/i.test(value),
+    "Enter a valid business website.",
+  ),
+  industry: draftText(160),
+  respondentName: draftText(160),
+  contactEmail: draftText(254).refine(
+    (value) => !value || z.string().email().safeParse(value).success,
+    "Enter a valid email address.",
+  ),
+  contactPhone: draftText(80).refine(
+    (value) => !value || value.replace(/\D/g, "").length >= 7,
+    "Enter a valid phone or WhatsApp number.",
+  ),
+});
+
+export const BrandScorecardCompleteProfileSchema = BrandScorecardProfileSchema.superRefine((value, context) => {
+  if (!value.businessName) context.addIssue({ code: "custom", path: ["businessName"], message: "Enter your business name." });
+  if (!value.industry) context.addIssue({ code: "custom", path: ["industry"], message: "Enter your industry." });
+  if (!value.respondentName) context.addIssue({ code: "custom", path: ["respondentName"], message: "Enter your name." });
+  if (!value.contactEmail && !value.contactPhone) {
+    context.addIssue({ code: "custom", path: ["contactEmail"], message: "Add an email address or phone/WhatsApp number." });
+  }
+});
+
+export const BrandScorecardAnswerMapSchema = z.record(
+  z.string().trim().min(1).max(120),
+  z.number().int().min(1).max(5),
+);
+
+export const BrandScorecardDraftSchema = z.object({
+  profile: BrandScorecardProfileSchema,
+  answers: z.record(z.string().trim().min(1).max(120), z.number().int().min(1).max(5)),
+  currentStep: z.number().int().min(0).max(6),
+  clearResult: z.boolean().optional().default(false),
+});
+
+export const BrandScorecardResultRequestSchema = z.object({
+  profile: BrandScorecardCompleteProfileSchema,
+  answers: BrandScorecardAnswerMapSchema,
+});

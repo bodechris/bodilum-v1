@@ -64,7 +64,7 @@ function contactData(place: PlaceDetails, evidence: WebsiteEvidence | null) {
 function legalFallbackContent(
   profile: BusinessProfile,
   place: PlaceDetails,
-  evidence: WebsiteEvidence | null,
+  // evidence: WebsiteEvidence | null,
 ) {
   const offer = profile.offers[0]?.name || "commercial legal support";
   const offerOutcome = profile.offers[0]?.description || profile.description;
@@ -230,7 +230,8 @@ function fallbackReport(
   score = Math.min(9.2, Number(score.toFixed(1)));
 
   const content = isLegalBusiness(profile)
-    ? legalFallbackContent(profile, place, evidence)
+    // ? legalFallbackContent(profile, place, evidence)
+    ? legalFallbackContent(profile, place)
     : genericFallbackContent(profile, place);
 
   return {

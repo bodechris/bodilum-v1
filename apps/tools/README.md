@@ -99,3 +99,29 @@ The uploaded development archive contained a `.env.local` file with long-lived A
 A valid Amazon Bedrock response is now kept as AI-assisted even when one or more sections fail the offer-relevance checks. The application makes one repair request, then applies deterministic offer-specific safeguards to the affected strategy and outreach sections instead of discarding the whole AI analysis. The rules-based fallback is now reserved for an actual Bedrock invocation failure or a response that cannot be parsed after the repair attempt.
 
 Public email discovery also filters telemetry, Sentry/Wix error addresses, machine-generated identifiers and malformed addresses that do not match the prospect's official website domain.
+
+## Brand Scorecard
+
+The Brand Scorecard is available at `/brand-scorecard` and includes:
+
+- 40 questions across brand foundation, visual identity, digital credibility, customer experience and growth/AI readiness;
+- direct scoring out of 100 with transparent category scores;
+- optional Amazon Bedrock enrichment for an industry-specific diagnosis;
+- deterministic fallback recommendations when Bedrock is unavailable;
+- a 30-day action plan and downloadable PDF;
+- browser-specific profile, draft and result storage in MongoDB;
+- a configurable daily completion limit.
+
+Production variables:
+
+```env
+BRAND_SCORECARD_ENABLED=true
+SCORECARD_DAILY_LIMIT=3
+```
+
+Completed assessments are stored in:
+
+- `brand_scorecard_profiles`
+- `brand_scorecard_results`
+
+The score itself is always calculated directly from the 40 answers. Amazon Bedrock only enriches the narrative and does not alter the numeric score.

@@ -45,8 +45,8 @@ export default function Home() {
         <ToolCard
           number="04"
           title="Brand Scorecard"
-          description="See how credible, clear and commercially ready your brand appears to potential customers."
-          comingSoon
+          description="Answer 40 practical questions, measure your brand strength and get a focused 30-day improvement plan."
+          href="/brand-scorecard"
           icon={<ChartNoAxesCombined size={24} />}
         />
       </section>
