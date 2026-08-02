@@ -11,6 +11,7 @@ Next.js application for `tools.bodilum.com` containing the tools homepage and an
 - Vercel OIDC authentication to AWS; no permanent AWS keys are required in Vercel
 - Zod validation for requests and model output, with one controlled JSON repair attempt
 - MongoDB-backed daily rate limits with atomic reservations and automatic expiry
+- Per-browser Prospect Finder profiles saved pseudonymously in MongoDB, with local-storage fallback and a clear/delete control
 - Branded client-side PDF downloads
 - Privacy, Terms and Acceptable Use pages
 - Health/config endpoint at `/api/health`
@@ -63,7 +64,7 @@ The Google key must remain server-side and be restricted to Places API (New). Se
 
 ## MongoDB
 
-Production defaults to fail closed when MongoDB is absent because in-memory limits are unreliable across Vercel instances. Use an Atlas database and allow Vercel connectivity. The app creates a TTL index on `usage_counters.expiresAt` automatically.
+Production defaults to fail closed when MongoDB is absent because in-memory limits are unreliable across Vercel instances. Use an Atlas database and allow Vercel connectivity. The app creates a TTL index on `usage_counters.expiresAt` automatically and a unique owner index for `prospect_finder_profiles`. Business details, outreach contact details and the last target market are stored against a hashed anonymous browser identifier; no IP address is stored in the profile document.
 
 ## AWS Bedrock
 

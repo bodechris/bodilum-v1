@@ -52,6 +52,52 @@ type AnalyseResponse = {
   error?: string;
 };
 
+type ProfileResponse = {
+  preferences?: {
+    profile: BusinessProfile;
+    targetCategory: string;
+    targetLocation: string;
+  } | null;
+  persistent?: boolean;
+  error?: string;
+};
+
+type ProfileSaveState = "loading" | "saved" | "saving" | "local" | "error";
+
+function normaliseProfile(value: Partial<BusinessProfile> | null | undefined): BusinessProfile {
+  const offers = Array.isArray(value?.offers)
+    ? value.offers.slice(0, 5).map((offer) => ({
+        name: typeof offer?.name === "string" ? offer.name : "",
+        description: typeof offer?.description === "string" ? offer.description : "",
+      }))
+    : initialProfile.offers;
+  return {
+    ...initialProfile,
+    ...value,
+    offers: offers.length ? offers : [emptyOffer()],
+    businessName: value?.businessName ?? "",
+    website: value?.website ?? "",
+    industry: value?.industry ?? "",
+    description: value?.description ?? "",
+    contactName: value?.contactName ?? "",
+    contactEmail: value?.contactEmail ?? "",
+    contactPhone: value?.contactPhone ?? "",
+  };
+}
+
+function hasProfileData(profile: BusinessProfile) {
+  return Boolean(
+    profile.businessName ||
+      profile.website ||
+      profile.industry ||
+      profile.description ||
+      profile.contactName ||
+      profile.contactEmail ||
+      profile.contactPhone ||
+      profile.offers.some((offer) => offer.name || offer.description),
+  );
+}
+
 function fieldClass(value: string) {
   return `form-field ${value.trim() ? "form-field-filled" : ""}`;
 }
@@ -76,42 +122,72 @@ export default function ProspectFinderPage() {
   const [report, setReport] = useState<ProspectReport | null>(null);
   const [analysedPlace, setAnalysedPlace] = useState<PlaceDetails | null>(null);
   const [activeSection, setActiveSection] = useState<"profile" | "search">("profile");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [profileSaveState, setProfileSaveState] = useState<ProfileSaveState>("loading");
 
   useEffect(() => {
-    const frameId = window.requestAnimationFrame(() => {
+    let cancelled = false;
+
+    async function loadSavedProfile() {
+      let localProfile: BusinessProfile | null = null;
       try {
-        const stored = window.localStorage.getItem(
-          "bodilum-prospect-profile",
-        );
-
-        if (!stored) {
-          return;
-        }
-
-        const savedProfile = JSON.parse(
-          stored,
-        ) as Partial<BusinessProfile>;
-
-        setProfile((currentProfile) => ({
-          ...currentProfile,
-          ...savedProfile,
-        }));
+        const stored = window.localStorage.getItem("bodilum-prospect-profile");
+        if (stored) localProfile = normaliseProfile(JSON.parse(stored) as Partial<BusinessProfile>);
       } catch {
-        window.localStorage.removeItem(
-          "bodilum-prospect-profile",
-        );
+        window.localStorage.removeItem("bodilum-prospect-profile");
       }
-    });
 
+      try {
+        const response = await fetch("/api/profile", { cache: "no-store" });
+        const payload = (await response.json()) as ProfileResponse;
+        if (cancelled) return;
+        if (response.ok && payload.preferences) {
+          setProfile(normaliseProfile(payload.preferences.profile));
+          setCategory(payload.preferences.targetCategory ?? "");
+          setLocation(payload.preferences.targetLocation ?? "");
+          setProfileSaveState(payload.persistent ? "saved" : "local");
+        } else if (localProfile) {
+          setProfile(normaliseProfile(localProfile));
+          setProfileSaveState("local");
+        } else {
+          setProfileSaveState(payload.persistent ? "saved" : "local");
+        }
+      } catch {
+        if (cancelled) return;
+        if (localProfile) setProfile(normaliseProfile(localProfile));
+        setProfileSaveState("local");
+      } finally {
+        if (!cancelled) setProfileLoaded(true);
+      }
+    }
+
+    void loadSavedProfile();
     return () => {
-      window.cancelAnimationFrame(frameId);
+      cancelled = true;
     };
   }, []);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => window.localStorage.setItem("bodilum-prospect-profile", JSON.stringify(profile)), 300);
+    if (!profileLoaded) return;
+    const timeout = window.setTimeout(async () => {
+      window.localStorage.setItem("bodilum-prospect-profile", JSON.stringify(profile));
+      setProfileSaveState("saving");
+      try {
+        const response = !hasProfileData(profile) && !category && !location
+          ? await fetch("/api/profile", { method: "DELETE", keepalive: true })
+          : await fetch("/api/profile", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ profile, targetCategory: category, targetLocation: location }),
+              keepalive: true,
+            });
+        setProfileSaveState(response.ok ? "saved" : "local");
+      } catch {
+        setProfileSaveState("local");
+      }
+    }, 700);
     return () => window.clearTimeout(timeout);
-  }, [profile]);
+  }, [profile, category, location, profileLoaded]);
 
   useEffect(() => {
     if (!analysingId) return;
@@ -125,6 +201,8 @@ export default function ProspectFinderPage() {
         profile.businessName.trim() &&
           profile.industry.trim() &&
           profile.description.trim() &&
+          profile.contactName.trim() &&
+          (profile.contactEmail.trim() || profile.contactPhone.trim()) &&
           profile.offers.some((offer) => offer.name.trim() && offer.description.trim()),
       ),
     [profile],
@@ -149,6 +227,22 @@ export default function ProspectFinderPage() {
   function removeOffer(index: number) {
     if (profile.offers.length <= 1) return;
     updateProfile("offers", profile.offers.filter((_, offerIndex) => offerIndex !== index));
+  }
+
+  async function clearSavedProfile() {
+    if (!window.confirm("Clear the saved business profile and outreach details for this browser?")) return;
+    setProfile(initialProfile);
+    setCategory("");
+    setLocation("");
+    setPlaces([]);
+    window.localStorage.removeItem("bodilum-prospect-profile");
+    setProfileSaveState("saving");
+    try {
+      await fetch("/api/profile", { method: "DELETE" });
+      setProfileSaveState("saved");
+    } catch {
+      setProfileSaveState("local");
+    }
   }
 
   async function searchProspects(event: React.FormEvent) {
@@ -320,12 +414,25 @@ export default function ProspectFinderPage() {
                 ))}
               </div>
 
-              <div className="subsection-title"><h3>Your outreach details</h3><p>These details will be placed in the generated introduction and PDF.</p></div>
-              <div className="form-grid three-columns">
-                <label className={fieldClass(profile.contactName)}><span>Your name</span><input value={profile.contactName} onChange={(event) => updateProfile("contactName", event.target.value)} placeholder="Full name" maxLength={160} /></label>
-                <label className={fieldClass(profile.contactEmail)}><span>Email</span><input value={profile.contactEmail} onChange={(event) => updateProfile("contactEmail", event.target.value)} placeholder="you@business.com" inputMode="email" maxLength={254} /></label>
-                <label className={fieldClass(profile.contactPhone)}><span>Phone / WhatsApp</span><input value={profile.contactPhone} onChange={(event) => updateProfile("contactPhone", event.target.value)} placeholder="+27…" inputMode="tel" maxLength={80} /></label>
+              <div className="subsection-title profile-details-heading">
+                <div><h3>Your outreach details</h3><p>These exact details will be used in the email, WhatsApp message and PDF. They are saved to your private browser profile.</p></div>
+                <div className="profile-save-controls">
+                  <span className={`profile-save-status ${profileSaveState}`}>
+                    {profileSaveState === "loading" ? "Loading saved profile…" : null}
+                    {profileSaveState === "saving" ? "Saving…" : null}
+                    {profileSaveState === "saved" ? "Profile saved" : null}
+                    {profileSaveState === "local" ? "Saved on this device" : null}
+                    {profileSaveState === "error" ? "Could not save" : null}
+                  </span>
+                  <button type="button" className="small-button" onClick={clearSavedProfile}>Clear saved details</button>
+                </div>
               </div>
+              <div className="form-grid three-columns">
+                <label className={fieldClass(profile.contactName)}><span>Your name *</span><input value={profile.contactName} onChange={(event) => updateProfile("contactName", event.target.value)} placeholder="Full name" maxLength={160} autoComplete="name" /></label>
+                <label className={fieldClass(profile.contactEmail)}><span>Email</span><input value={profile.contactEmail} onChange={(event) => updateProfile("contactEmail", event.target.value)} placeholder="you@business.com" inputMode="email" maxLength={254} autoComplete="email" /></label>
+                <label className={fieldClass(profile.contactPhone)}><span>Phone / WhatsApp</span><input value={profile.contactPhone} onChange={(event) => updateProfile("contactPhone", event.target.value)} placeholder="+27…" inputMode="tel" maxLength={80} autoComplete="tel" /></label>
+              </div>
+              <p className="field-help">Add at least one contact route: email or phone/WhatsApp.</p>
 
               <div className="form-actions">
                 <span>{profileComplete ? <><CheckCircle2 size={17} /> Required profile details complete</> : "Complete all required fields to continue."}</span>

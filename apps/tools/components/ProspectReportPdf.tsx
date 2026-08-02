@@ -150,7 +150,8 @@ function ReportDocument({ report, profile, place }: { report: ProspectReport; pr
           <Text style={styles.sectionTitle}>Public contact routes found</Text>
           {report.discoveredContacts.emails.map((email) => <Text key={email}>Email: {email}</Text>)}
           {report.discoveredContacts.phones.map((phone) => <Text key={phone}>Phone: {phone}</Text>)}
-          {!report.discoveredContacts.emails.length && !report.discoveredContacts.phones.length ? <Text style={styles.muted}>No verified public email or telephone number was found. Use the official website, Google Maps listing or public social profile.</Text> : null}
+          {report.discoveredContacts.websites.map((website) => <Link key={website} src={website} style={styles.source}>Website: {website}</Link>)}
+          {!report.discoveredContacts.emails.length && !report.discoveredContacts.phones.length && !report.discoveredContacts.websites.length ? <Text style={styles.muted}>No verified public email, telephone number or official website was found. Use the Google Maps listing for further research.</Text> : null}
         </View>
 
         <View style={styles.section}>

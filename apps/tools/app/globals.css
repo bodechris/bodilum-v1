@@ -432,3 +432,42 @@ button { color: inherit; }
   .legal-content h1 { font-size: 50px; }
   .analysis-progress { grid-template-columns: 24px 1fr; }
 }
+
+.profile-details-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.profile-save-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.profile-save-status {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.profile-save-status.saved { color: #16794a; }
+.profile-save-status.saving,
+.profile-save-status.loading { color: var(--purple); }
+.profile-save-status.local { color: #8a5b00; }
+.profile-save-status.error { color: #b42318; }
+.field-help {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media (max-width: 760px) {
+  .profile-details-heading {
+    flex-direction: column;
+  }
+  .profile-save-controls {
+    justify-content: flex-start;
+  }
+}

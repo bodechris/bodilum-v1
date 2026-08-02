@@ -34,6 +34,12 @@ export type PlaceDetails = PlaceSummary & {
   types?: string[];
 };
 
+export type PublicPerson = {
+  name: string;
+  role: string;
+  sourceUrl: string;
+};
+
 export type WebsiteEvidence = {
   website: string;
   pagesAnalysed: Array<{ title: string; url: string; text: string }>;
@@ -42,6 +48,7 @@ export type WebsiteEvidence = {
   socialLinks: string[];
   bookingLinks: string[];
   pageTitles: string[];
+  people: PublicPerson[];
   notes: string[];
 };
 
@@ -98,6 +105,7 @@ export type ProspectReport = {
   discoveredContacts: {
     emails: string[];
     phones: string[];
+    websites: string[];
     socialLinks: string[];
     bookingLinks: string[];
   };

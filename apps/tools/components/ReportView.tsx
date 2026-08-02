@@ -22,6 +22,15 @@ import type { BusinessProfile, PlaceDetails, ProspectReport } from "@/types/pros
 
 const ProspectReportPdf = dynamic(() => import("@/components/ProspectReportPdf"), { ssr: false });
 
+
+function websiteLabel(value: string) {
+  try {
+    return new URL(value).hostname.replace(/^www\./, "");
+  } catch {
+    return value;
+  }
+}
+
 function CopyButton({ value, label = "Copy" }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   async function copy() {
@@ -134,7 +143,18 @@ export function ReportView({
               {report.decisionMakers.map((person, index) => (
                 <article key={`${person.role}-${index}`}>
                   <UserRoundSearch size={18} />
-                  <div><h3>{person.name ? `${person.name} — ` : ""}{person.role}</h3>{person.contact ? <p>{person.contact}</p> : null}<small>{person.confidence}{person.source ? ` · ${person.source}` : ""}</small></div>
+                  <div>
+                    <h3>{person.name ? `${person.name} — ` : ""}{person.role}</h3>
+                    {person.contact ? <p>{person.contact}</p> : null}
+                    <small>
+                      {person.confidence}
+                      {person.source ? (
+                        person.source.startsWith("http")
+                          ? <> · <a href={person.source} target="_blank" rel="noreferrer">Public source <ExternalLink size={12} /></a></>
+                          : ` · ${person.source}`
+                      ) : ""}
+                    </small>
+                  </div>
                 </article>
               ))}
             </div>
@@ -158,7 +178,8 @@ export function ReportView({
             <h3>Public contacts found</h3>
             {report.discoveredContacts.emails.map((email) => <a key={email} href={`mailto:${email}`}>{email}</a>)}
             {report.discoveredContacts.phones.map((phone) => <a key={phone} href={`tel:${phone}`}>{phone}</a>)}
-            {!report.discoveredContacts.emails.length && !report.discoveredContacts.phones.length ? <p>No verified public email or phone was found. Use the official listing or website contact form.</p> : null}
+            {report.discoveredContacts.websites.map((website) => <a key={website} href={website} target="_blank" rel="noreferrer">Website: {websiteLabel(website)} <ExternalLink size={13} /></a>)}
+            {!report.discoveredContacts.emails.length && !report.discoveredContacts.phones.length && !report.discoveredContacts.websites.length ? <p>No verified public email, phone or official website was found. Use the Google Maps listing for further research.</p> : null}
           </div>
 
           <div className="sidebar-card">
