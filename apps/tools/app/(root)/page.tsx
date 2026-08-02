@@ -1,5 +1,6 @@
 import { BrandHeader } from "@/components/BrandHeader";
 import { ToolCard } from "@/components/ToolCard";
+import { LegalFooterLinks } from "@/components/LegalFooterLinks";
 import { Brush, ChartNoAxesCombined, Palette, ScanSearch } from "lucide-react";
 
 export default function Home() {
@@ -52,7 +53,7 @@ export default function Home() {
 
       <footer className="site-footer">
         <p>Tools by <a href="https://www.bodilum.com" target="_blank" rel="noreferrer">Bodilum</a> — a Nigerian-owned creative technology studio based in Johannesburg.</p>
-        <span>© {new Date().getFullYear()} Bodilum</span>
+        <div className="footer-meta"><LegalFooterLinks /><span>© {new Date().getFullYear()} Bodilum</span></div>
       </footer>
     </main>
   );

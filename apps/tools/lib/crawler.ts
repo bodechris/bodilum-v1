@@ -47,6 +47,9 @@ async function assertPublicHttpUrl(input: string) {
   if (!['http:', 'https:'].includes(url.protocol)) {
     throw new Error("Only http and https websites can be analysed");
   }
+  if (url.username || url.password) throw new Error("Websites containing embedded credentials cannot be analysed");
+  if (url.port && !["80", "443"].includes(url.port)) throw new Error("Only standard website ports can be analysed");
+  url.hash = "";
 
   const hostname = url.hostname.toLowerCase();
   if (hostname === "localhost" || hostname.endsWith(".local") || hostname === "169.254.169.254") {

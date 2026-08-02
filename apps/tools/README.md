@@ -1,78 +1,94 @@
-# Bodilum Business Tools
+# Bodilum Business Tools — production-ready Prospect Finder
 
-A Next.js application for `tools.bodilum.com` with:
+Next.js application for `tools.bodilum.com` containing the tools homepage and an AI-assisted local Prospect Finder.
 
-- Business tools home page
-- Links to the existing BiznesXpo business-name and brand-colour tools
-- Bodilum Prospect Finder
-- Google Places business discovery
-- Public website analysis with SSRF protection and robots.txt support
-- Amazon Bedrock prospect scoring and outreach generation
-- Rules-based fallback reports when Bedrock is not configured
-- MongoDB-backed daily rate limits with a local in-memory fallback
-- Client-side branded PDF downloads
+## What is included
 
-## Local setup
+- Google Places API (New) business discovery with low-cost search field masks
+- Place Details enrichment only after a user selects a prospect
+- Public website analysis with robots.txt handling, response-size limits, redirect checks and SSRF protections
+- Amazon Nova 2 Lite analysis through Amazon Bedrock
+- Vercel OIDC authentication to AWS; no permanent AWS keys are required in Vercel
+- Zod validation for requests and model output, with one controlled JSON repair attempt
+- MongoDB-backed daily rate limits with atomic reservations and automatic expiry
+- Branded client-side PDF downloads
+- Privacy, Terms and Acceptable Use pages
+- Health/config endpoint at `/api/health`
+- Kill switches and basic security headers
+
+## Install and run
 
 ```bash
-npm install
+pnpm install
 cp .env.example .env.local
-npm run dev
+pnpm dev
 ```
 
-Open `http://localhost:3010`.
+## Required Vercel production variables
 
-## Vercel environment variables
+```env
+NEXT_PUBLIC_SITE_URL=https://tools.bodilum.com
+GOOGLE_PLACES_API_KEY=...
+MONGODB_URI=...
+MONGODB_DB=bodilum_tools
+RATE_LIMIT_SALT=use-a-random-secret-at-least-24-characters
+RATE_LIMIT_REQUIRE_DATABASE=true
+SEARCH_DAILY_LIMIT=10
+ANALYSIS_DAILY_LIMIT=2
+PROSPECT_SEARCH_ENABLED=true
+PROSPECT_ANALYSIS_ENABLED=true
+AWS_REGION=eu-west-1
+AWS_ROLE_ARN=arn:aws:iam::338193218732:role/BodilumProspectFinderBedrockProdRole
+BEDROCK_MODEL_ID=eu.amazon.nova-2-lite-v1:0
+BEDROCK_TIMEOUT_MS=70000
+ENABLE_DEMO_MODE=false
+```
 
-Add these in **Vercel → Project → Settings → Environment Variables**:
+Do not add `AWS_ACCESS_KEY_ID` or `AWS_SECRET_ACCESS_KEY` to Vercel. The application uses `@vercel/oidc-aws-credentials-provider` and the production IAM role you configured.
 
-### Required for live Google results
+## Vercel setup
 
-- `GOOGLE_PLACES_API_KEY`
+- Framework: Next.js
+- Root directory: the folder containing this `package.json` (or `apps/tools` in your monorepo)
+- Build command: `pnpm build`
+- Install command: `pnpm install`
+- Node.js: 22
+- Custom domain: `tools.bodilum.com`
 
-Create a billing-enabled Google Cloud project, enable **Places API (New)** and restrict the key to the Places API. The key is used only in server route handlers and is not exposed to the browser.
+After changing environment variables, redeploy production. Visit `/api/health`; production is ready when it returns `200` with `status: "ok"`.
 
-### Recommended for reliable rate limiting
+## Google Places controls
 
-- `MONGODB_URI`
-- `MONGODB_DB=bodilum_tools`
-- `RATE_LIMIT_SALT`
-- `SEARCH_DAILY_LIMIT=10`
-- `ANALYSIS_DAILY_LIMIT=2`
+The Google key must remain server-side and be restricted to Places API (New). Set Google Cloud quotas and billing alerts. Search requests only retrieve lightweight listing fields. Rating, review count, website, telephone and opening hours are requested only during a selected prospect analysis.
 
-Without MongoDB, the app uses an in-memory fallback. That is fine for a local demo but is not reliable across Vercel serverless instances.
+## MongoDB
 
-### Amazon Bedrock
+Production defaults to fail closed when MongoDB is absent because in-memory limits are unreliable across Vercel instances. Use an Atlas database and allow Vercel connectivity. The app creates a TTL index on `usage_counters.expiresAt` automatically.
 
-- `AWS_REGION`
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `BEDROCK_MODEL_ID`
+## AWS Bedrock
 
-The default model ID is `amazon.nova-lite-v1:0`. Confirm that the selected model is available in your chosen AWS region. If Bedrock is unavailable, the tool still produces a useful rules-based report and clearly identifies it as a fallback.
+The code expects:
 
-### Preview/demo mode
+- Region: `eu-west-1`
+- Model/inference profile: `eu.amazon.nova-2-lite-v1:0`
+- Role: `BodilumProspectFinderBedrockProdRole`
+- Vercel Team OIDC issuer and a trust policy restricted to `bodilum-v1-tools` production
 
-- `ENABLE_DEMO_MODE=true`
+The report explicitly shows whether it was AI-assisted or produced by the conservative rules-based fallback.
 
-When a Google Places key is missing, the UI returns clearly labelled demo businesses so the design and complete report flow can still be tested. Set this to `false` in production after configuring Google Places.
+## Launch checks
 
-## Vercel deployment
+1. `pnpm check-types`
+2. `pnpm lint`
+3. `pnpm build`
+4. `/api/health` returns 200 in production
+5. Search for a real business
+6. Analyse a business with a public website
+7. Confirm `AI-assisted` appears on the report
+8. Confirm the IAM role shows recent activity
+9. Download and open the PDF
+10. Test the daily limit and a failed request
 
-1. Push this project to GitHub or import the folder directly into Vercel.
-2. Set the framework preset to **Next.js**.
-3. Add the environment variables above.
-4. Add the custom domain `tools.bodilum.com`.
-5. Point the Bodilum DNS record to Vercel as instructed.
+## Security note
 
-The app does not require GitHub Actions. Vercel can build directly from the repository.
-
-## Google Places cost controls
-
-The search route requests only lightweight fields. Full website, rating, telephone and opening-hours details are fetched only when a user clicks **Analyse prospect**. The default app limits are 10 searches and 2 full analyses per browser/IP identity per day.
-
-Set daily quotas in Google Cloud as an additional safety ceiling.
-
-## Current MVP constraint
-
-Analysis runs synchronously in a Vercel route handler. This is suitable for an early controlled launch. If usage grows or some sites regularly exceed the function duration, move website crawling and Bedrock generation into an SQS/Lambda worker while keeping the current UI and API contract.
+The uploaded development archive contained a `.env.local` file with long-lived AWS credential fields. This production package excludes that file. Remove those old fields locally and deactivate any IAM access key that was created only for this project now that OIDC is in place.

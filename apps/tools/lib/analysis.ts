@@ -1,5 +1,7 @@
-import { BedrockRuntimeClient, ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
-import { env } from "@/lib/env";
+import { ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
+import { z } from "zod";
+import { getBedrockClient } from "@/lib/bedrock";
+import { bedrockConfigured, env } from "@/lib/env";
 import type {
   BusinessProfile,
   PlaceDetails,
@@ -154,112 +156,94 @@ function fallbackReport(
   };
 }
 
+const EvidencePointSchema = z.object({ title: z.string().trim().min(1).max(160), evidence: z.string().trim().min(1).max(1200), whyItMatters: z.string().trim().min(1).max(800) });
+const OpportunityPointSchema = z.object({ title: z.string().trim().min(1).max(160), description: z.string().trim().min(1).max(1200), outcome: z.string().trim().min(1).max(600) });
+const ModelReportSchema = z.object({
+  prospectName: z.string().trim().min(1).max(200), prospectScore: z.number().min(0).max(10), confidence: z.enum(["High","Medium","Low"]), oneLineVerdict: z.string().trim().min(1).max(700),
+  commerciallyAttractive: z.array(EvidencePointSchema).min(2).max(5), opportunity: z.array(OpportunityPointSchema).min(2).max(5),
+  bestAngle: z.object({ headline: z.string().trim().min(1).max(300), explanation: z.string().trim().min(1).max(1400), avoidLeadingWith: z.string().trim().min(1).max(700) }),
+  objections: z.array(z.object({ objection: z.string().trim().min(1).max(300), response: z.string().trim().min(1).max(1000) })).min(2).max(5),
+  decisionMakers: z.array(z.object({ name: z.string().trim().max(160).optional(), role: z.string().trim().min(1).max(180), contact: z.string().trim().max(300).optional(), confidence: z.enum(["Verified","Likely","Suggested"]), source: z.string().trim().max(500).optional() })).min(1).max(6),
+  finalAssessment: z.object({ verdict: z.string().trim().min(1).max(800), nextStep: z.string().trim().min(1).max(800) }),
+  email: z.object({ subjectLines: z.array(z.string().trim().min(1).max(180)).min(1).max(3), body: z.string().trim().min(1).max(9000), whatsapp: z.string().trim().min(1).max(1800), followUp: z.string().trim().min(1).max(1800) }),
+});
+type ModelReport = z.infer<typeof ModelReportSchema>;
+
 function extractJson(text: string) {
-  const cleaned = text.trim().replace(/^```(?:json)?/i, "").replace(/```$/, "").trim();
-  const first = cleaned.indexOf("{");
-  const last = cleaned.lastIndexOf("}");
-  if (first === -1 || last === -1) throw new Error("The model did not return JSON");
-  return JSON.parse(cleaned.slice(first, last + 1));
+  const cleaned = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
+  const first = cleaned.indexOf("{"); const last = cleaned.lastIndexOf("}");
+  if (first === -1 || last === -1 || last <= first) throw new Error("The model did not return a JSON object");
+  return JSON.parse(cleaned.slice(first, last + 1)) as unknown;
 }
-
-function ensureReport(value: unknown, fallback: ProspectReport): ProspectReport {
-  if (!value || typeof value !== "object") return fallback;
-  const candidate = value as Partial<ProspectReport>;
-  const score = Math.max(0, Math.min(10, Number(candidate.prospectScore ?? fallback.prospectScore)));
-  const confidence = ["High", "Medium", "Low"].includes(String(candidate.confidence))
-    ? candidate.confidence as ProspectReport["confidence"]
-    : fallback.confidence;
-  const email: Partial<ProspectReport["email"]> = candidate.email && typeof candidate.email === "object" ? candidate.email : {};
-  const bestAngle: Partial<ProspectReport["bestAngle"]> = candidate.bestAngle && typeof candidate.bestAngle === "object" ? candidate.bestAngle : {};
-  const finalAssessment: Partial<ProspectReport["finalAssessment"]> = candidate.finalAssessment && typeof candidate.finalAssessment === "object" ? candidate.finalAssessment : {};
-
-  return {
-    ...fallback,
-    ...candidate,
-    prospectName: typeof candidate.prospectName === "string" && candidate.prospectName.trim() ? candidate.prospectName : fallback.prospectName,
-    prospectScore: score,
-    confidence,
-    priority: tierFromScore(score),
-    oneLineVerdict: typeof candidate.oneLineVerdict === "string" && candidate.oneLineVerdict.trim() ? candidate.oneLineVerdict : fallback.oneLineVerdict,
-    commerciallyAttractive: Array.isArray(candidate.commerciallyAttractive) && candidate.commerciallyAttractive.length ? candidate.commerciallyAttractive.slice(0, 5) : fallback.commerciallyAttractive,
-    opportunity: Array.isArray(candidate.opportunity) && candidate.opportunity.length ? candidate.opportunity.slice(0, 5) : fallback.opportunity,
-    bestAngle: {
-      headline: typeof bestAngle.headline === "string" && bestAngle.headline.trim() ? bestAngle.headline : fallback.bestAngle.headline,
-      explanation: typeof bestAngle.explanation === "string" && bestAngle.explanation.trim() ? bestAngle.explanation : fallback.bestAngle.explanation,
-      avoidLeadingWith: typeof bestAngle.avoidLeadingWith === "string" && bestAngle.avoidLeadingWith.trim() ? bestAngle.avoidLeadingWith : fallback.bestAngle.avoidLeadingWith,
-    },
-    objections: Array.isArray(candidate.objections) && candidate.objections.length ? candidate.objections.slice(0, 5) : fallback.objections,
-    decisionMakers: Array.isArray(candidate.decisionMakers) && candidate.decisionMakers.length ? candidate.decisionMakers.slice(0, 6) : fallback.decisionMakers,
-    finalAssessment: {
-      verdict: typeof finalAssessment.verdict === "string" && finalAssessment.verdict.trim() ? finalAssessment.verdict : fallback.finalAssessment.verdict,
-      nextStep: typeof finalAssessment.nextStep === "string" && finalAssessment.nextStep.trim() ? finalAssessment.nextStep : fallback.finalAssessment.nextStep,
-    },
-    email: {
-      subjectLines: Array.isArray(email.subjectLines) && email.subjectLines.length ? email.subjectLines.filter((line): line is string => typeof line === "string").slice(0, 3) : fallback.email.subjectLines,
-      body: typeof email.body === "string" && email.body.trim() ? email.body : fallback.email.body,
-      whatsapp: typeof email.whatsapp === "string" && email.whatsapp.trim() ? email.whatsapp : fallback.email.whatsapp,
-      followUp: typeof email.followUp === "string" && email.followUp.trim() ? email.followUp : fallback.email.followUp,
-    },
-    sources: fallback.sources,
-    discoveredContacts: fallback.discoveredContacts,
-    generatedWithAI: true,
-    dataNote: "Generated from public Google Places data and public website content. Verify contacts, pricing, roles and claims before outreach.",
-  };
+function parseModelReport(text: string) { return ModelReportSchema.parse(extractJson(text)); }
+function applyModelReport(candidate: ModelReport, fallback: ProspectReport): ProspectReport {
+  const score = Number(candidate.prospectScore.toFixed(1));
+  return { ...fallback, ...candidate, prospectScore: score, priority: tierFromScore(score), discoveredContacts: fallback.discoveredContacts, sources: fallback.sources, generatedWithAI: true, dataNote: "AI-assisted analysis generated from public Google Maps data and public website content. Verify contacts, pricing, roles and claims before outreach." };
 }
-
-export async function generateProspectReport(
-  profile: BusinessProfile,
-  place: PlaceDetails,
-  evidence: WebsiteEvidence | null,
-): Promise<ProspectReport> {
-  const fallback = fallbackReport(profile, place, evidence);
-  const hasAwsCredentials = Boolean(process.env.AWS_ACCESS_KEY_ID || process.env.AWS_PROFILE || process.env.AWS_WEB_IDENTITY_TOKEN_FILE);
-  if (!hasAwsCredentials || !env.bedrockModelId) return fallback;
-
-  const evidencePayload = evidence
-    ? {
-        pages: evidence.pagesAnalysed.map((page) => ({
-          title: page.title,
-          url: page.url,
-          text: page.text.slice(0, 12_000),
-        })),
-        contacts: {
-          emails: evidence.emails,
-          phones: evidence.phones,
-          socialLinks: evidence.socialLinks,
-          bookingLinks: evidence.bookingLinks,
-        },
-        notes: evidence.notes,
-      }
-    : null;
-
-  const prompt = `You are an evidence-led B2B prospect analyst. Analyse whether the target business is a good prospect for the sender's offers. Focus on commercial outcomes, not technology. Never invent names, emails, roles, branches, prices or facts. Mark inferred roles as Suggested or Likely. Use only the supplied evidence.\n\nSender business profile:\n${JSON.stringify(profile)}\n\nTarget business from Google Places:\n${JSON.stringify(place)}\n\nPublic website evidence:\n${JSON.stringify(evidencePayload)}\n\nReturn ONLY valid JSON matching this exact structure:\n${JSON.stringify(fallback)}\n\nScoring guidance: 8.5-10 Tier A; 7-8.4 Tier B; 5.5-6.9 Tier C; below 5.5 Low priority. Consider demand, commercial capacity, fit with the sender's offers, visible opportunity, reachability and evidence quality.\n\nEmail requirements: human and professional; include one genuine observation; explain one outcome-led opportunity; include a practical customer scenario where useful; create tasteful urgency that future market leaders will become AI-enabled across customer acquisition, service and operations; do not lead with AI or technical features. Whenever the sender business name is mentioned in the email, include its website in parentheses when a website is available. Do not claim that something was found if it is not in the evidence.`;
-
+async function invokeBedrock(prompt: string, maxTokens = 5000) {
+  const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), env.bedrockTimeoutMs);
   try {
-    const client = new BedrockRuntimeClient({ region: env.awsRegion });
-    const response = await client.send(
-      new ConverseCommand({
-        modelId: env.bedrockModelId,
-        messages: [
-          {
-            role: "user",
-            content: [{ text: prompt }],
-          },
-        ],
-        inferenceConfig: {
-          maxTokens: 5000,
-          temperature: 0.25,
-          topP: 0.9,
-        },
-      }),
-    );
+    const response = await getBedrockClient().send(new ConverseCommand({
+      modelId: env.bedrockModelId,
+      system: [{ text: "You are an evidence-led B2B prospect analyst. Use only supplied evidence. Never invent names, contacts, services, branches, prices, reviews or facts. Return only valid JSON matching the requested schema, with no markdown." }],
+      messages: [{ role: "user", content: [{ text: prompt }] }],
+      inferenceConfig: { maxTokens, temperature: 0.2, topP: 0.9 },
+    }), { abortSignal: controller.signal });
+    const text = response.output?.message?.content?.map((item) => ("text" in item ? item.text ?? "" : "")).join("").trim() ?? "";
+    if (!text) throw new Error("Amazon Bedrock returned an empty response");
+    console.info("Prospect analysis model invocation completed", { provider: "amazon-bedrock", modelId: env.bedrockModelId, inputTokens: response.usage?.inputTokens, outputTokens: response.usage?.outputTokens });
+    return text;
+  } finally { clearTimeout(timeout); }
+}
+function modelTemplate(fallback: ProspectReport) {
+  return { prospectName: fallback.prospectName, prospectScore: fallback.prospectScore, confidence: fallback.confidence, oneLineVerdict: fallback.oneLineVerdict, commerciallyAttractive: fallback.commerciallyAttractive, opportunity: fallback.opportunity, bestAngle: fallback.bestAngle, objections: fallback.objections, decisionMakers: fallback.decisionMakers, finalAssessment: fallback.finalAssessment, email: fallback.email };
+}
 
-    const text = response.output?.message?.content
-      ?.map((item) => ("text" in item ? item.text : ""))
-      .join("") ?? "";
-    return ensureReport(extractJson(text), fallback);
+export async function generateProspectReport(profile: BusinessProfile, place: PlaceDetails, evidence: WebsiteEvidence | null): Promise<ProspectReport> {
+  const fallback = fallbackReport(profile, place, evidence);
+  if (!bedrockConfigured()) return fallback;
+  const evidencePayload = evidence ? { pages: evidence.pagesAnalysed.map((page) => ({ title: page.title, url: page.url, text: page.text.slice(0, 12_000) })), contacts: { emails: evidence.emails, phones: evidence.phones, socialLinks: evidence.socialLinks, bookingLinks: evidence.bookingLinks }, notes: evidence.notes } : null;
+  const template = modelTemplate(fallback);
+  const prompt = `Analyse whether the target business is a strong commercial prospect for the sender's specific offers. Focus on commercial outcomes, customer journeys and operational opportunities rather than technology. The score must reflect demand, commercial capacity, fit with the sender's offers, visible opportunity, reachability and evidence quality. A strong reputation is a positive buying-capacity signal, not a reason to score the prospect lower.
+
+Sender business profile:
+${JSON.stringify(profile)}
+
+Target business from Google Places:
+${JSON.stringify(place)}
+
+Public website evidence:
+${JSON.stringify(evidencePayload)}
+
+Return only one valid JSON object matching this structure and field types:
+${JSON.stringify(template)}
+
+Rules:
+- 8.5-10 means Tier A; 7-8.4 Tier B; 5.5-6.9 Tier C; below 5.5 low priority.
+- Every business-specific claim must be supported by the supplied evidence.
+- A decision-maker name or contact is Verified only when it appears in the supplied public evidence. Otherwise omit the name/contact and mark the role Likely or Suggested.
+- Do not criticise the prospect harshly. Frame gaps as commercial opportunities.
+- The best angle must be tailored to the sender's offers and the prospect's visible customer journey.
+- The email must be human, concise and outcome-led. Include a genuine observation, one clear commercial opportunity, a practical customer scenario where useful, and a low-friction CTA.
+- Create tasteful urgency: future market leaders will become AI-enabled across customer acquisition, service and operations, but do not lead with AI or technical features.
+- Whenever the sender's business name appears in the email, append its website in parentheses when a website was supplied.
+- Do not include sources, discovered contacts, priority, generatedWithAI or dataNote fields; the application adds those itself.`;
+  try {
+    const firstResponse = await invokeBedrock(prompt);
+    try { return applyModelReport(parseModelReport(firstResponse), fallback); }
+    catch (validationError) {
+      console.warn("Bedrock response required one JSON repair attempt", { error: validationError instanceof Error ? validationError.message.slice(0, 500) : "Unknown validation error" });
+      const repairPrompt = `Repair the following response into one valid JSON object that exactly matches the required structure. Do not add markdown or commentary. Preserve only claims supported by the original supplied evidence. If a field is missing, use the provided template's conservative wording.
+
+Required structure:
+${JSON.stringify(template)}
+
+Invalid response:
+${firstResponse.slice(0, 24_000)}`;
+      return applyModelReport(parseModelReport(await invokeBedrock(repairPrompt)), fallback);
+    }
   } catch (error) {
-    console.error("Bedrock analysis failed; using fallback report", error);
+    console.error("Bedrock prospect analysis failed; returning rules-based fallback", { name: error instanceof Error ? error.name : "UnknownError", message: error instanceof Error ? error.message.slice(0, 700) : "Unknown error", modelId: env.bedrockModelId, region: env.awsRegion });
     return fallback;
   }
 }

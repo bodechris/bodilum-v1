@@ -2,7 +2,6 @@ import { MongoClient, type Db } from "mongodb";
 import { env } from "@/lib/env";
 
 declare global {
-  // eslint-disable-next-line no-var
   var __bodilumMongoPromise: Promise<MongoClient> | undefined;
 }
 

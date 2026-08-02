@@ -20,6 +20,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { BrandHeader } from "@/components/BrandHeader";
 import { ReportView } from "@/components/ReportView";
+import { LegalFooterLinks } from "@/components/LegalFooterLinks";
 import type {
   BusinessProfile,
   Offer,
@@ -31,15 +32,11 @@ import type {
 const emptyOffer = (): Offer => ({ name: "", description: "" });
 
 const initialProfile: BusinessProfile = {
-  businessName: "",
-  website: "",
-  industry: "",
-  description: "",
-  offers: [emptyOffer(), emptyOffer(), emptyOffer()],
-  contactName: "",
-  contactEmail: "",
-  contactPhone: "",
+  businessName: "", website: "", industry: "", description: "",
+  offers: [emptyOffer(), emptyOffer(), emptyOffer()], contactName: "", contactEmail: "", contactPhone: "",
 };
+
+const analysisStages = ["Retrieving business details…", "Reviewing the public website…", "Identifying commercial opportunities…", "Preparing the outreach strategy…", "Generating the final report…"];
 
 type SearchResponse = {
   places?: PlaceSummary[];
@@ -71,6 +68,7 @@ export default function ProspectFinderPage() {
   const [places, setPlaces] = useState<PlaceSummary[]>([]);
   const [searching, setSearching] = useState(false);
   const [analysingId, setAnalysingId] = useState<string | null>(null);
+  const [analysisStage, setAnalysisStage] = useState(0);
   const [error, setError] = useState("");
   const [demo, setDemo] = useState(false);
   const [searchRemaining, setSearchRemaining] = useState<number | null>(null);
@@ -80,20 +78,46 @@ export default function ProspectFinderPage() {
   const [activeSection, setActiveSection] = useState<"profile" | "search">("profile");
 
   useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem("bodilum-prospect-profile");
-      if (stored) setProfile(JSON.parse(stored) as BusinessProfile);
-    } catch {
-      // Ignore invalid local storage.
-    }
+    const frameId = window.requestAnimationFrame(() => {
+      try {
+        const stored = window.localStorage.getItem(
+          "bodilum-prospect-profile",
+        );
+
+        if (!stored) {
+          return;
+        }
+
+        const savedProfile = JSON.parse(
+          stored,
+        ) as Partial<BusinessProfile>;
+
+        setProfile((currentProfile) => ({
+          ...currentProfile,
+          ...savedProfile,
+        }));
+      } catch {
+        window.localStorage.removeItem(
+          "bodilum-prospect-profile",
+        );
+      }
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      window.localStorage.setItem("bodilum-prospect-profile", JSON.stringify(profile));
-    }, 300);
+    const timeout = window.setTimeout(() => window.localStorage.setItem("bodilum-prospect-profile", JSON.stringify(profile)), 300);
     return () => window.clearTimeout(timeout);
   }, [profile]);
+
+  useEffect(() => {
+    if (!analysingId) return;
+    const interval = window.setInterval(() => setAnalysisStage((current) => Math.min(current + 1, analysisStages.length - 1)), 4500);
+    return () => window.clearInterval(interval);
+  }, [analysingId]);
 
   const profileComplete = useMemo(
     () =>
@@ -163,6 +187,7 @@ export default function ProspectFinderPage() {
 
   async function analyseProspect(place: PlaceSummary) {
     setError("");
+    setAnalysisStage(0);
     setAnalysingId(place.id);
     try {
       const response = await fetch("/api/prospect/analyse", {
@@ -206,10 +231,7 @@ export default function ProspectFinderPage() {
             setAnalysedPlace(null);
           }}
         />
-        <footer className="site-footer compact-footer">
-          <p>Use public business information responsibly. Verify all details before outreach.</p>
-          <span>© {new Date().getFullYear()} Bodilum</span>
-        </footer>
+        <footer className="site-footer compact-footer"><p>Use public business information responsibly. Verify all details before outreach.</p><div className="footer-meta"><LegalFooterLinks /><span>© {new Date().getFullYear()} Bodilum</span></div></footer>
       </main>
     );
   }
@@ -249,7 +271,7 @@ export default function ProspectFinderPage() {
 
           <div className="finder-limit-note">
             <strong>Free daily access</strong>
-            <p>Up to 2 full prospect analyses per day. Search limits may also apply.</p>
+            <p>Limited free prospect analyses are available each day. Search limits also apply.</p>
             {analysisRemaining !== null ? <span>{analysisRemaining} analyses remaining today</span> : null}
           </div>
         </aside>
@@ -266,19 +288,19 @@ export default function ProspectFinderPage() {
               <div className="form-grid two-columns">
                 <label className={fieldClass(profile.businessName)}>
                   <span>Business name *</span>
-                  <input value={profile.businessName} onChange={(event) => updateProfile("businessName", event.target.value)} placeholder="e.g. Bodilum" />
+                  <input value={profile.businessName} onChange={(event) => updateProfile("businessName", event.target.value)} placeholder="e.g. Bodilum" maxLength={140} />
                 </label>
                 <label className={fieldClass(profile.website)}>
                   <span>Business website</span>
-                  <input value={profile.website} onChange={(event) => updateProfile("website", event.target.value)} placeholder="https://www.yourbusiness.com" inputMode="url" />
+                  <input value={profile.website} onChange={(event) => updateProfile("website", event.target.value)} placeholder="https://www.yourbusiness.com" inputMode="url" maxLength={500} />
                 </label>
                 <label className={fieldClass(profile.industry)}>
                   <span>Your industry *</span>
-                  <input value={profile.industry} onChange={(event) => updateProfile("industry", event.target.value)} placeholder="e.g. Creative technology studio" />
+                  <input value={profile.industry} onChange={(event) => updateProfile("industry", event.target.value)} placeholder="e.g. Creative technology studio" maxLength={140} />
                 </label>
                 <label className={`${fieldClass(profile.description)} full-span`}>
                   <span>What does your business help customers achieve? *</span>
-                  <textarea value={profile.description} onChange={(event) => updateProfile("description", event.target.value)} placeholder="Describe the customer outcomes you create—not only the technology or tasks you provide." rows={4} />
+                  <textarea value={profile.description} onChange={(event) => updateProfile("description", event.target.value)} placeholder="Describe the customer outcomes you create—not only the technology or tasks you provide." rows={4} maxLength={2500} />
                 </label>
               </div>
 
@@ -291,8 +313,8 @@ export default function ProspectFinderPage() {
                 {profile.offers.map((offer, index) => (
                   <div className="offer-row" key={`offer-${index}`}>
                     <div className="offer-number">{String(index + 1).padStart(2, "0")}</div>
-                    <label className={fieldClass(offer.name)}><span>Offer name</span><input value={offer.name} onChange={(event) => updateOffer(index, "name", event.target.value)} placeholder="e.g. WhatsApp lead-to-booking system" /></label>
-                    <label className={fieldClass(offer.description)}><span>Outcome / description</span><textarea value={offer.description} onChange={(event) => updateOffer(index, "description", event.target.value)} placeholder="e.g. Turn more enquiries into qualified, booked customers." rows={2} /></label>
+                    <label className={fieldClass(offer.name)}><span>Offer name</span><input value={offer.name} onChange={(event) => updateOffer(index, "name", event.target.value)} placeholder="e.g. WhatsApp lead-to-booking system" maxLength={180} /></label>
+                    <label className={fieldClass(offer.description)}><span>Outcome / description</span><textarea value={offer.description} onChange={(event) => updateOffer(index, "description", event.target.value)} placeholder="e.g. Turn more enquiries into qualified, booked customers." rows={2} maxLength={1600} /></label>
                     <button type="button" className="icon-button danger" onClick={() => removeOffer(index)} disabled={profile.offers.length <= 1} aria-label={`Remove offer ${index + 1}`}><Trash2 size={17} /></button>
                   </div>
                 ))}
@@ -300,9 +322,9 @@ export default function ProspectFinderPage() {
 
               <div className="subsection-title"><h3>Your outreach details</h3><p>These details will be placed in the generated introduction and PDF.</p></div>
               <div className="form-grid three-columns">
-                <label className={fieldClass(profile.contactName)}><span>Your name</span><input value={profile.contactName} onChange={(event) => updateProfile("contactName", event.target.value)} placeholder="Full name" /></label>
-                <label className={fieldClass(profile.contactEmail)}><span>Email</span><input value={profile.contactEmail} onChange={(event) => updateProfile("contactEmail", event.target.value)} placeholder="you@business.com" inputMode="email" /></label>
-                <label className={fieldClass(profile.contactPhone)}><span>Phone / WhatsApp</span><input value={profile.contactPhone} onChange={(event) => updateProfile("contactPhone", event.target.value)} placeholder="+27…" inputMode="tel" /></label>
+                <label className={fieldClass(profile.contactName)}><span>Your name</span><input value={profile.contactName} onChange={(event) => updateProfile("contactName", event.target.value)} placeholder="Full name" maxLength={160} /></label>
+                <label className={fieldClass(profile.contactEmail)}><span>Email</span><input value={profile.contactEmail} onChange={(event) => updateProfile("contactEmail", event.target.value)} placeholder="you@business.com" inputMode="email" maxLength={254} /></label>
+                <label className={fieldClass(profile.contactPhone)}><span>Phone / WhatsApp</span><input value={profile.contactPhone} onChange={(event) => updateProfile("contactPhone", event.target.value)} placeholder="+27…" inputMode="tel" maxLength={80} /></label>
               </div>
 
               <div className="form-actions">
@@ -321,19 +343,20 @@ export default function ProspectFinderPage() {
               <form className="market-search" onSubmit={searchProspects}>
                 <label className={fieldClass(category)}>
                   <span>Type of prospect *</span>
-                  <div className="input-with-icon"><Building2 size={19} /><input value={category} onChange={(event) => setCategory(event.target.value)} placeholder="e.g. Aesthetic clinics, hotels, accountants" /></div>
+                  <div className="input-with-icon"><Building2 size={19} /><input value={category} onChange={(event) => setCategory(event.target.value)} placeholder="e.g. Aesthetic clinics, hotels, accountants" maxLength={120} /></div>
                 </label>
                 <label className={fieldClass(location)}>
                   <span>City, suburb or area *</span>
-                  <div className="input-with-icon"><MapPin size={19} /><input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="e.g. Lekki Phase 1, Lagos" /></div>
+                  <div className="input-with-icon"><MapPin size={19} /><input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="e.g. Lekki Phase 1, Lagos" maxLength={180} /></div>
                 </label>
-                <button type="submit" className="button button-primary search-button" disabled={searching || !profileComplete}>
+                <button type="submit" className="button button-primary search-button" disabled={searching || Boolean(analysingId) || !profileComplete}>
                   {searching ? <LoaderCircle className="spin" size={19} /> : <Search size={19} />}
                   {searching ? "Finding businesses…" : "Find prospects"}
                 </button>
               </form>
 
               {searchRemaining !== null ? <p className="usage-caption">{searchRemaining} searches remaining today.</p> : null}
+              {analysingId ? <div className="analysis-progress" role="status" aria-live="polite"><LoaderCircle className="spin" size={22} /><div><strong>{analysisStages[analysisStage]}</strong><span>This can take up to a minute while public evidence is reviewed.</span></div><div className="analysis-progress-track"><span style={{ width: `${((analysisStage + 1) / analysisStages.length) * 100}%` }} /></div></div> : null}
 
               {places.length ? (
                 <div className="results-section">
@@ -374,6 +397,7 @@ export default function ProspectFinderPage() {
                   <p>Start with a focused category and location—for example, “aesthetic clinics” in “Lekki Phase 1, Lagos”.</p>
                 </div>
               ) : null}
+              <p className="finder-legal-note">By using Prospect Finder, you agree to the <Link href="/terms">Terms</Link>, <Link href="/privacy">Privacy Policy</Link> and <Link href="/acceptable-use">Acceptable Use Policy</Link>.</p>
             </section>
           )}
         </div>
@@ -388,10 +412,7 @@ export default function ProspectFinderPage() {
         </div>
       </section>
 
-      <footer className="site-footer">
-        <p>Tools by <a href="https://www.bodilum.com" target="_blank" rel="noreferrer">Bodilum</a> — a Nigerian-owned creative technology studio based in Johannesburg.</p>
-        <span>© {new Date().getFullYear()} Bodilum</span>
-      </footer>
+      <footer className="site-footer"><p>Tools by <a href="https://www.bodilum.com" target="_blank" rel="noreferrer">Bodilum</a> — a Nigerian-owned creative technology studio based in Johannesburg.</p><div className="footer-meta"><LegalFooterLinks /><span>© {new Date().getFullYear()} Bodilum</span></div></footer>
     </main>
   );
 }

@@ -70,7 +70,7 @@ export function ReportView({
 
       <section className="report-hero">
         <div>
-          <div className="eyebrow"><span /> Prospect analysis</div>
+          <div className="report-provider-row"><div className="eyebrow"><span /> Prospect analysis</div><span className={`analysis-provider-badge ${report.generatedWithAI ? "ai" : "fallback"}`}>{report.generatedWithAI ? "AI-assisted" : "Rules-based fallback"}</span></div>
           <h1>{report.prospectName}</h1>
           <p><MapPin size={16} /> {place.address}</p>
         </div>
