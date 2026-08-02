@@ -1,7 +1,7 @@
 import { ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
 import { z } from "zod";
 import { getBedrockClient } from "@/lib/bedrock";
-import { sanitiseEmails, sanitisePhones, sanitiseWebsites } from "@/lib/contact-utils";
+import { sanitiseEmails, sanitiseEmailsForWebsites, sanitisePhones, sanitiseWebsites } from "@/lib/contact-utils";
 import { bedrockConfigured, env } from "@/lib/env";
 import type {
   BusinessProfile,
@@ -47,14 +47,15 @@ function senderLabel(profile: BusinessProfile) {
 }
 
 function contactData(place: PlaceDetails, evidence: WebsiteEvidence | null) {
+  const officialWebsites = sanitiseWebsites([place.website, evidence?.website]);
   return {
-    emails: sanitiseEmails(evidence?.emails ?? []).slice(0, 8),
+    emails: sanitiseEmailsForWebsites(evidence?.emails ?? [], officialWebsites).slice(0, 8),
     phones: sanitisePhones([
       place.internationalPhone,
       place.phone,
       ...(evidence?.phones ?? []),
     ]).slice(0, 8),
-    websites: sanitiseWebsites([place.website, evidence?.website]).slice(0, 4),
+    websites: officialWebsites.slice(0, 4),
     socialLinks: evidence?.socialLinks ?? [],
     bookingLinks: evidence?.bookingLinks ?? [],
   };
@@ -282,20 +283,36 @@ function fallbackReport(
   };
 }
 
+const OptionalShortTextSchema = z.preprocess(
+  (value) => value === null || value === "" ? undefined : value,
+  z.string().trim().max(500).optional(),
+);
+const ConfidenceSchema = z.preprocess(
+  (value) => typeof value === "string"
+    ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+    : value,
+  z.enum(["High", "Medium", "Low"]),
+);
+const DecisionConfidenceSchema = z.preprocess(
+  (value) => typeof value === "string"
+    ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase()
+    : value,
+  z.enum(["Verified", "Likely", "Suggested"]),
+);
 const EvidencePointSchema = z.object({
-  title: z.string().trim().min(1).max(160),
-  evidence: z.string().trim().min(1).max(1200),
-  whyItMatters: z.string().trim().min(1).max(800),
+  title: z.string().trim().min(1).max(220),
+  evidence: z.string().trim().min(1).max(1800),
+  whyItMatters: z.string().trim().min(1).max(1200),
 });
 const OpportunityPointSchema = z.object({
-  title: z.string().trim().min(1).max(160),
-  description: z.string().trim().min(1).max(1200),
-  outcome: z.string().trim().min(1).max(600),
+  title: z.string().trim().min(1).max(220),
+  description: z.string().trim().min(1).max(1800),
+  outcome: z.string().trim().min(1).max(1000),
 });
 const ModelReportSchema = z.object({
-  prospectName: z.string().trim().min(1).max(200),
-  prospectScore: z.number().min(0).max(10),
-  confidence: z.enum(["High", "Medium", "Low"]),
+  prospectName: z.string().trim().min(1).max(240),
+  prospectScore: z.coerce.number().min(0).max(10),
+  confidence: ConfidenceSchema,
   oneLineVerdict: z.string().trim().min(1).max(700),
   commerciallyAttractive: z.array(EvidencePointSchema).min(2).max(5),
   opportunity: z.array(OpportunityPointSchema).min(2).max(5),
@@ -309,11 +326,11 @@ const ModelReportSchema = z.object({
     response: z.string().trim().min(1).max(1000),
   })).min(2).max(5),
   decisionMakers: z.array(z.object({
-    name: z.string().trim().max(160).optional(),
-    role: z.string().trim().min(1).max(220),
-    contact: z.string().trim().max(300).optional(),
-    confidence: z.enum(["Verified", "Likely", "Suggested"]),
-    source: z.string().trim().max(500).optional(),
+    name: OptionalShortTextSchema,
+    role: z.string().trim().min(1).max(300),
+    contact: OptionalShortTextSchema,
+    confidence: DecisionConfidenceSchema,
+    source: OptionalShortTextSchema,
   })).min(1).max(7),
   finalAssessment: z.object({
     verdict: z.string().trim().min(1).max(800),
@@ -345,7 +362,8 @@ function offerTerms(profile: BusinessProfile) {
   return [...new Set(senderText(profile).match(/[a-z][a-z-]{3,}/g)?.filter((word) => !STOP_WORDS.has(word)) ?? [])].slice(0, 30);
 }
 
-function assertSenderRelevance(report: ModelReport, profile: BusinessProfile) {
+function senderRelevanceIssues(report: ModelReport, profile: BusinessProfile) {
+  const issues: string[] = [];
   const terms = offerTerms(profile);
   const angle = `${report.bestAngle.headline} ${report.bestAngle.explanation}`.toLowerCase();
   const objections = report.objections.map((item) => `${item.objection} ${item.response}`).join(" ").toLowerCase();
@@ -356,33 +374,61 @@ function assertSenderRelevance(report: ModelReport, profile: BusinessProfile) {
   const exactPhoneDigits = profile.contactPhone.replace(/\D/g, "");
 
   if (exactName && !outreach.includes(exactName)) {
-    throw new Error("The outreach does not use the exact contact name supplied by this user");
+    issues.push("missing-sender-name");
   }
   if (exactEmail && !report.email.body.toLowerCase().includes(exactEmail)) {
-    throw new Error("The email signature does not use the exact email supplied by this user");
+    issues.push("missing-sender-email");
   }
   if (exactPhoneDigits && !report.email.body.replace(/\D/g, "").includes(exactPhoneDigits)) {
-    throw new Error("The email signature does not use the exact phone number supplied by this user");
+    issues.push("missing-sender-phone");
   }
 
   if (terms.length && (!hasTerm(angle) || !hasTerm(outreach))) {
-    throw new Error("The strategy and outreach are not anchored strongly enough to the sender's actual offers");
+    issues.push("weak-offer-relevance");
   }
   if (!isDigitalGrowthBusiness(profile)) {
     const genericAgencyLanguage = /\b(?:website redesign|web agency|lead generation|booking conversion|customer[- ]journey|turn more attention into|measurable customer action|digital marketing|crm implementation|whatsapp automation|ai-enabled customer)\b/i;
     if (genericAgencyLanguage.test(`${angle} ${objections} ${outreach}`)) {
-      throw new Error("The report defaulted to digital-agency language that is not part of the sender's offers");
+      issues.push("generic-agency-language");
     }
   }
   if (isLegalBusiness(profile)) {
     const legalTerms = /\b(?:legal|law|litigation|dispute|arbitration|court|counsel|liability|claim|contract)\b/i;
     if (!legalTerms.test(angle) || !legalTerms.test(objections) || !legalTerms.test(outreach)) {
-      throw new Error("The legal-services analysis contains generic agency language instead of a legal proposition");
+      issues.push("weak-legal-relevance");
     }
     if (/we already have a website|customer[- ]journey|booking conversion|lead generation|marketing agency/i.test(objections)) {
-      throw new Error("The objections are not relevant to purchasing legal services");
+      issues.push("irrelevant-legal-objections");
     }
   }
+  return issues;
+}
+
+function applyRelevanceSafeguards(
+  candidate: ModelReport,
+  fallback: ProspectReport,
+  profile: BusinessProfile,
+) {
+  const issues = senderRelevanceIssues(candidate, profile);
+  if (!issues.length) return { candidate, issues };
+
+  const strategyIssue = issues.some((issue) => [
+    "weak-offer-relevance",
+    "generic-agency-language",
+    "weak-legal-relevance",
+    "irrelevant-legal-objections",
+  ].includes(issue));
+  const outreachIssue = strategyIssue || issues.some((issue) => issue.startsWith("missing-sender-"));
+
+  const corrected: ModelReport = {
+    ...candidate,
+    opportunity: strategyIssue ? fallback.opportunity : candidate.opportunity,
+    bestAngle: strategyIssue ? fallback.bestAngle : candidate.bestAngle,
+    objections: strategyIssue ? fallback.objections : candidate.objections,
+    email: outreachIssue ? fallback.email : candidate.email,
+  };
+
+  return { candidate: corrected, issues };
 }
 
 function normaliseName(value: string) {
@@ -464,12 +510,12 @@ function mergeDecisionMakers(
 }
 
 function applyModelReport(
-  candidate: ModelReport,
+  rawCandidate: ModelReport,
   fallback: ProspectReport,
   profile: BusinessProfile,
   evidence: WebsiteEvidence | null,
 ): ProspectReport {
-  assertSenderRelevance(candidate, profile);
+  const { candidate, issues } = applyRelevanceSafeguards(rawCandidate, fallback, profile);
   const score = Number(candidate.prospectScore.toFixed(1));
   return {
     ...fallback,
@@ -480,7 +526,9 @@ function applyModelReport(
     discoveredContacts: fallback.discoveredContacts,
     sources: fallback.sources,
     generatedWithAI: true,
-    dataNote: "AI-assisted analysis generated from public Google Maps data and public website content. Verify contacts, names, roles and commercial assumptions before outreach.",
+    dataNote: issues.length
+      ? "AI-assisted analysis generated from public Google Maps data and public website content. Offer-relevance safeguards corrected sections that did not match the user's stated services. Verify contacts, names, roles and commercial assumptions before outreach."
+      : "AI-assisted analysis generated from public Google Maps data and public website content. Verify contacts, names, roles and commercial assumptions before outreach.",
   };
 }
 
@@ -568,11 +616,11 @@ export async function generateProspectReport(
       text: page.text.slice(0, 12_000),
     })),
     verifiedContactCandidates: {
-      emails: evidence.emails,
-      phones: evidence.phones,
-      websites: sanitiseWebsites([place.website, evidence.website]),
-      socialLinks: evidence.socialLinks,
-      bookingLinks: evidence.bookingLinks,
+      emails: fallback.discoveredContacts.emails,
+      phones: fallback.discoveredContacts.phones,
+      websites: fallback.discoveredContacts.websites,
+      socialLinks: fallback.discoveredContacts.socialLinks,
+      bookingLinks: fallback.discoveredContacts.bookingLinks,
     },
     namedPeopleCandidates: evidence.people,
     notes: evidence.notes,
@@ -597,13 +645,27 @@ Rules:${rules}`;
 
   try {
     const firstResponse = await invokeBedrock(prompt);
+    let firstParsed: ModelReport | null = null;
+    let repairReason = "";
+
     try {
-      return applyModelReport(parseModelReport(firstResponse), fallback, profile, evidence);
+      firstParsed = parseModelReport(firstResponse);
+      const relevanceIssues = senderRelevanceIssues(firstParsed, profile);
+      if (!relevanceIssues.length) {
+        return applyModelReport(firstParsed, fallback, profile, evidence);
+      }
+      repairReason = `Offer relevance checks: ${relevanceIssues.join(", ")}`;
     } catch (validationError) {
-      console.warn("Bedrock response required one repair attempt", {
-        error: validationError instanceof Error ? validationError.message.slice(0, 700) : "Unknown validation error",
-      });
-      const repairPrompt = `The previous response failed validation or was insufficiently relevant to the sender's actual services. Rewrite it completely as one valid JSON object. Do not merely edit the generic wording. Re-read the sender's exact offers and make the best angle, objections, buyer roles, email, WhatsApp message and follow-up specific to those offers.
+      repairReason = validationError instanceof Error
+        ? validationError.message.slice(0, 700)
+        : "Unknown validation error";
+    }
+
+    console.warn("Bedrock response required one repair attempt", { error: repairReason });
+    const repairPrompt = `The previous response failed validation or was insufficiently relevant to the sender's actual services. Rewrite it completely as one valid JSON object. Do not merely edit generic wording. Re-read the sender's exact offers and make the opportunity, best angle, objections, buyer roles, email, WhatsApp message and follow-up specific to those offers.
+
+Reason the previous response was rejected:
+${repairReason}
 
 Sender business profile:
 ${JSON.stringify(profile)}
@@ -621,10 +683,21 @@ Rules:${rules}
 
 Previous invalid or irrelevant response:
 ${firstResponse.slice(0, 24_000)}`;
-      return applyModelReport(parseModelReport(await invokeBedrock(repairPrompt)), fallback, profile, evidence);
+
+    try {
+      const repaired = parseModelReport(await invokeBedrock(repairPrompt));
+      return applyModelReport(repaired, fallback, profile, evidence);
+    } catch (repairError) {
+      if (firstParsed) {
+        console.warn("Bedrock repair failed; using the parsed AI report with deterministic offer-relevance safeguards", {
+          error: repairError instanceof Error ? repairError.message.slice(0, 700) : "Unknown repair error",
+        });
+        return applyModelReport(firstParsed, fallback, profile, evidence);
+      }
+      throw repairError;
     }
   } catch (error) {
-    console.error("Bedrock prospect analysis failed; returning rules-based fallback", {
+    console.error("Bedrock prospect analysis invocation failed; returning rules-based fallback", {
       name: error instanceof Error ? error.name : "UnknownError",
       message: error instanceof Error ? error.message.slice(0, 700) : "Unknown error",
       modelId: env.bedrockModelId,

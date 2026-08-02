@@ -8,7 +8,7 @@ import { AnalyseRequestSchema, firstValidationMessage } from "@/lib/validation";
 import type { PlaceDetails, WebsiteEvidence } from "@/types/prospect";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 180;
 export const dynamic = "force-dynamic";
 const MAX_REQUEST_BYTES = 45_000;
 

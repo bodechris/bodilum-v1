@@ -93,3 +93,9 @@ The report explicitly shows whether it was AI-assisted or produced by the conser
 ## Security note
 
 The uploaded development archive contained a `.env.local` file with long-lived AWS credential fields. This production package excludes that file. Remove those old fields locally and deactivate any IAM access key that was created only for this project now that OIDC is in place.
+
+## Bedrock relevance and fallback behaviour
+
+A valid Amazon Bedrock response is now kept as AI-assisted even when one or more sections fail the offer-relevance checks. The application makes one repair request, then applies deterministic offer-specific safeguards to the affected strategy and outreach sections instead of discarding the whole AI analysis. The rules-based fallback is now reserved for an actual Bedrock invocation failure or a response that cannot be parsed after the repair attempt.
+
+Public email discovery also filters telemetry, Sentry/Wix error addresses, machine-generated identifiers and malformed addresses that do not match the prospect's official website domain.
