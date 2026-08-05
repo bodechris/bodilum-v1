@@ -183,7 +183,7 @@ function ReportDocument({ report, profile, place }: { report: ProspectReport; pr
 
         <View style={[styles.quote, { marginTop: 24 }]}>
           <Text style={styles.itemTitle}>Need a complete lead-discovery and conversion system?</Text>
-          <Text>Bodilum is a Nigerian-owned creative technology studio based in Johannesburg. Visit www.bodilum.com.</Text>
+          <Text>Bodilum is a global creative technology studio based in Johannesburg. Visit www.bodilum.com.</Text>
         </View>
         <Footer />
       </Page>

@@ -140,7 +140,7 @@ function ScorecardDocument({ result }: { result: BrandScorecardResult }) {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Next step with Bodilum</Text>
-          <Text>Bodilum is a Nigerian-owned creative technology studio based in Johannesburg. We help businesses strengthen their positioning, identity, digital credibility, customer experience and practical AI-enabled growth systems.</Text>
+          <Text>Bodilum is a global creative technology studio based in Johannesburg. We help businesses strengthen their positioning, identity, digital credibility, customer experience and practical AI-enabled growth systems.</Text>
           <Text style={{ marginTop: 8 }}>Visit www.bodilum.com to discuss a focused brand improvement sprint.</Text>
         </View>
         <Footer />
