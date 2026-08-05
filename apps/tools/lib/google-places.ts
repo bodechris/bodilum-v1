@@ -9,6 +9,10 @@ type GooglePlace = {
   internationalPhoneNumber?: string; regularOpeningHours?: { weekdayDescriptions?: string[] }; types?: string[];
 };
 const GOOGLE_TIMEOUT_MS = 12_000;
+const GOOGLE_PAGE_SIZE = 20;
+export const DEFAULT_PROSPECT_RESULT_COUNT = 50;
+export const MAX_PROSPECT_RESULT_COUNT = 500;
+export const GOOGLE_TEXT_SEARCH_RESULT_LIMIT = 60;
 
 function normalisePlace(place: GooglePlace): PlaceSummary {
   return {
@@ -35,18 +39,60 @@ async function googleFetch(url: string, init: RequestInit) {
   } finally { clearTimeout(timeout); }
 }
 
-export async function searchPlaces(textQuery: string): Promise<PlaceSummary[]> {
+export async function searchPlaces(
+  textQuery: string,
+  requestedCount = DEFAULT_PROSPECT_RESULT_COUNT,
+): Promise<PlaceSummary[]> {
   if (!env.googlePlacesApiKey) throw new Error("GOOGLE_PLACES_API_KEY is not configured");
-  const response = await googleFetch("https://places.googleapis.com/v1/places:searchText", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json", "X-Goog-Api-Key": env.googlePlacesApiKey,
-      "X-Goog-FieldMask": ["places.id","places.displayName","places.formattedAddress","places.primaryTypeDisplayName","places.businessStatus","places.googleMapsUri"].join(","),
-    },
-    body: JSON.stringify({ textQuery, pageSize: 12, rankPreference: "RELEVANCE" }),
-  });
-  const payload = (await response.json()) as { places?: GooglePlace[] };
-  return (payload.places ?? []).map(normalisePlace).filter((place) => place.id && place.businessStatus !== "CLOSED_PERMANENTLY");
+
+  const targetCount = Math.min(
+    MAX_PROSPECT_RESULT_COUNT,
+    Math.max(1, Math.trunc(requestedCount)),
+  );
+  const placesById = new Map<string, PlaceSummary>();
+  const seenPageTokens = new Set<string>();
+  let pageToken: string | undefined;
+
+  do {
+    const remaining = targetCount - placesById.size;
+    const response = await googleFetch("https://places.googleapis.com/v1/places:searchText", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Goog-Api-Key": env.googlePlacesApiKey,
+        "X-Goog-FieldMask": [
+          "places.id",
+          "places.displayName",
+          "places.formattedAddress",
+          "places.primaryTypeDisplayName",
+          "places.businessStatus",
+          "places.googleMapsUri",
+          "nextPageToken",
+        ].join(","),
+      },
+      body: JSON.stringify({
+        textQuery,
+        pageSize: Math.min(GOOGLE_PAGE_SIZE, remaining),
+        rankPreference: "RELEVANCE",
+        ...(pageToken ? { pageToken } : {}),
+      }),
+    });
+    const payload = (await response.json()) as { places?: GooglePlace[]; nextPageToken?: string };
+
+    for (const place of payload.places ?? []) {
+      const normalised = normalisePlace(place);
+      if (!normalised.id || normalised.businessStatus === "CLOSED_PERMANENTLY") continue;
+      placesById.set(normalised.id, normalised);
+      if (placesById.size >= targetCount) break;
+    }
+
+    const nextPageToken = payload.nextPageToken;
+    if (!nextPageToken || seenPageTokens.has(nextPageToken)) break;
+    seenPageTokens.add(nextPageToken);
+    pageToken = nextPageToken;
+  } while (placesById.size < targetCount);
+
+  return Array.from(placesById.values()).slice(0, targetCount);
 }
 
 export async function getPlaceDetails(placeId: string): Promise<PlaceDetails> {

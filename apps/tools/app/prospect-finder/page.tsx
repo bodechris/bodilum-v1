@@ -42,6 +42,8 @@ type SearchResponse = {
   places?: PlaceSummary[];
   demo?: boolean;
   rateLimit?: { remaining: number; limit: number };
+  requestedCount?: number;
+  providerResultLimit?: number;
   error?: string;
 };
 
@@ -107,6 +109,17 @@ function prettyStatus(status?: string) {
   return status.toLowerCase().replaceAll("_", " ");
 }
 
+const DEFAULT_PROSPECT_RESULT_COUNT = 50;
+const MAX_PROSPECT_RESULT_COUNT = 500;
+
+function getRequestedProspectCount() {
+  if (typeof window === "undefined") return DEFAULT_PROSPECT_RESULT_COUNT;
+  const rawValue = new URLSearchParams(window.location.search).get("numpg");
+  if (!rawValue || !/^\d+$/.test(rawValue)) return DEFAULT_PROSPECT_RESULT_COUNT;
+  const parsedValue = Number.parseInt(rawValue, 10);
+  return Math.min(MAX_PROSPECT_RESULT_COUNT, Math.max(1, parsedValue));
+}
+
 export default function ProspectFinderPage() {
   const [profile, setProfile] = useState<BusinessProfile>(initialProfile);
   const [category, setCategory] = useState("");
@@ -118,6 +131,8 @@ export default function ProspectFinderPage() {
   const [error, setError] = useState("");
   const [demo, setDemo] = useState(false);
   const [searchRemaining, setSearchRemaining] = useState<number | null>(null);
+  const [requestedResultCount, setRequestedResultCount] = useState(DEFAULT_PROSPECT_RESULT_COUNT);
+  const [providerResultLimit, setProviderResultLimit] = useState<number | null>(null);
   const [analysisRemaining, setAnalysisRemaining] = useState<number | null>(null);
   const [report, setReport] = useState<ProspectReport | null>(null);
   const [analysedPlace, setAnalysedPlace] = useState<PlaceDetails | null>(null);
@@ -258,6 +273,9 @@ export default function ProspectFinderPage() {
       return;
     }
 
+    const requestedCount = getRequestedProspectCount();
+    setRequestedResultCount(requestedCount);
+    setProviderResultLimit(null);
     setSearching(true);
     setPlaces([]);
     setReport(null);
@@ -265,13 +283,15 @@ export default function ProspectFinderPage() {
       const response = await fetch("/api/places/search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ category, location }),
+        body: JSON.stringify({ category, location, numpg: requestedCount }),
       });
       const payload = (await response.json()) as SearchResponse;
       if (!response.ok) throw new Error(payload.error || "The search could not be completed.");
       setPlaces(payload.places ?? []);
       setDemo(Boolean(payload.demo));
       setSearchRemaining(payload.rateLimit?.remaining ?? null);
+      setRequestedResultCount(payload.requestedCount ?? requestedCount);
+      setProviderResultLimit(payload.providerResultLimit ?? null);
     } catch (searchError) {
       setError(searchError instanceof Error ? searchError.message : "The search could not be completed.");
     } finally {
@@ -471,6 +491,11 @@ export default function ProspectFinderPage() {
                     <div><span>{places.length} businesses found</span><h3>Choose a business to analyse</h3></div>
                     {demo ? <span className="demo-badge">Demo data — add a Google Places key for live results</span> : null}
                   </div>
+                  {providerResultLimit !== null && requestedResultCount > providerResultLimit ? (
+                    <p className="usage-caption">
+                      Requested up to {requestedResultCount} results. Google Text Search currently returns at most {providerResultLimit} results for one query.
+                    </p>
+                  ) : null}
 
                   <div className="prospect-list">
                     {places.map((place, index) => (

@@ -6,6 +6,7 @@ const draftText = (max: number) => z.string().trim().max(max).default("");
 export const SearchRequestSchema = z.object({
   category: trimmed(120),
   location: trimmed(180),
+  numpg: z.number().int().min(1).max(500).default(50),
 });
 
 const OfferDraftSchema = z.object({

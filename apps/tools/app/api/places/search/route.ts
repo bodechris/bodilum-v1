@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
-import { demoPlaces, searchPlaces } from "@/lib/google-places";
+import { demoPlaces, GOOGLE_TEXT_SEARCH_RESULT_LIMIT, searchPlaces } from "@/lib/google-places";
 import { consumeDailyLimit, getRequestIdentity, RateLimitUnavailableError, refundDailyLimit } from "@/lib/rate-limit";
 import { firstValidationMessage, SearchRequestSchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
-export const maxDuration = 30;
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 const MAX_REQUEST_BYTES = 12_000;
 
@@ -27,10 +27,22 @@ export async function POST(request: Request) {
         await refundDailyLimit(identity, "search"); reserved = false;
         return NextResponse.json({ error: "Google Places is not configured yet." }, { status: 503 });
       }
-      return NextResponse.json({ places: demoPlaces(textQuery), demo: true, rateLimit });
+      return NextResponse.json({
+        places: demoPlaces(textQuery),
+        demo: true,
+        rateLimit,
+        requestedCount: parsed.data.numpg,
+        providerResultLimit: GOOGLE_TEXT_SEARCH_RESULT_LIMIT,
+      });
     }
-    const places = await searchPlaces(textQuery);
-    return NextResponse.json({ places, demo: false, rateLimit });
+    const places = await searchPlaces(textQuery, parsed.data.numpg);
+    return NextResponse.json({
+      places,
+      demo: false,
+      rateLimit,
+      requestedCount: parsed.data.numpg,
+      providerResultLimit: GOOGLE_TEXT_SEARCH_RESULT_LIMIT,
+    });
   } catch (error) {
     if (reserved && identity) await refundDailyLimit(identity, "search").catch(() => undefined);
     console.error("Prospect search failed", { name: error instanceof Error ? error.name : "UnknownError", message: error instanceof Error ? error.message.slice(0, 700) : "Unknown error" });

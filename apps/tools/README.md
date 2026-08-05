@@ -65,6 +65,15 @@ After changing environment variables, redeploy production. Visit `/api/health`; 
 
 The Google key must remain server-side and be restricted to Places API (New). Set Google Cloud quotas and billing alerts. Search requests only retrieve lightweight listing fields. Rating, review count, website, telephone and opening hours are requested only during a selected prospect analysis.
 
+Prospect searches request 50 businesses by default. You can change the requested amount through the Prospect Finder page URL, for example:
+
+```text
+/prospect-finder?numpg=100
+/prospect-finder?numpg=500
+```
+
+`numpg` accepts values from 1 to 500 and is clamped to that range in the browser. The server also validates the value. Google Places Text Search currently returns a maximum of 60 results across all pages for a single text query, so values above 60 are accepted by the tool but may require a future multi-area/grid search strategy to return the full requested amount.
+
 ## MongoDB
 
 Production defaults to fail closed when MongoDB is absent because in-memory limits are unreliable across Vercel instances. Use an Atlas database and allow Vercel connectivity. The app creates a TTL index on `usage_counters.expiresAt` automatically and a unique owner index for `prospect_finder_profiles`. Business details, outreach contact details and the last target market are stored against a hashed anonymous browser identifier; no IP address is stored in the profile document.
