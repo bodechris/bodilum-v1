@@ -19,6 +19,10 @@ export const env = {
   awsRoleArn: process.env.AWS_ROLE_ARN ?? "",
   bedrockModelId: process.env.BEDROCK_MODEL_ID ?? "",
   bedrockTimeoutMs: positiveInteger(process.env.BEDROCK_TIMEOUT_MS, 70_000),
+  openAiApiKey: process.env.OPENAI_API_KEY ?? "",
+  openAiModel: process.env.OPENAI_MODEL ?? "gpt-5.6-luna",
+  openAiBaseUrl: (process.env.OPENAI_BASE_URL ?? "https://api.openai.com/v1").replace(/\/$/, ""),
+  openAiTimeoutMs: positiveInteger(process.env.OPENAI_TIMEOUT_MS, 45_000),
   rateLimitSalt: process.env.RATE_LIMIT_SALT ?? "",
   requireRateLimitDatabase: booleanValue(process.env.RATE_LIMIT_REQUIRE_DATABASE, isProduction),
   demoMode: booleanValue(process.env.ENABLE_DEMO_MODE, !isProduction),
@@ -40,13 +44,23 @@ export function bedrockConfigured() {
   return Boolean(env.awsRegion && env.bedrockModelId && hasCredentialSource);
 }
 
+export function openAiConfigured() {
+  return Boolean(env.openAiApiKey && env.openAiModel && env.openAiBaseUrl);
+}
+
+export function prospectAiConfigured() {
+  return bedrockConfigured() || openAiConfigured();
+}
+
 export function productionConfigurationIssues() {
   if (!isProduction) return [];
   const issues: string[] = [];
   if (!env.googlePlacesApiKey) issues.push("GOOGLE_PLACES_API_KEY is missing");
   if (!env.mongoUri && env.requireRateLimitDatabase) issues.push("MONGODB_URI is missing");
   if (!env.rateLimitSalt || env.rateLimitSalt.length < 24) issues.push("RATE_LIMIT_SALT must be at least 24 characters");
-  if (!bedrockConfigured()) issues.push("Amazon Bedrock is not fully configured");
+  if (!prospectAiConfigured()) {
+    issues.push("No prospect-analysis AI provider is configured (Amazon Bedrock or OpenAI)");
+  }
   if (env.demoMode) issues.push("ENABLE_DEMO_MODE must be false in production");
   return issues;
 }

@@ -7,7 +7,7 @@ Next.js application for `tools.bodilum.com` containing the tools homepage and an
 - Google Places API (New) business discovery with low-cost search field masks
 - Place Details enrichment only after a user selects a prospect
 - Public website analysis with robots.txt handling, response-size limits, redirect checks and SSRF protections
-- Amazon Nova 2 Lite analysis through Amazon Bedrock
+- Ordered AI failover: Amazon Nova 2 Lite through Bedrock, then OpenAI, then the rules-based fallback
 - Vercel OIDC authentication to AWS; no permanent AWS keys are required in Vercel
 - Zod validation for requests and model output, with one controlled JSON repair attempt
 - MongoDB-backed daily rate limits with atomic reservations and automatic expiry
@@ -42,6 +42,9 @@ AWS_REGION=eu-west-1
 AWS_ROLE_ARN=arn:aws:iam::338193218732:role/BodilumProspectFinderBedrockProdRole
 BEDROCK_MODEL_ID=eu.amazon.nova-2-lite-v1:0
 BEDROCK_TIMEOUT_MS=70000
+OPENAI_API_KEY=...
+OPENAI_MODEL=gpt-5.6-luna
+OPENAI_TIMEOUT_MS=45000
 ENABLE_DEMO_MODE=false
 ```
 
@@ -77,6 +80,16 @@ The code expects:
 
 The report explicitly shows whether it was AI-assisted or produced by the conservative rules-based fallback.
 
+## OpenAI failover
+
+Prospect analysis providers are attempted in this order:
+
+1. Amazon Bedrock, when configured.
+2. OpenAI Responses API, when `OPENAI_API_KEY` is configured.
+3. The conservative rules-based report only when every configured AI provider fails.
+
+The OpenAI request uses server-side JSON mode and `store: false`. Keep `OPENAI_API_KEY` server-side; never expose it through a `NEXT_PUBLIC_` variable. `gpt-5.6-luna` is the default cost-sensitive model, but `OPENAI_MODEL` can be changed without code edits.
+
 ## Launch checks
 
 1. `pnpm check-types`
@@ -94,9 +107,9 @@ The report explicitly shows whether it was AI-assisted or produced by the conser
 
 The uploaded development archive contained a `.env.local` file with long-lived AWS credential fields. This production package excludes that file. Remove those old fields locally and deactivate any IAM access key that was created only for this project now that OIDC is in place.
 
-## Bedrock relevance and fallback behaviour
+## AI-provider relevance and fallback behaviour
 
-A valid Amazon Bedrock response is now kept as AI-assisted even when one or more sections fail the offer-relevance checks. The application makes one repair request, then applies deterministic offer-specific safeguards to the affected strategy and outreach sections instead of discarding the whole AI analysis. The rules-based fallback is now reserved for an actual Bedrock invocation failure or a response that cannot be parsed after the repair attempt.
+A valid AI response is kept as AI-assisted even when one or more sections fail the offer-relevance checks. The application makes one repair request with the same provider, then applies deterministic offer-specific safeguards to the affected strategy and outreach sections instead of discarding the whole AI analysis. If Bedrock fails completely, OpenAI is attempted. The rules-based fallback is reserved for the case where every configured AI provider fails or cannot produce a parseable report after repair.
 
 Public email discovery also filters telemetry, Sentry/Wix error addresses, machine-generated identifiers and malformed addresses that do not match the prospect's official website domain.
 

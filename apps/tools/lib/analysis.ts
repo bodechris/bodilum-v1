@@ -2,7 +2,8 @@ import { ConverseCommand } from "@aws-sdk/client-bedrock-runtime";
 import { z } from "zod";
 import { getBedrockClient } from "@/lib/bedrock";
 import { sanitiseEmails, sanitiseEmailsForWebsites, sanitisePhones, sanitiseWebsites } from "@/lib/contact-utils";
-import { bedrockConfigured, env } from "@/lib/env";
+import { bedrockConfigured, env, openAiConfigured } from "@/lib/env";
+import { invokeOpenAI } from "@/lib/openai";
 import type {
   BusinessProfile,
   DecisionMaker,
@@ -10,6 +11,8 @@ import type {
   ProspectReport,
   WebsiteEvidence,
 } from "@/types/prospect";
+
+const PROSPECT_ANALYST_SYSTEM_INSTRUCTION = "You are an evidence-led B2B prospect analyst. The sender is selling its own stated services to the target prospect. Tailor every strategic recommendation to the sender's exact offers and industry. Use only supplied evidence for claims about the target. Sector-level hypotheses are allowed only when clearly labelled as hypotheses. Never invent names, contacts, services, branches, prices, reviews, problems or facts. Use the sender contact name, email and phone exactly as supplied; never substitute a developer, owner or previously seen person's name. Return only valid JSON matching the requested schema, with no markdown.";
 
 function cleanWebsite(url: string) {
   try {
@@ -540,7 +543,7 @@ async function invokeBedrock(prompt: string, maxTokens = 5200) {
     const response = await getBedrockClient().send(new ConverseCommand({
       modelId: env.bedrockModelId,
       system: [{
-        text: "You are an evidence-led B2B prospect analyst. The sender is selling its own stated services to the target prospect. Tailor every strategic recommendation to the sender's exact offers and industry. Use only supplied evidence for claims about the target. Sector-level hypotheses are allowed only when clearly labelled as hypotheses. Never invent names, contacts, services, branches, prices, reviews, problems or facts. Use the sender contact name, email and phone exactly as supplied; never substitute a developer, owner or previously seen person's name. Return only valid JSON matching the requested schema, with no markdown.",
+        text: PROSPECT_ANALYST_SYSTEM_INSTRUCTION,
       }],
       messages: [{ role: "user", content: [{ text: prompt }] }],
       inferenceConfig: { maxTokens, temperature: 0.15, topP: 0.85 },
@@ -557,6 +560,38 @@ async function invokeBedrock(prompt: string, maxTokens = 5200) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+type ProspectAnalysisProvider = {
+  name: "amazon-bedrock" | "openai";
+  modelId: string;
+  invoke: (prompt: string, maxTokens?: number) => Promise<string>;
+};
+
+function configuredProspectAnalysisProviders(): ProspectAnalysisProvider[] {
+  const providers: ProspectAnalysisProvider[] = [];
+
+  if (bedrockConfigured()) {
+    providers.push({
+      name: "amazon-bedrock",
+      modelId: env.bedrockModelId,
+      invoke: invokeBedrock,
+    });
+  }
+
+  if (openAiConfigured()) {
+    providers.push({
+      name: "openai",
+      modelId: env.openAiModel,
+      invoke: (prompt, maxTokens) => invokeOpenAI(
+        PROSPECT_ANALYST_SYSTEM_INSTRUCTION,
+        prompt,
+        maxTokens,
+      ),
+    });
+  }
+
+  return providers;
 }
 
 function schemaTemplate() {
@@ -608,7 +643,8 @@ export async function generateProspectReport(
   evidence: WebsiteEvidence | null,
 ): Promise<ProspectReport> {
   const fallback = fallbackReport(profile, place, evidence);
-  if (!bedrockConfigured()) return fallback;
+  const providers = configuredProspectAnalysisProviders();
+  if (!providers.length) return fallback;
 
   const evidencePayload = evidence ? {
     pages: evidence.pagesAnalysed.map((page) => ({
@@ -644,8 +680,8 @@ ${JSON.stringify(template)}
 
 Rules:${rules}`;
 
-  try {
-    const firstResponse = await invokeBedrock(prompt);
+  const analyseWithProvider = async (provider: ProspectAnalysisProvider) => {
+    const firstResponse = await provider.invoke(prompt);
     let firstParsed: ModelReport | null = null;
     let repairReason = "";
 
@@ -662,7 +698,12 @@ Rules:${rules}`;
         : "Unknown validation error";
     }
 
-    console.warn("Bedrock response required one repair attempt", { error: repairReason });
+    console.warn("Prospect analysis response required one repair attempt", {
+      provider: provider.name,
+      modelId: provider.modelId,
+      error: repairReason,
+    });
+
     const repairPrompt = `The previous response failed validation or was insufficiently relevant to the sender's actual services. Rewrite it completely as one valid JSON object. Do not merely edit generic wording. Re-read the sender's exact offers and make the opportunity, best angle, objections, buyer roles, email, WhatsApp message and follow-up specific to those offers.
 
 Reason the previous response was rejected:
@@ -686,24 +727,47 @@ Previous invalid or irrelevant response:
 ${firstResponse.slice(0, 24_000)}`;
 
     try {
-      const repaired = parseModelReport(await invokeBedrock(repairPrompt));
+      const repaired = parseModelReport(await provider.invoke(repairPrompt));
       return applyModelReport(repaired, fallback, profile, evidence);
     } catch (repairError) {
       if (firstParsed) {
-        console.warn("Bedrock repair failed; using the parsed AI report with deterministic offer-relevance safeguards", {
+        console.warn("Prospect analysis repair failed; using the parsed AI report with deterministic offer-relevance safeguards", {
+          provider: provider.name,
+          modelId: provider.modelId,
           error: repairError instanceof Error ? repairError.message.slice(0, 700) : "Unknown repair error",
         });
         return applyModelReport(firstParsed, fallback, profile, evidence);
       }
       throw repairError;
     }
-  } catch (error) {
-    console.error("Bedrock prospect analysis invocation failed; returning rules-based fallback", {
-      name: error instanceof Error ? error.name : "UnknownError",
-      message: error instanceof Error ? error.message.slice(0, 700) : "Unknown error",
-      modelId: env.bedrockModelId,
-      region: env.awsRegion,
-    });
-    return fallback;
+  };
+
+  const failures: Array<{
+    provider: ProspectAnalysisProvider["name"];
+    modelId: string;
+    name: string;
+    message: string;
+  }> = [];
+
+  for (const provider of providers) {
+    try {
+      return await analyseWithProvider(provider);
+    } catch (error) {
+      const failure = {
+        provider: provider.name,
+        modelId: provider.modelId,
+        name: error instanceof Error ? error.name : "UnknownError",
+        message: error instanceof Error ? error.message.slice(0, 700) : "Unknown error",
+      };
+      failures.push(failure);
+
+      console.warn("Prospect analysis provider failed; trying the next configured provider", {
+        ...failure,
+        region: provider.name === "amazon-bedrock" ? env.awsRegion : undefined,
+      });
+    }
   }
+
+  console.error("All prospect analysis providers failed; returning rules-based fallback", { failures });
+  return fallback;
 }
